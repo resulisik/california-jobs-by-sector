@@ -1,0 +1,4 @@
+data/raw/indeed/
+data/ca_jobs.db
+__pycache__/
+.DS_Store

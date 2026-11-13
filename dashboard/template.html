@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where California's Jobs Are Growing (2021–2026)</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-0: #f5f4f1;
+    --surface-1: #fcfcfb;
+    --border: #e6e5e1;
+    --grid: #ecebe7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #7a7974;
+    --pos: #2a78d6;
+    --neg: #e34948;
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --ref: #8a8984;
+    --faint: #d9d8d3;
+    --chip: #efeee9;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --surface-0: #121211;
+      --surface-1: #1a1a19;
+      --border: #2c2c2a;
+      --grid: #262624;
+      --text-primary: #f0efec;
+      --text-secondary: #c3c2b7;
+      --text-muted: #9a9991;
+      --pos: #3987e5;
+      --neg: #e66767;
+      --series-1: #3987e5;
+      --series-2: #d95926;
+      --ref: #8f8e88;
+      --faint: #3a3a37;
+      --chip: #262624;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--surface-0); color: var(--text-primary);
+    font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 20px 56px; }
+  header h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--text-secondary); max-width: 760px; }
+  .byline { margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .byline a { color: inherit; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 28px 0 16px; }
+  .tile, .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  .tile { padding: 16px 18px; }
+  .tile .label { font-size: 13px; color: var(--text-secondary); }
+  .tile .value { font-size: 28px; font-weight: 600; margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+  .tile .note { font-size: 12.5px; color: var(--text-muted); }
+  .card { padding: 20px 22px 16px; margin-top: 16px; }
+  .card h2 { font-size: 17px; margin: 0 0 2px; }
+  .card .sub { font-size: 13px; color: var(--text-secondary); margin: 0 0 12px; }
+  .card .foot { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid2 .card { margin-top: 16px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+  .controls button {
+    font: inherit; font-size: 12.5px; padding: 4px 10px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--chip); color: var(--text-secondary);
+  }
+  .controls button[aria-pressed="true"] { background: var(--text-primary); color: var(--surface-1); border-color: var(--text-primary); }
+  .controls button:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+  .chart { width: 100%; position: relative; }
+  svg { display: block; overflow: visible; }
+  svg text { font-family: inherit; }
+  .legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--text-secondary); margin: -4px 0 8px; }
+  .legend span::before { content: ""; display: inline-block; width: 14px; height: 2px; vertical-align: middle; margin-right: 6px; background: var(--c); border-radius: 2px; }
+  #tip {
+    position: fixed; pointer-events: none; z-index: 10; display: none; max-width: 280px;
+    background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; font-size: 12.5px; box-shadow: 0 6px 24px rgba(0,0,0,.12);
+  }
+  #tip b { font-weight: 600; }
+  #tip .row { display: flex; justify-content: space-between; gap: 14px; }
+  #tip .k::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 7px 8px; border-bottom: 1px solid var(--border); text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  th { font-weight: 600; color: var(--text-secondary); font-size: 12.5px; }
+  tr.total td { font-weight: 600; }
+  .up { color: var(--text-primary); } .up::before { content: "▲ "; color: var(--pos); font-size: 10px; }
+  .down { color: var(--text-primary); } .down::before { content: "▼ "; color: var(--neg); font-size: 10px; }
+  .findings { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 28px; margin: 4px 0 0; padding: 0; list-style: none; }
+  .findings li { font-size: 14px; color: var(--text-secondary); }
+  .findings b { color: var(--text-primary); display: block; margin-bottom: 2px; }
+  footer { margin-top: 28px; font-size: 12.5px; color: var(--text-muted); }
+  footer a { color: inherit; }
+  .scroll { overflow-x: auto; }
+  @media (max-width: 820px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .grid2, .findings { grid-template-columns: 1fr; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Where California's jobs are growing</h1>
+    <p>Five years of official payroll data (Sep 2021 – Sep 2026) and daily job-posting data, by sector.
+       Which industries are hiring, which are shrinking, and what that means for someone looking for an entry-level analyst role in Los Angeles.</p>
+    <div class="byline">Resul Isik · Data Analyst portfolio · <span id="meta"></span></div>
+  </header>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="card">
+    <h2>Which sectors added jobs?</h2>
+    <p class="sub" id="bars-sub"></p>
+    <div class="controls" role="group" aria-label="Period">
+      <button data-period="5" aria-pressed="true">5 years</button>
+      <button data-period="12" aria-pressed="false">Last 12 months</button>
+    </div>
+    <div class="chart" id="bars"></div>
+    <p class="foot">Thousands of payroll jobs, seasonally adjusted. Hover a bar for details.</p>
+  </section>
+
+  <section class="card">
+    <h2>How each sector moved since before the pandemic</h2>
+    <p class="sub">Payroll jobs indexed to February 2020 = 100. Pick a sector to compare it with all jobs.</p>
+    <div class="controls" id="chips" role="group" aria-label="Sector"></div>
+    <div class="legend" id="line-legend"></div>
+    <div class="chart" id="lines"></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Job postings: California vs the U.S.</h2>
+      <p class="sub">Indeed job postings, monthly average, Feb 1 2020 = 100</p>
+      <div class="legend"><span style="--c:var(--series-1)">California</span><span style="--c:var(--series-2)">United States</span></div>
+      <div class="chart" id="postings"></div>
+    </section>
+    <section class="card">
+      <h2>Postings by metro area, last 12 months</h2>
+      <p class="sub">Last 28 days vs the same 28 days a year earlier</p>
+      <div class="chart" id="metros"></div>
+      <p class="foot">Large California metros. Indeed Hiring Lab metro index.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Which occupations are posting more jobs?</h2>
+    <p class="sub">U.S. Indeed postings by occupation, last 28 days vs a year earlier (state-level occupation data is not published)</p>
+    <div class="controls" role="group" aria-label="Occupations shown">
+      <button data-occ="hi" aria-pressed="true">Highlights</button>
+      <button data-occ="all" aria-pressed="false">All 47 occupations</button>
+    </div>
+    <div class="chart" id="occ"></div>
+  </section>
+
+  <section class="card">
+    <h2>What the data says</h2>
+    <ul class="findings" id="findings"></ul>
+  </section>
+
+  <section class="card">
+    <h2>Industry spotlight</h2>
+    <p class="sub">Smaller industries behind the headlines. Some series are not seasonally adjusted, so they are compared September to September.</p>
+    <div class="scroll"><table id="spot"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>All sectors (table view)</h2>
+    <div class="scroll"><table id="table"></table></div>
+  </section>
+
+  <footer>
+    <p><b>Data.</b> Payroll jobs: U.S. Bureau of Labor Statistics, Current Employment Statistics (state and metro),
+      via <a href="https://fred.stlouisfed.org/">FRED</a>. Job postings: <a href="https://github.com/hiring-lab/job_postings_tracker">Indeed Hiring Lab job postings index</a>
+      (seasonally adjusted, 7-day average, Feb 1 2020 = 100). An index measures the trend in postings, not the number of open jobs.</p>
+    <p><b>Method.</b> Python (pandas) cleans the files and loads them into SQLite; the analysis is written in SQL (CTEs, window functions).
+      Code, queries and results: <a href="https://github.com/resulisik/california-jobs-by-sector">github.com/resulisik/california-jobs-by-sector</a>.</p>
+  </footer>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const D = /*__DATA__*/null;
+const NS = "http://www.w3.org/2000/svg";
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const tip = document.getElementById("tip");
+
+const fmtK = v => {
+  const s = v > 0 ? "+" : v < 0 ? "−" : "";
+  const a = Math.abs(v);
+  return s + (a >= 1000 ? (a / 1000).toFixed(2) + "M" : a < 10 ? a.toFixed(1) + "K" : Math.round(a).toLocaleString() + "K");
+};
+const fmtPct = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d) + "%";
+const fmtJobs = k => (k >= 1000 ? (k / 1000).toFixed(2) + "M" : Math.round(k).toLocaleString() + "K");
+const monthName = m => new Date(m + "T00:00:00").toLocaleString("en-US", { month: "short", year: "numeric" });
+
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function showTip(html, ev) {
+  tip.innerHTML = html; tip.style.display = "block";
+  const r = tip.getBoundingClientRect();
+  let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+  x = Math.max(8, x); y = Math.max(8, y);
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const hideTip = () => (tip.style.display = "none");
+
+/* Horizontal diverging bar chart. rows: [{label, value, text, tip}] */
+function barChart(host, rows, opts = {}) {
+  host.innerHTML = "";
+  const W = host.clientWidth, rowH = opts.rowH || 30, barH = Math.min(18, rowH - 10);
+  const narrow = W < 560;
+  const labelW = Math.min(opts.labelW || 190, W * (narrow ? 0.4 : 0.42));
+  const H = rows.length * rowH + 24;
+  const svg = el("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "bar chart" }, host);
+  const vals = rows.map(r => r.value);
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+  const pad = narrow ? 46 : 62, x0 = labelW + 8 + (lo < 0 ? pad : 0), x1 = W - pad;
+  const scale = v => x0 + (v - lo) / (hi - lo || 1) * (x1 - x0);
+  const zero = scale(0);
+  // light vertical grid
+  const step = niceStep((hi - lo) / (narrow ? 2 : 4));
+  for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) {
+    const x = scale(t);
+    el("line", { x1: x, x2: x, y1: 0, y2: rows.length * rowH, stroke: cssVar("--grid"), "stroke-width": 1 }, svg);
+    const tx = el("text", { x, y: rows.length * rowH + 16, "text-anchor": "middle", "font-size": 11, fill: cssVar("--text-muted") }, svg);
+    tx.textContent = opts.tick ? opts.tick(t) : t;
+  }
+  rows.forEach((r, i) => {
+    const y = i * rowH + (rowH - barH) / 2, xv = scale(r.value), pos = r.value >= 0;
+    const lab = el("text", { x: labelW, y: i * rowH + rowH / 2 + 4, "text-anchor": "end", "font-size": narrow ? 11.5 : 12.5,
+      fill: cssVar(r.strong ? "--text-primary" : "--text-secondary"), "font-weight": r.strong ? 600 : 400 }, svg);
+    lab.textContent = r.label;
+    const len = Math.abs(xv - zero), rr = Math.min(4, len / 2, barH / 2);
+    const d = pos
+      ? `M${zero},${y} H${xv - rr} Q${xv},${y} ${xv},${y + rr} V${y + barH - rr} Q${xv},${y + barH} ${xv - rr},${y + barH} H${zero} Z`
+      : `M${zero},${y} H${xv + rr} Q${xv},${y} ${xv},${y + rr} V${y + barH - rr} Q${xv},${y + barH} ${xv + rr},${y + barH} H${zero} Z`;
+    if (len > 0.5) el("path", { d, fill: cssVar(pos ? "--pos" : "--neg") }, svg);
+    const vt = el("text", { x: pos ? xv + 6 : xv - 6, y: i * rowH + rowH / 2 + 4, "text-anchor": pos ? "start" : "end",
+      "font-size": 12, fill: cssVar("--text-primary") }, svg);
+    vt.textContent = r.text;
+    const hit = el("rect", { x: 0, y: i * rowH, width: W, height: rowH, fill: "transparent" }, svg);
+    hit.addEventListener("pointermove", ev => showTip(r.tip, ev));
+    hit.addEventListener("pointerleave", hideTip);
+  });
+  el("line", { x1: zero, x2: zero, y1: 0, y2: rows.length * rowH, stroke: cssVar("--text-secondary"), "stroke-width": 1 }, svg);
+}
+
+function niceStep(raw) {
+  const p = Math.pow(10, Math.floor(Math.log10(raw || 1))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+}
+
+/* Line chart over months. series: [{name, color, width, points:[[month, value, extra]], emph}] */
+function lineChart(host, series, opts = {}) {
+  host.innerHTML = "";
+  const W = host.clientWidth, narrow = W < 560, H = opts.height || 320;
+  const m = { t: 10, r: narrow ? 40 : (opts.right || 150), b: 26, l: 36 };
+  const svg = el("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "line chart" }, host);
+  const months = series[0].points.map(p => p[0]);
+  const all = series.flatMap(s => s.points.map(p => p[1]));
+  let lo = Math.min(...all, opts.ref ?? Infinity), hi = Math.max(...all, opts.ref ?? -Infinity);
+  const st = niceStep((hi - lo) / 4); lo = Math.floor(lo / st) * st; hi = Math.ceil(hi / st) * st;
+  const X = i => m.l + i / (months.length - 1) * (W - m.l - m.r);
+  const Y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  for (let t = lo; t <= hi + 1e-9; t += st) {
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: cssVar("--grid") }, svg);
+    el("text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = t;
+  }
+  const perYear = 12 * (W - m.l - m.r) / (months.length - 1);
+  months.forEach((mo, i) => {
+    if (mo.endsWith("-01-01")) {
+      const yr = +mo.slice(0, 4);
+      if (perYear < 34 && yr % 2) return;
+      el("text", { x: X(i), y: H - 6, "text-anchor": "middle", "font-size": 11, fill: cssVar("--text-muted") }, svg)
+        .textContent = perYear < 60 ? "\u2019" + mo.slice(2, 4) : mo.slice(0, 4);
+    }
+  });
+  if (opts.ref != null) el("line", { x1: m.l, x2: W - m.r, y1: Y(opts.ref), y2: Y(opts.ref), stroke: cssVar("--text-secondary"), "stroke-width": 1 }, svg);
+  if (opts.shade) {
+    const a = months.indexOf(opts.shade[0]), b = months.indexOf(opts.shade[1]);
+    if (a >= 0 && b >= 0) el("rect", { x: X(a), y: m.t, width: X(b) - X(a), height: H - m.t - m.b, fill: cssVar("--series-1"), opacity: 0.06 }, svg);
+  }
+  const ordered = [...series].sort((a, b) => (a.emph ? 1 : 0) - (b.emph ? 1 : 0));
+  for (const s of ordered) {
+    const d = s.points.map((p, i) => (i ? "L" : "M") + X(i).toFixed(1) + "," + Y(p[1]).toFixed(1)).join("");
+    el("path", { d, fill: "none", stroke: s.color, "stroke-width": s.width || 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+  }
+  // end labels with leader lines when nudged
+  const ends = series.filter(s => s.emph).map(s => {
+    const p = s.points[s.points.length - 1];
+    return { s, x: X(s.points.length - 1), y: Y(p[1]), ly: Y(p[1]), v: p[1] };
+  }).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < ends.length; i++) if (ends[i].ly - ends[i - 1].ly < 16) ends[i].ly = ends[i - 1].ly + 16;
+  for (const e of ends) {
+    el("circle", { cx: e.x, cy: e.y, r: 4, fill: e.s.color, stroke: cssVar("--surface-1"), "stroke-width": 2 }, svg);
+    if (Math.abs(e.ly - e.y) > 1) el("line", { x1: e.x + 5, y1: e.y, x2: e.x + 12, y2: e.ly, stroke: cssVar("--text-muted"), "stroke-width": 1 }, svg);
+    el("text", { x: e.x + 14, y: e.ly + 4, "font-size": 12, fill: cssVar("--text-primary") }, svg)
+      .textContent = narrow ? `${Math.round(e.v)}` : `${e.s.label || e.s.name}  ${Math.round(e.v)}`;
+  }
+  // crosshair + tooltip
+  const cross = el("line", { y1: m.t, y2: H - m.b, stroke: cssVar("--text-muted"), "stroke-width": 1, visibility: "hidden" }, svg);
+  const dots = series.filter(s => s.emph).map(s => el("circle", { r: 4, fill: s.color, stroke: cssVar("--surface-1"), "stroke-width": 2, visibility: "hidden" }, svg));
+  const hit = el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent" }, svg);
+  hit.addEventListener("pointermove", ev => {
+    const box = svg.getBoundingClientRect();
+    const i = Math.max(0, Math.min(months.length - 1, Math.round((ev.clientX - box.left - m.l) / (W - m.l - m.r) * (months.length - 1))));
+    cross.setAttribute("x1", X(i)); cross.setAttribute("x2", X(i)); cross.setAttribute("visibility", "visible");
+    let html = `<b>${monthName(months[i])}</b>`;
+    series.filter(s => s.emph).forEach((s, k) => {
+      const p = s.points[i];
+      dots[k].setAttribute("cx", X(i)); dots[k].setAttribute("cy", Y(p[1])); dots[k].setAttribute("visibility", "visible");
+      html += `<div class="row"><span class="k" style="--c:${s.color}">${s.label || s.name}</span><span>${opts.tipFmt ? opts.tipFmt(p) : p[1]}</span></div>`;
+    });
+    showTip(html, ev);
+  });
+  hit.addEventListener("pointerleave", () => { hideTip(); cross.setAttribute("visibility", "hidden"); dots.forEach(d => d.setAttribute("visibility", "hidden")); });
+}
+
+/* ---------- page ---------- */
+const K = D.kpi;
+const sectors = D.sectors.filter(s => !s.total);
+const totalRow = D.sectors.find(s => s.total);
+document.getElementById("meta").textContent =
+  `Jobs data through ${monthName(D.meta.end)} · postings through ${new Date(D.meta.postings_through + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+
+document.getElementById("kpis").innerHTML = [
+  ["Net new jobs, 5 years", fmtK(K.total_chg5), `${fmtPct(K.total_pct5)} since Sep 2021`],
+  ["Share of growth from health care", K.health_care_share.toFixed(0) + "%", `${fmtK(K.health_care_chg5)} jobs in health care & social assistance`],
+  ["Information sector (tech, media)", fmtPct(K.info_pct5), "change in jobs since Sep 2021"],
+  ["Job postings vs Feb 2020", Math.round(K.ca_postings).toString(), `California (U.S.: ${Math.round(K.us_postings)}); 100 = Feb 2020`],
+].map(([l, v, n]) => `<div class="tile"><div class="label">${l}</div><div class="value">${v}</div><div class="note">${n}</div></div>`).join("");
+
+let period = "5";
+function drawBars() {
+  const key = period === "5" ? "chg5" : "chg12", pk = period === "5" ? "pct5" : "pct12";
+  document.getElementById("bars-sub").textContent = period === "5"
+    ? `Change in payroll jobs, Sep 2021 to Sep 2026. All sectors together: ${fmtK(totalRow.chg5)} (${fmtPct(totalRow.pct5)}).`
+    : `Change in payroll jobs, Sep 2025 to Sep 2026. All sectors together: ${fmtK(totalRow.chg12)} (${fmtPct(totalRow.pct12)}).`;
+  const rows = [...sectors].sort((a, b) => b[key] - a[key]).map(s => ({
+    label: s.short, value: s[key], text: fmtK(s[key]),
+    tip: `<b>${s.name}</b><div class="row"><span>Change</span><span>${fmtK(s[key])} (${fmtPct(s[pk])})</span></div>
+          <div class="row"><span>Jobs, Sep 2026</span><span>${fmtJobs(s.j26)}</span></div>
+          <div class="row"><span>vs Feb 2020</span><span>${s.idx20.toFixed(1)}</span></div>`,
+  }));
+  barChart(document.getElementById("bars"), rows, { labelW: 170, tick: t => (t > 0 ? "+" : "") + t + "K", aria: "Job change by sector" });
+}
+document.querySelectorAll("[data-period]").forEach(b => b.addEventListener("click", () => {
+  period = b.dataset.period;
+  document.querySelectorAll("[data-period]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  drawBars();
+}));
+
+let picked = "Private education & health services";
+const chips = document.getElementById("chips");
+[...sectors].sort((a, b) => b.idx20 - a.idx20).forEach(s => {
+  const b = document.createElement("button");
+  b.textContent = s.short; b.setAttribute("aria-pressed", s.name === picked);
+  b.addEventListener("click", () => { picked = s.name; chips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawLines(); });
+  chips.appendChild(b);
+});
+function drawLines() {
+  const sel = sectors.find(s => s.name === picked);
+  document.getElementById("line-legend").innerHTML =
+    `<span style="--c:var(--series-1)">${sel.short}</span><span style="--c:var(--ref)">All jobs</span><span style="--c:var(--faint)">Other sectors</span>`;
+  const ser = Object.entries(D.lines).map(([name, pts]) => {
+    const s = D.sectors.find(x => x.name === name);
+    const isSel = name === picked, isTot = name === "Total nonfarm";
+    return { name, label: s.short, points: pts, emph: isSel || isTot,
+             color: isSel ? cssVar("--series-1") : isTot ? cssVar("--ref") : cssVar("--faint"), width: isSel || isTot ? 2 : 1 };
+  });
+  lineChart(document.getElementById("lines"), ser, { ref: 100, height: 340, right: 190, shade: [D.meta.start, D.meta.end],
+    aria: "Jobs indexed to February 2020", tipFmt: p => `${p[1].toFixed(1)} · ${fmtJobs(p[2])}` });
+}
+
+function drawPostings() {
+  const ser = [
+    { name: "United States", points: D.postings.US, emph: true, color: cssVar("--series-2") },
+    { name: "California", points: D.postings.CA, emph: true, color: cssVar("--series-1") },
+  ];
+  lineChart(document.getElementById("postings"), ser, { ref: 100, height: 280, right: 120, aria: "Indeed postings CA vs US",
+    tipFmt: p => p[1].toFixed(1) });
+}
+
+function drawMetros() {
+  const rows = D.metros.map(m => ({ label: m.short, value: m.pct, text: fmtPct(m.pct), strong: m.short === "Los Angeles",
+    tip: `<b>${m.name}</b><div class="row"><span>12-month change</span><span>${fmtPct(m.pct)}</span></div>
+          <div class="row"><span>Index now (Feb 2020 = 100)</span><span>${m.now}</span></div>
+          <div class="row"><span>A year ago</span><span>${m.ago}</span></div>` }));
+  barChart(document.getElementById("metros"), rows, { labelW: 100, rowH: 30, tick: t => t + "%", aria: "Postings change by metro" });
+}
+
+let occMode = "hi";
+const WATCH = ["Data & Analytics", "Software Development", "Nursing", "Medical Information"];
+function drawOcc() {
+  const all = D.occupations;
+  const rows = occMode === "all" ? all : all.filter((o, i) => i < 6 || i >= all.length - 5 || WATCH.includes(o.name));
+  barChart(document.getElementById("occ"), rows.map(o => ({ label: o.name, value: o.pct, text: fmtPct(o.pct), strong: WATCH.includes(o.name),
+    tip: `<b>${o.name}</b><div class="row"><span>12-month change</span><span>${fmtPct(o.pct)}</span></div>
+          <div class="row"><span>Index now (Feb 2020 = 100)</span><span>${o.now}</span></div>` })),
+    { labelW: 230, rowH: 26, tick: t => t + "%", aria: "Postings change by occupation" });
+}
+document.querySelectorAll("[data-occ]").forEach(b => b.addEventListener("click", () => {
+  occMode = b.dataset.occ;
+  document.querySelectorAll("[data-occ]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  drawOcc();
+}));
+
+// months (of the last 24) where jobs were below the same month a year earlier
+function monthsDown(name) {
+  const p = D.lines[name], n = p.length; let c = 0;
+  for (let i = n - 24; i < n; i++) if (p[i][2] < p[i - 12][2]) c++;
+  return c;
+}
+const spot = Object.fromEntries(D.spotlight.map(s => [s.name, s]));
+const metro = Object.fromEntries(D.metros.map(m => [m.short, m]));
+const ed = sectors.find(s => s.name === "Private education & health services");
+const info = sectors.find(s => s.name === "Information");
+const lh = sectors.find(s => s.name === "Leisure & hospitality");
+const da = D.occupations.find(o => o.name === "Data & Analytics");
+document.getElementById("findings").innerHTML = [
+  ["Health care carried the state.", `Of ${fmtK(K.total_chg5)} net new jobs since Sep 2021, health care & social assistance added ${fmtK(K.health_care_chg5)} (${K.health_care_share.toFixed(0)}%). Education & health was above its year-earlier level ${monthsDown(ed.name) === 0 ? "in every one of the last 24 months" : `in ${24 - monthsDown(ed.name)} of the last 24 months`}.`],
+  ["Tech and media are shrinking.", `Information jobs fell ${Math.abs(info.pct5).toFixed(1)}% in five years and were below the year before in ${monthsDown(info.name)} of the last 24 months. Computer systems design ${fmtPct(spot["Computer systems design"].pct5)}, motion picture & sound recording ${fmtPct(spot["Motion picture & sound recording"].pct5)}.`],
+  ["California postings lag the nation.", `Postings sit at ${Math.round(K.ca_postings)} in California vs ${Math.round(K.us_postings)} nationally (Feb 2020 = 100). The Bay Area is rebounding (San Francisco ${fmtPct(metro["San Francisco"].pct)}, San Jose ${fmtPct(metro["San Jose"].pct)} in a year); Los Angeles is flat (${fmtPct(metro["Los Angeles"].pct)}).`],
+  ["Bright spots outside health care.", `Aerospace product & parts jobs grew ${fmtPct(spot["Aerospace product & parts"].pct5)} in five years. Leisure & hospitality added ${fmtK(lh.chg5)} but is still ${(100 - lh.idx20).toFixed(1)}% below February 2020.`],
+  ["Data roles: growing, from a low base.", `U.S. postings for Data & Analytics are ${fmtPct(da.pct)} on a year ago, but at ${Math.round(da.now)} they remain well below February 2020, so competition for entry-level roles stays high.`],
+  ["What I take from it.", `For an entry-level analyst in Los Angeles, the largest and steadiest employers are hospital systems, insurers and public agencies. Healthcare data (claims, patient flow, quality measures) is the domain to build skills in.`],
+].map(([h, t]) => `<li><b>${h}</b>${t}</li>`).join("");
+
+const cls = v => (v > 0 ? "up" : v < 0 ? "down" : "");
+document.getElementById("spot").innerHTML =
+  `<thead><tr><th>Industry</th><th>Jobs, Sep 2026</th><th>5-year change</th><th>12-month change</th><th>Adjusted</th></tr></thead><tbody>` +
+  D.spotlight.map(s => `<tr><td>${s.name}</td><td>${fmtJobs(s.j26)}</td><td class="${cls(s.pct5)}">${fmtPct(s.pct5)}</td>
+    <td class="${cls(s.pct12)}">${fmtPct(s.pct12)}</td><td>${s.sa ? "Seasonally" : "Sep vs Sep"}</td></tr>`).join("") + "</tbody>";
+
+document.getElementById("table").innerHTML =
+  `<thead><tr><th>Sector</th><th>Jobs, Sep 2026</th><th>Share</th><th>5-year change</th><th>5-year %</th><th>12-month change</th><th>Feb 2020 = 100</th></tr></thead><tbody>` +
+  D.sectors.map(s => `<tr class="${s.total ? "total" : ""}"><td>${s.name}</td><td>${fmtJobs(s.j26)}</td><td>${s.share26.toFixed(1)}%</td>
+    <td class="${cls(s.chg5)}">${fmtK(s.chg5)}</td><td>${fmtPct(s.pct5)}</td><td class="${cls(s.chg12)}">${fmtK(s.chg12)}</td><td>${s.idx20.toFixed(1)}</td></tr>`).join("") + "</tbody>";
+
+function drawAll() { drawBars(); drawLines(); drawPostings(); drawMetros(); drawOcc(); }
+drawAll();
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
+</script>
+</body>
+</html>

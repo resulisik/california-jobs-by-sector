@@ -2,7 +2,8 @@
 -- Database: data/sectors.db (built by src/build_database.py)
 -- jobs_k = thousands of jobs. postings_index = Indeed postings, Feb 1 2020 = 100.
 -- adj_close = month-end price with dividends reinvested. Months are stored as YYYY-MM-01.
--- Q1-Q12 California, Q13-Q15 California vs U.S., Q16-Q20 stock sectors, Q21-Q24 last three months.
+-- Q1-Q12 California, Q13-Q15 California vs U.S., Q16-Q20 stock sectors, Q21-Q24 last three months,
+-- Q25-Q30 occupations and college majors.
 -- Each query starts with a "-- Qn: title" line so src/run_queries.py can split the file.
 
 -- Q1: Five-year job change by sector (Sep 2021 -> Sep 2026)
@@ -508,3 +509,86 @@ LEFT JOIN openings o USING (name)
 LEFT JOIN layoffs l USING (name)
 LEFT JOIN stocks st USING (name)
 ORDER BY hiring_signals_of_3 DESC, j.jobs_12m_pct DESC;
+
+-- Q25: Top five occupations by yearly job openings in each field (BLS projections 2025-35)
+WITH ranked AS (
+    SELECT field, title, openings_k, change_pct, median_wage, education,
+           ROW_NUMBER() OVER (PARTITION BY field ORDER BY openings_k DESC) AS rank_in_field
+    FROM occupation_outlook
+    WHERE field IS NOT NULL
+)
+SELECT field, rank_in_field, title,
+       openings_k   AS openings_per_year_k,
+       change_pct   AS growth_2025_35_pct,
+       median_wage,
+       education    AS typical_education
+FROM ranked
+WHERE rank_in_field <= 5
+ORDER BY field, rank_in_field;
+
+-- Q26: Bachelor's-level occupations growing fastest and shrinking most (2025-35, at least 50,000 jobs)
+WITH b AS (
+    SELECT title, emp_2025_k, change_pct, openings_k, median_wage,
+           ROW_NUMBER() OVER (ORDER BY change_pct DESC) AS from_top,
+           ROW_NUMBER() OVER (ORDER BY change_pct ASC)  AS from_bottom
+    FROM occupation_outlook
+    WHERE bachelors = 1 AND emp_2025_k >= 50
+)
+SELECT CASE WHEN from_top <= 10 THEN 'fastest growing' ELSE 'shrinking' END AS grp,
+       title, change_pct AS growth_2025_35_pct, openings_k AS openings_per_year_k, median_wage
+FROM b
+WHERE from_top <= 10 OR from_bottom <= 8
+ORDER BY change_pct DESC;
+
+-- Q27: College majors with the lowest and highest underemployment (recent graduates, 2024)
+WITH r AS (
+    SELECT major, major_group, underemployment_pct, unemployment_pct, wage_early,
+           ROW_NUMBER() OVER (ORDER BY underemployment_pct ASC)  AS best,
+           ROW_NUMBER() OVER (ORDER BY underemployment_pct DESC) AS worst
+    FROM majors WHERE major <> 'Overall'
+)
+SELECT CASE WHEN best <= 10 THEN 'lowest underemployment' ELSE 'highest underemployment' END AS grp,
+       major, major_group, underemployment_pct, unemployment_pct, wage_early
+FROM r
+WHERE best <= 10 OR worst <= 10
+ORDER BY underemployment_pct;
+
+-- Q28: Major families compared (simple averages across the majors in each family)
+SELECT major_group,
+       COUNT(*)                               AS majors,
+       ROUND(AVG(unemployment_pct), 1)        AS avg_unemployment_pct,
+       ROUND(AVG(underemployment_pct), 1)     AS avg_underemployment_pct,
+       ROUND(AVG(wage_early))                 AS avg_wage_early,
+       ROUND(AVG(wage_mid))                   AS avg_wage_mid,
+       ROUND(100.0 * (AVG(wage_mid) / AVG(wage_early) - 1)) AS wage_growth_pct,
+       ROUND(AVG(grad_share_pct), 1)          AS avg_grad_degree_share_pct
+FROM majors
+WHERE major <> 'Overall'
+GROUP BY major_group
+ORDER BY avg_underemployment_pct;
+
+-- Q29: Major scorecard - how many of three tests does each major pass against the average graduate?
+WITH o AS (SELECT * FROM majors WHERE major = 'Overall'),
+s AS (
+    SELECT m.major, m.major_group, m.unemployment_pct, m.underemployment_pct, m.wage_early,
+           (m.unemployment_pct < o.unemployment_pct)
+         + (m.underemployment_pct < o.underemployment_pct)
+         + (m.wage_early > o.wage_early) AS tests_passed
+    FROM majors m, o
+    WHERE m.major <> 'Overall'
+)
+SELECT tests_passed,
+       COUNT(*) AS majors,
+       GROUP_CONCAT(major, ', ') AS which
+FROM s
+GROUP BY tests_passed
+ORDER BY tests_passed DESC;
+
+-- Q30: Well paid but harder to land - majors with above-average pay and above-average unemployment
+SELECT m.major, m.major_group, m.unemployment_pct, m.underemployment_pct, m.wage_early, m.wage_mid
+FROM majors m
+JOIN majors o ON o.major = 'Overall'
+WHERE m.major <> 'Overall'
+  AND m.wage_early > o.wage_early
+  AND m.unemployment_pct > o.unemployment_pct
+ORDER BY m.unemployment_pct DESC;

@@ -1,16 +1,17 @@
-# Sector Pulse: jobs, stock returns and careers by sector, California and the U.S. (2021–2026)
+# Sector Pulse: jobs, stock returns, careers and live job postings by sector, California and the U.S. (2021–2026)
 
 **Which industries are hiring, which are shrinking, which ones did investors reward, and which occupations and college majors do the numbers favor?**
 
-This project puts four views of the same sectors side by side:
+This project puts five views of the same sectors side by side:
 
 1. **Jobs**: five years of official payroll data for California and the whole United States (U.S. Bureau of Labor Statistics).
 2. **Stock market**: five-year and one-year total returns and momentum for the 11 S&P 500 sector funds.
 3. **The last three months**: a small dataset I collected by hand from primary reports (BLS JOLTS job openings and the Challenger, Gray & Christmas job-cut reports), with a source link for every table.
 
 4. **Careers and college majors**: the five occupations with the most yearly openings in engineering, health care, finance, computer & data and film & media (BLS projections 2025–35), and early-career outcomes for 73 college majors (Federal Reserve Bank of New York).
+5. **Live job postings**: a one-day snapshot (17 Nov 2026) of **39,215 open postings** collected from the public job APIs behind 283 employers' careers pages (Greenhouse, Ashby, Lever, SmartRecruiters) and three remote job boards (Remotive, Remote OK, Jobicy), sorted into job families, seniority levels and locations, with the skills and pay named in data-related postings.
 
-Python cleans the files and loads them into one SQLite database. The analysis is 30 SQL queries, and the results feed static charts and an interactive dashboard.
+Python cleans the files and loads them into one SQLite database. The analysis is 43 SQL queries, and the results feed static charts and an interactive dashboard.
 
 📊 **Interactive dashboard:** https://resulisik.github.io/california-jobs-by-sector/
 
@@ -40,7 +41,19 @@ Python cleans the files and loads them into one SQLite database. The analysis is
 
 These are averages for past graduates and ten-year projections. They describe groups, not what will happen to one person.
 
-**What I take from it:** for an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California job postings sit at 87 against 104 nationally (Feb 2020 = 100), so the search should include remote roles outside the state.
+### Live job postings (one-day snapshot, 17 Nov 2026)
+
+| | |
+|---|---|
+| **13. What employers are posting** | Of **29,153** U.S. postings, operations & service (**20.8%**), software engineering & IT (**17.4%**) and hardware & other engineering (**16.4%**) lead. AI & machine learning is 5.9%; data & analytics is **2.3%** (659 postings), and 47% of those are in California. |
+| **14. Junior roles are scarce** | Only **10.2%** of U.S. postings are entry level or internships. In software engineering it is **5.1%** and in data & analytics **7.0%**; operations (19.9%) and clinical health care (16.0%) are the most open to beginners. Most postings (68.6% in data) ask for senior people. |
+| **15. SQL and Python come first** | Of 653 U.S. data & analytics postings whose description was read, **77%** name SQL and **72%** Python, then statistics (46%) and A/B testing (30%). Tableau (21%) leads the BI tools; Excel (13%) and Power BI (9%) trail. The median advertised pay is **$181K** where no level is stated (126 postings); only 3 entry-level data postings state pay. |
+| **16. Top titles by sector** | **Health care:** psychiatrist, prescribing nurse practitioner or physician assistant, software engineer, mental health therapist, account partner. **Finance:** software engineer, account executive, engineering manager, product designer, data scientist. **Media & gaming:** software engineer, machine learning engineer, data scientist, editor, software engineering manager. **Aerospace:** software, manufacturing, mechanical, electrical and systems engineers. Across all engineering postings: software (3,911), manufacturing/quality/test (864), mechanical (687), machine learning (647), electrical (577). |
+| **17. Los Angeles postings are an aerospace story** | **80%** of the 4,470 Los Angeles-area postings come from aerospace, defense & hardware employers; Anduril and SpaceX alone post 55%. |
+
+The snapshot is a sample of the market, not a census: it covers employers whose hiring systems publish an open API, which leans toward tech, aerospace and startups (California holds 45% of the U.S. postings). Hospitals, studios, banks and governments mostly use systems without one.
+
+**What I take from it:** for an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California job postings sit at 87 against 104 nationally (Feb 2020 = 100), so the search should include remote roles outside the state. Live postings add two things: about one posting in ten is open to beginners, so postings with no level stated are worth applying to; and SQL plus Python appear in three of every four data postings, more than any BI tool.
 
 The stock figures describe past returns. Nothing here is investment advice.
 
@@ -54,6 +67,8 @@ The stock figures describe past returns. Nothing here is investment advice.
 ![U.S. last three months](charts/09_us_last_three_months.png)
 ![Top occupations by field](charts/10_top_occupations_by_field.png)
 ![Majors underemployment](charts/11_majors_underemployment.png)
+![Postings by job family](charts/12_postings_by_family.png)
+![Skills in data postings](charts/13_data_posting_skills.png)
 ![Postings California vs U.S.](charts/03_postings_ca_vs_us.png)
 ![Postings by metro](charts/04_metro_postings.png)
 ![Postings by occupation](charts/05_occupation_postings.png)
@@ -68,6 +83,9 @@ The stock figures describe past returns. Nothing here is investment advice.
 | **Hand-collected** ([`data/research/`](data/research)) | BLS JOLTS Table A (openings, hires, separations by industry); Challenger job-cut reports (cuts by industry, reasons, hiring plans) | Monthly | Aug – Oct 2026 |
 | **Hand-collected** ([`data/research/`](data/research)) | BLS Employment Projections Table 1.10: 64 occupations (top 8 by openings in five fields, plus the fastest and slowest growing bachelor's-level occupations) | 10-year projection | 2025 – 2035 |
 | **Hand-collected** ([`data/research/`](data/research)) | New York Fed outcomes by college major: unemployment, underemployment, early and mid-career pay, graduate-degree share for 73 majors | Annual | 2024 |
+| **Collected** ([`data/raw/postings/`](data/raw/postings)) | 39,215 open job postings: title, department, location, date and link, plus the skills and pay range named in 3,171 data-related descriptions. Public APIs of [Greenhouse](https://developers.greenhouse.io/job-board.html), [Ashby](https://developers.ashbyhq.com/docs/public-job-posting-api), [Lever](https://github.com/lever/postings-api) and [SmartRecruiters](https://developers.smartrecruiters.com/docs/posting-api) for 283 employers (listed in [`postings_boards.csv`](data/research/postings_boards.csv)), and the remote job boards [Remotive](https://remotive.com), [Remote OK](https://remoteok.com) and [Jobicy](https://jobicy.com) | One-day snapshot | 17 Nov 2026 |
+
+**Why not LinkedIn, Indeed, ZipRecruiter or Glassdoor?** Their terms of use forbid automated collection and they offer no open postings API, so they are not scraped here. The Indeed figures above come from Indeed's own published dataset. USAJOBS (federal jobs) has an official API that needs a free key; it can be added to `collect_postings.py`. Postings from Remotive and Remote OK are credited to them and every posting keeps its link back to the original.
 
 Every hand-collected table has its report and link in [`data/research/sources.csv`](data/research/sources.csv). All series IDs and tickers are in [`src/config.py`](src/config.py).
 
@@ -77,17 +95,18 @@ Three groupings in this project are my own judgment and are approximate: Challen
 
 ```
 download_data.py ──► data/raw/            FRED, Yahoo Finance and Indeed files
-(by hand) ─────────► data/research/       JOLTS and Challenger tables with sources
-build_database.py ─► data/sectors.db      15 tables
+(by hand) ─────────► data/research/       JOLTS, Challenger, BLS projections and NY Fed tables with sources
+collect_postings.py► data/raw/postings/   one-day snapshot from public job APIs
+build_database.py ─► data/sectors.db      19 tables (postings classified by src/postings.py)
 validate.py ───────► checks vs published  EDD, BLS, Challenger and JOLTS headline numbers
-run_queries.py ────► sql/results.md       30 SQL questions
+run_queries.py ────► sql/results.md       43 SQL questions
 make_charts.py ────► charts/*.png
 build_dashboard.py ► docs/index.html      self-contained interactive page (no external libraries)
 ```
 
 ## SQL analysis
 
-[`sql/analysis_queries.sql`](sql/analysis_queries.sql) answers 30 questions. The output is in [`sql/results.md`](sql/results.md).
+[`sql/analysis_queries.sql`](sql/analysis_queries.sql) answers 43 questions. The output is in [`sql/results.md`](sql/results.md).
 
 | Part | Questions |
 |---|---|
@@ -96,6 +115,7 @@ build_dashboard.py ► docs/index.html      self-contained interactive page (no 
 | Stock sectors (Q16–Q20) | Returns over 5 years, 1 year, 6 and 3 months; momentum vs the S&P 500; year-by-year returns; maximum drawdown; stock returns vs job growth |
 | Last three months (Q21–Q24) | Payroll change vs the earlier pace, announced layoffs by sector, openings per hire, and a sector scorecard that joins all four sources |
 | Careers and majors (Q25–Q30) | Top five occupations by openings in each field, fastest growing and shrinking bachelor's-level jobs, majors by underemployment, major families compared, a three-test major scorecard, well-paid majors with high unemployment |
+| Live job postings (Q31–Q43) | What each platform returned, job families and their junior share, top five families and titles in each sector, engineering postings by kind, location by family, junior share by sector, data roles by sector and level, skills in data postings, advertised pay, top Los Angeles employers, freshness, and a list of open analyst roles with links |
 
 **Techniques:** CTEs; window functions (`LAG`, `RANK`, `ROW_NUMBER`, running `MAX` and `AVG` with frames, named windows); conditional aggregation with `CASE` to pivot months into columns; self-joins; scalar subqueries; `LEFT JOIN` across sources; date arithmetic for rolling 28-day windows.
 
@@ -110,6 +130,7 @@ build_dashboard.py ► docs/index.html      self-contained interactive page (no 
 - The hand-collected monthly layoff totals match the published headlines (52,881; 43,281; 43,994), and the JOLTS sectors add up to the published total.
 - Spot checks on the occupation and majors tables (registered nurses' openings, the all-graduates row, 74 unique rows).
 - Every jobs and price series has all its months with no gaps.
+- Job postings: unique IDs, platform totals add up, every posting has a family, level and location, and the classification rules pass their tests (`tests/test_postings.py`).
 
 ## Run it yourself
 
@@ -121,7 +142,10 @@ python src/validate.py
 python src/run_queries.py
 python src/make_charts.py
 python src/build_dashboard.py   # writes docs/index.html
+python src/collect_postings.py  # optional: a new postings snapshot (then set POSTINGS_SNAPSHOT in src/config.py)
 ```
+
+The committed postings snapshot was collected from a browser with the same API requests that `collect_postings.py` makes.
 
 The BLS, stock and hand-collected files are committed. Only the large Indeed files need the download step.
 
@@ -136,6 +160,7 @@ To explore without Python: build the database once, open `data/sectors.db` in [D
 - Major outcomes come from a survey of people who already graduated; they mix the effect of the major with who chooses it.
 - The Indeed index measures the **trend** in postings relative to Feb 1, 2020, not the number of open jobs.
 - BLS revises data. Figures here are as published in early November 2026.
+- The postings snapshot covers one day and the employers whose hiring systems have an open API, so it leans toward tech, aerospace and startups, and toward California. Job family, seniority and location come from keyword rules on the title and location text (about right, not exact). "Mid or not stated" includes every posting without a level word. Greenhouse reports the last update date for some postings, so "posted" can be later than the first posting date. Skills are matched by keyword in descriptions, and pay is the first range a posting states.
 
 ## Project structure
 
@@ -146,11 +171,13 @@ To explore without Python: build the database once, open `data/sectors.db` in [D
 │   ├── raw/bls/            BLS series from FRED (committed)
 │   ├── raw/stocks/         sector fund prices (committed)
 │   ├── raw/indeed/         Indeed files (downloaded, not committed)
+│   ├── raw/postings/       job postings snapshot (committed)
 │   ├── research/           hand-collected tables and their sources
 │   └── processed/          tidy CSV extracts
 ├── docs/index.html         built dashboard (GitHub Pages)
 ├── sql/                    analysis queries, results, practice queries
-└── src/                    Python pipeline
+├── src/                    Python pipeline
+└── tests/                  tests for the postings classification rules
 ```
 
 ---

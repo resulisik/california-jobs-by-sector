@@ -45,8 +45,8 @@ def subtitle(ax, text):
     ax.text(0, 1.02, text, transform=ax.transAxes, color=TEXT2, fontsize=9.5, va="bottom")
 
 
-def finish(fig, name, source):
-    fig.text(0.01, -0.03, f"Source: {source}", color=TEXT2, fontsize=8)
+def finish(fig, name, source, y=-0.03):
+    fig.text(0.01, y, f"Source: {source}", color=TEXT2, fontsize=8)
     fig.savefig(CHARTS / name, bbox_inches="tight", facecolor=SURFACE)
     plt.close(fig)
     print(f"saved charts/{name}")
@@ -280,6 +280,46 @@ def chart_last_three_months(conn):
     finish(fig, "09_us_last_three_months.png", "BLS Employment Situation via FRED, seasonally adjusted")
 
 
+def chart_top_occupations(conn):
+    df = q(conn, """
+        SELECT field, title, openings_k,
+               ROW_NUMBER() OVER (PARTITION BY field ORDER BY openings_k DESC) AS rn
+        FROM occupation_outlook WHERE field IS NOT NULL""")
+    df = df[df["rn"] <= 5]
+    fields = ["Engineering", "Health care", "Finance", "Computer & data", "Film & media"]
+    fig, axes = plt.subplots(5, 1, figsize=(9, 11))
+    for ax, field in zip(axes, fields):
+        d = df[df["field"] == field].sort_values("openings_k", ascending=False)
+        labels = [x if len(x) < 44 else x[:42] + "…" for x in d["title"]]
+        hbar(ax, labels, d["openings_k"].tolist(), lambda v: f"{v:,.1f}K")
+        ax.set_ylabel(field, fontweight="semibold", color=TEXT)
+    axes[0].set_title("Top five occupations by yearly job openings in each field", pad=26)
+    subtitle(axes[0], "Projected openings per year, 2025-35 average (thousands). Each panel has its own scale.")
+    fig.subplots_adjust(hspace=0.45)
+    finish(fig, "10_top_occupations_by_field.png", "BLS Employment Projections 2025-35, Table 1.10", y=0.07)
+
+
+def chart_majors(conn):
+    df = q(conn, "SELECT major, underemployment_pct FROM majors WHERE major <> 'Overall' ORDER BY underemployment_pct")
+    overall = q(conn, "SELECT underemployment_pct FROM majors WHERE major = 'Overall'").iloc[0, 0]
+    d = pd.concat([df.head(10), df.tail(10)])
+    fig, ax = plt.subplots(figsize=(9, 6.6))
+    colors = [BLUE] * 10 + [ORANGE] * 10
+    ax.barh(d["major"], d["underemployment_pct"], color=colors, height=0.6)
+    ax.invert_yaxis()
+    ax.grid(axis="y", visible=False)
+    ax.set_axisbelow(True)
+    for i, v in enumerate(d["underemployment_pct"]):
+        ax.text(v + 0.8, i, f"{v:.1f}%", va="center", fontsize=9, color=TEXT)
+    ax.axvline(overall, color=TEXT2, linewidth=1, linestyle="--")
+    ax.text(overall + 0.6, 9.5, f"all graduates {overall:.1f}%", color=TEXT2, fontsize=9, va="center")
+    ax.set_xlim(0, 75)
+    ax.set_xlabel("Recent graduates working in jobs that do not require a degree (%)")
+    ax.set_title("The major matters: underemployment runs from 13% to 66%", pad=26)
+    subtitle(ax, "Ten majors with the lowest (blue) and ten with the highest (orange) underemployment, graduates aged 22-27, 2024")
+    finish(fig, "11_majors_underemployment.png", "Federal Reserve Bank of New York, The Labor Market for Recent College Graduates")
+
+
 def main() -> None:
     CHARTS.mkdir(exist_ok=True)
     with sqlite3.connect(DB_PATH) as conn:
@@ -292,6 +332,8 @@ def main() -> None:
         chart_stock_returns(conn)
         chart_jobs_vs_stocks(conn)
         chart_last_three_months(conn)
+        chart_top_occupations(conn)
+        chart_majors(conn)
 
 
 if __name__ == "__main__":

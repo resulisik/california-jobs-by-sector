@@ -84,6 +84,13 @@ def main() -> int:
                               WHERE level = 'supersector' AND month = '2026-09-01'""").fetchone()[0]
         errors += check(abs(sup - jo) <= 3, f"JOLTS sectors add up to the total ({sup:,} vs {jo:,}, rounding)")
 
+        rn = conn.execute("SELECT openings_k FROM occupation_outlook WHERE code = '29-1141'").fetchone()[0]
+        errors += check(rn == 180.8, f"BLS projections: registered nurses openings {rn}K per year")
+        ov = conn.execute("SELECT unemployment_pct, underemployment_pct FROM majors WHERE major = 'Overall'").fetchone()
+        errors += check(ov == (4.2, 39.4), f"NY Fed majors: overall unemployment {ov[0]}%, underemployment {ov[1]}%")
+        n = conn.execute("SELECT COUNT(*), COUNT(DISTINCT major) FROM majors").fetchone()
+        errors += check(n == (74, 74), f"NY Fed majors: {n[0]} rows, no duplicates")
+
         for table, key in (("employment", "series_id"), ("stock_prices", "ticker")):
             g = pd.read_sql_query(f"SELECT {key} AS k, COUNT(*) AS n, MIN(month) AS a, MAX(month) AS b "
                                   f"FROM {table} GROUP BY {key}", conn)

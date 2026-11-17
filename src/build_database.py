@@ -7,6 +7,8 @@ Tables
   stock_sectors   ticker -> sector name and the closest jobs sector
   layoffs_*       announced job cuts by industry, last 3 months (hand-collected)
   jolts           job openings, hires, separations by industry (hand-collected)
+  occupation_outlook  BLS 2025-35 projections for selected occupations (hand-collected)
+  majors          New York Fed outcomes by college major (hand-collected)
   research_sources where every hand-collected number came from
   postings_state  Indeed job postings index for California and the U.S. (daily)
   postings_metro  Indeed index for California metro areas (daily)
@@ -20,7 +22,8 @@ import sqlite3
 
 import pandas as pd
 
-from config import DB_PATH, PROCESSED, RAW_BLS, RAW_INDEED, RAW_STOCKS, RESEARCH, SERIES, STOCKS
+from config import (DB_PATH, MAJOR_GROUPS, OCCUPATION_FIELDS, OTHER_MAJOR_GROUP, PROCESSED, RAW_BLS, RAW_INDEED,
+                    RAW_STOCKS, RESEARCH, SERIES, STOCKS)
 
 
 def build_series() -> pd.DataFrame:
@@ -109,6 +112,26 @@ def build_jolts() -> pd.DataFrame:
     return pd.concat(frames).reset_index(drop=True)
 
 
+def build_occupations() -> pd.DataFrame:
+    """BLS Employment Projections 2025-35 for selected occupations (hand-collected)."""
+    df = pd.read_csv(RESEARCH / "bls_occupation_outlook.csv", sep="|")
+    tags = df["tags"].str.split(";")
+    df["field"] = [next((OCCUPATION_FIELDS[x] for x in t if x in OCCUPATION_FIELDS), None) for t in tags]
+    df["bachelors"] = (df["education"] == "Bachelor's degree").astype(int)
+    return df.drop(columns="tags")
+
+
+def build_majors() -> pd.DataFrame:
+    """New York Fed outcomes by college major, figures for 2024 (hand-collected)."""
+    df = pd.read_csv(RESEARCH / "nyfed_majors.csv", sep="|")
+    lookup = {m: g for g, majors in MAJOR_GROUPS.items() for m in majors}
+    df["major_group"] = [("All majors" if m == "OVERALL" else lookup.get(m, OTHER_MAJOR_GROUP)) for m in df["major"]]
+    small = {"And", "Of", "&"}
+    df["major"] = [" ".join(w if w in small else w.capitalize() for w in m.title().split()).replace("And", "and")
+                   for m in df["major"]]
+    return df
+
+
 def main() -> None:
     layoffs_monthly, layoffs_ytd = build_layoffs()
     tables = {
@@ -124,6 +147,8 @@ def main() -> None:
         "layoff_totals": pd.read_csv(RESEARCH / "challenger_totals.csv"),
         "layoff_reasons": pd.read_csv(RESEARCH / "challenger_reasons.csv"),
         "jolts": build_jolts(),
+        "occupation_outlook": build_occupations(),
+        "majors": build_majors(),
         "research_sources": pd.read_csv(RESEARCH / "sources.csv"),
     }
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)

@@ -98,3 +98,31 @@ STOCKS = [
     ("XLE",  "Energy",                  "Mining & logging"),
     ("XLU",  "Utilities",               "Trade, transportation & utilities"),
 ]
+
+# Fields used for the "top occupations" view, in display order.
+OCCUPATION_FIELDS = {
+    "engineering": "Engineering",
+    "health": "Health care",
+    "finance": "Finance",
+    "computer": "Computer & data",
+    "film": "Film & media",
+}
+
+# My grouping of the New York Fed's 73 majors into eight families.
+MAJOR_GROUPS = {
+    "Engineering & architecture": ["AEROSPACE ENGINEERING", "CHEMICAL ENGINEERING", "CIVIL ENGINEERING", "COMPUTER ENGINEERING",
+        "ELECTRICAL ENGINEERING", "GENERAL ENGINEERING", "INDUSTRIAL ENGINEERING", "MECHANICAL ENGINEERING",
+        "MISCELLANEOUS ENGINEERING", "ENGINEERING TECHNOLOGIES", "CONSTRUCTION SERVICES", "ARCHITECTURE"],
+    "Computer & math": ["COMPUTER SCIENCE", "INFORMATION SYSTEMS & MANAGEMENT", "MATHEMATICS", "BUSINESS ANALYTICS",
+        "MISCELLANEOUS TECHNOLOGIES"],
+    "Business & finance": ["ACCOUNTING", "FINANCE", "ECONOMICS", "BUSINESS MANAGEMENT", "GENERAL BUSINESS", "MARKETING",
+        "ADVERTISING AND PUBLIC RELATIONS", "LEISURE AND HOSPITALITY"],
+    "Health": ["NURSING", "PHARMACY", "MEDICAL TECHNICIANS", "HEALTH SERVICES", "TREATMENT THERAPY", "NUTRITION SCIENCES"],
+    "Education": ["EARLY CHILDHOOD EDUCATION", "ELEMENTARY EDUCATION", "GENERAL EDUCATION", "MISCELLANEOUS EDUCATION",
+        "SECONDARY EDUCATION", "SPECIAL EDUCATION"],
+    "Arts & media": ["FINE ARTS", "PERFORMING ARTS", "COMMERCIAL ART & GRAPHIC DESIGN", "MASS MEDIA", "JOURNALISM",
+        "COMMUNICATIONS", "ART HISTORY"],
+    "Natural sciences": ["BIOLOGY", "BIOCHEMISTRY", "CHEMISTRY", "PHYSICS", "EARTH SCIENCES", "ENVIRONMENTAL STUDIES",
+        "MISCELLANEOUS BIOLOGICAL SCIENCE", "MISCELLANEOUS PHYSICAL SCIENCES", "ANIMAL AND PLANT SCIENCES", "AGRICULTURE"],
+}
+OTHER_MAJOR_GROUP = "Social sciences & humanities"

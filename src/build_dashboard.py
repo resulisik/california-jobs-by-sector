@@ -149,6 +149,11 @@ def extra(conn) -> dict:
         "layoff_totals": records(conn, "SELECT * FROM layoff_totals ORDER BY month"),
         "layoff_ytd": records(conn, "SELECT * FROM layoffs_ytd WHERE industry IN ('TOTAL', 'Technology')"),
         "layoff_reasons": records(conn, "SELECT * FROM layoff_reasons ORDER BY oct_2026 DESC"),
+        "occ_top": records(conn, Q["Q25"]),
+        "occ_growth": records(conn, Q["Q26"]),
+        "majors": records(conn, "SELECT * FROM majors ORDER BY underemployment_pct"),
+        "major_groups": records(conn, Q["Q28"]),
+        "major_tests": records(conn, Q["Q29"]),
         "sources": records(conn, "SELECT report, url FROM research_sources"),
         "short": SHORT,
     }

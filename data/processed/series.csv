@@ -1,22 +1,35 @@
-series_id,name,level,seasonally_adjusted
-CANA,Total nonfarm,total,1
-CAEDUH,Private education & health services,supersector,1
-CALEIH,Leisure & hospitality,supersector,1
-CATRAD,"Trade, transportation & utilities",supersector,1
-CAGOVT,Government,supersector,1
-CASRVO,Other services,supersector,1
-CANRMN,Mining & logging,supersector,1
-CACONS,Construction,supersector,1
-CAPBSV,Professional & business services,supersector,1
-CAMFG,Manufacturing,supersector,1
-CAFIRE,Financial activities,supersector,1
-SMS06000005000000001,Information,supersector,1
-SMS06000006562000001,Health care & social assistance,subsector,1
-SMS06000006054000001,"Professional, scientific & technical",subsector,1
-SMS06000004300000001,"Transportation, warehousing & utilities",subsector,1
-SMS06000004200000001,Retail trade,subsector,1
-SMS06000007072000001,Accommodation & food services,subsector,1
-SMU06000003133640001,Aerospace product & parts,subsector,0
-SMU06000005051200001,Motion picture & sound recording,subsector,0
-SMU06000006054150001,Computer systems design,subsector,0
-SMU06310840000000001,Los Angeles-Long Beach-Glendale (total),area,0
+series_id,name,level,seasonally_adjusted,region
+CANA,Total nonfarm,total,1,CA
+CAEDUH,Private education & health services,supersector,1,CA
+CALEIH,Leisure & hospitality,supersector,1,CA
+CATRAD,"Trade, transportation & utilities",supersector,1,CA
+CAGOVT,Government,supersector,1,CA
+CASRVO,Other services,supersector,1,CA
+CANRMN,Mining & logging,supersector,1,CA
+CACONS,Construction,supersector,1,CA
+CAPBSV,Professional & business services,supersector,1,CA
+CAMFG,Manufacturing,supersector,1,CA
+CAFIRE,Financial activities,supersector,1,CA
+SMS06000005000000001,Information,supersector,1,CA
+SMS06000006562000001,Health care & social assistance,subsector,1,CA
+SMS06000006054000001,"Professional, scientific & technical",subsector,1,CA
+SMS06000004300000001,"Transportation, warehousing & utilities",subsector,1,CA
+SMS06000004200000001,Retail trade,subsector,1,CA
+SMS06000007072000001,Accommodation & food services,subsector,1,CA
+SMU06000003133640001,Aerospace product & parts,subsector,0,CA
+SMU06000005051200001,Motion picture & sound recording,subsector,0,CA
+SMU06000006054150001,Computer systems design,subsector,0,CA
+SMU06310840000000001,Los Angeles-Long Beach-Glendale (total),area,0,CA
+PAYEMS,Total nonfarm,total,1,US
+USEHS,Private education & health services,supersector,1,US
+USLAH,Leisure & hospitality,supersector,1,US
+USTPU,"Trade, transportation & utilities",supersector,1,US
+USGOVT,Government,supersector,1,US
+USSERV,Other services,supersector,1,US
+USMINE,Mining & logging,supersector,1,US
+USCONS,Construction,supersector,1,US
+USPBS,Professional & business services,supersector,1,US
+MANEMP,Manufacturing,supersector,1,US
+USFIRE,Financial activities,supersector,1,US
+USINFO,Information,supersector,1,US
+CES6562000001,Health care & social assistance,subsector,1,US

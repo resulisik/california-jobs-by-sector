@@ -1,0 +1,13 @@
+ticker,sector,jobs_sector
+SPY,S&P 500 (all sectors),Total nonfarm
+XLK,Technology,Information
+XLC,Communication services,Information
+XLV,Health care,Private education & health services
+XLF,Financials,Financial activities
+XLRE,Real estate,Financial activities
+XLY,Consumer discretionary,Leisure & hospitality
+XLP,Consumer staples,"Trade, transportation & utilities"
+XLI,Industrials,Manufacturing
+XLB,Materials,Manufacturing
+XLE,Energy,Mining & logging
+XLU,Utilities,"Trade, transportation & utilities"

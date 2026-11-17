@@ -320,6 +320,43 @@ def chart_majors(conn):
     finish(fig, "11_majors_underemployment.png", "Federal Reserve Bank of New York, The Labor Market for Recent College Graduates")
 
 
+POSTINGS_SOURCE = ("public job APIs of Greenhouse, Ashby, Lever and SmartRecruiters (283 employers' careers pages) "
+                   "and the remote job boards Remotive, Remote OK and Jobicy, collected 17 Nov 2026")
+
+
+def chart_posting_families(conn):
+    df = q(conn, """SELECT family, COUNT(*) AS n,
+                           100.0 * SUM(seniority IN ('Entry level', 'Internship')) / COUNT(*) AS junior
+                    FROM postings WHERE is_us = 1 GROUP BY family ORDER BY n DESC""")
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(10, 6), sharey=True, gridspec_kw={"width_ratios": [1.5, 1]})
+    hbar(a1, df["family"].tolist(), df["n"].tolist(), lambda v: f"{v:,.0f}")
+    hbar(a2, df["family"].tolist(), df["junior"].tolist(), lambda v: f"{v:.1f}%")
+    a2.invert_yaxis()  # shared axis was already inverted by the first panel
+    for ax, lab in ((a1, "U.S. postings"), (a2, "Entry level or internship (% of the family)")):
+        ax.set_xlabel(lab)
+    a1.get_yticklabels()[df.index[df["family"] == "Data & analytics"][0]].set_fontweight("bold")
+    a1.set_title("What employers are hiring for, and how much of it is junior", pad=26)
+    subtitle(a1, f"{df['n'].sum():,} U.S. job postings by job family (keyword rules on the title). Each panel has its own scale.")
+    fig.subplots_adjust(wspace=0.08)
+    finish(fig, "12_postings_by_family.png", POSTINGS_SOURCE)
+
+
+def chart_posting_skills(conn):
+    df = q(conn, """WITH d AS (SELECT posting_id FROM postings
+                               WHERE family = 'Data & analytics' AND desc_fetched = 1 AND is_us = 1)
+                    SELECT skill, 100.0 * COUNT(*) / (SELECT COUNT(*) FROM d) AS pct, (SELECT COUNT(*) FROM d) AS n
+                    FROM posting_skills JOIN d USING (posting_id) GROUP BY skill ORDER BY pct DESC""")
+    names = {"sql": "SQL", "python": "Python", "statistics": "Statistics", "machine_learning": "Machine learning",
+             "ab_testing": "A/B testing", "dbt": "dbt", "snowflake": "Snowflake", "tableau": "Tableau", "r": "R", "spark": "Spark",
+             "looker": "Looker", "airflow": "Airflow", "excel": "Excel", "aws": "AWS", "bigquery": "BigQuery", "power_bi": "Power BI"}
+    fig, ax = plt.subplots(figsize=(9, 6))
+    hbar(ax, [names.get(s, s) for s in df["skill"]], df["pct"].tolist(), lambda v: f"{v:.0f}%")
+    ax.set_xlabel("Share of postings whose description names the skill (%)")
+    ax.set_title("SQL and Python lead the skills named in data & analytics postings", pad=26)
+    subtitle(ax, f"{int(df['n'].iloc[0]):,} U.S. data & analytics postings whose description was read")
+    finish(fig, "13_data_posting_skills.png", POSTINGS_SOURCE)
+
+
 def main() -> None:
     CHARTS.mkdir(exist_ok=True)
     with sqlite3.connect(DB_PATH) as conn:
@@ -334,6 +371,8 @@ def main() -> None:
         chart_last_three_months(conn)
         chart_top_occupations(conn)
         chart_majors(conn)
+        chart_posting_families(conn)
+        chart_posting_skills(conn)
 
 
 if __name__ == "__main__":

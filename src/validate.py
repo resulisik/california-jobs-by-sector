@@ -7,6 +7,7 @@
 3. Hand-collected tables: monthly totals must match the published headline
    numbers (Challenger job cuts, JOLTS job openings).
 4. Every series must have one value per month with no gaps.
+5. Job postings: unique ids, platform totals add up, every posting classified, rule tests pass.
 Run after build_database.py; exits with code 1 on any mismatch.
 """
 import sqlite3
@@ -90,6 +91,21 @@ def main() -> int:
         errors += check(ov == (4.2, 39.4), f"NY Fed majors: overall unemployment {ov[0]}%, underemployment {ov[1]}%")
         n = conn.execute("SELECT COUNT(*), COUNT(DISTINCT major) FROM majors").fetchone()
         errors += check(n == (74, 74), f"NY Fed majors: {n[0]} rows, no duplicates")
+
+        n_post, n_ids = conn.execute("SELECT COUNT(*), COUNT(DISTINCT posting_id) FROM postings").fetchone()
+        errors += check(n_post == n_ids and n_post > 30000, f"postings: {n_post:,} rows, ids unique")
+        plat = conn.execute("SELECT SUM(postings) FROM posting_platforms").fetchone()[0]
+        errors += check(plat == n_post, f"postings: platform totals add up ({plat:,})")
+        blanks = conn.execute("SELECT COUNT(*) FROM postings WHERE family IS NULL OR loc_bucket IS NULL OR seniority IS NULL").fetchone()[0]
+        errors += check(blanks == 0, "postings: every posting has a family, seniority and location bucket")
+        bad_pay = conn.execute("SELECT COUNT(*) FROM postings WHERE pay_min > pay_max").fetchone()[0]
+        errors += check(bad_pay == 0, "postings: pay ranges run low to high")
+        orphan = conn.execute("""SELECT COUNT(*) FROM posting_skills s JOIN postings p USING (posting_id)
+                                 WHERE p.desc_fetched = 0""").fetchone()[0]
+        errors += check(orphan == 0, "postings: skills only on postings whose description was read")
+        import subprocess
+        rc = subprocess.run([sys.executable, str(DB_PATH.parents[1] / "tests" / "test_postings.py")], capture_output=True).returncode
+        errors += check(rc == 0, "postings: classification rule tests pass")
 
         for table, key in (("employment", "series_id"), ("stock_prices", "ticker")):
             g = pd.read_sql_query(f"SELECT {key} AS k, COUNT(*) AS n, MIN(month) AS a, MAX(month) AS b "

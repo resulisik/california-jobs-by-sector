@@ -11,6 +11,8 @@ CHARTS = ROOT / "charts"
 DOCS = ROOT / "docs"
 RAW_STOCKS = ROOT / "data" / "raw" / "stocks"
 RESEARCH = ROOT / "data" / "research"
+RAW_POSTINGS = ROOT / "data" / "raw" / "postings"
+POSTINGS_SNAPSHOT = "2026-11-17"
 
 # Analysis window: 5 years ending in the latest month BLS has published.
 START_MONTH = "2021-09-01"

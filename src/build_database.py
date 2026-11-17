@@ -9,6 +9,9 @@ Tables
   jolts           job openings, hires, separations by industry (hand-collected)
   occupation_outlook  BLS 2025-35 projections for selected occupations (hand-collected)
   majors          New York Fed outcomes by college major (hand-collected)
+  postings        job postings snapshot from public job APIs, one row per posting, classified
+  posting_skills  skills named in data-related postings (one row per posting and skill)
+  posting_companies / posting_platforms  employers and platforms in the snapshot
   research_sources where every hand-collected number came from
   postings_state  Indeed job postings index for California and the U.S. (daily)
   postings_metro  Indeed index for California metro areas (daily)
@@ -22,8 +25,9 @@ import sqlite3
 
 import pandas as pd
 
-from config import (DB_PATH, MAJOR_GROUPS, OCCUPATION_FIELDS, OTHER_MAJOR_GROUP, PROCESSED, RAW_BLS, RAW_INDEED,
-                    RAW_STOCKS, RESEARCH, SERIES, STOCKS)
+from config import (DB_PATH, MAJOR_GROUPS, OCCUPATION_FIELDS, OTHER_MAJOR_GROUP, POSTINGS_SNAPSHOT, PROCESSED, RAW_BLS,
+                    RAW_INDEED, RAW_POSTINGS, RAW_STOCKS, RESEARCH, SERIES, STOCKS)
+from postings import BOARD_SOURCES, clean as clean_postings, skills_long
 
 
 def build_series() -> pd.DataFrame:
@@ -132,8 +136,40 @@ def build_majors() -> pd.DataFrame:
     return df
 
 
+PLATFORMS = {
+    "greenhouse": ("Greenhouse", "Applicant tracking system: company careers pages", "https://developers.greenhouse.io/job-board.html"),
+    "ashby": ("Ashby", "Applicant tracking system: company careers pages", "https://developers.ashbyhq.com/docs/public-job-posting-api"),
+    "lever": ("Lever", "Applicant tracking system: company careers pages", "https://github.com/lever/postings-api"),
+    "smartrecruiters": ("SmartRecruiters", "Applicant tracking system: company careers pages", "https://developers.smartrecruiters.com/docs/posting-api"),
+    "jobicy": ("Jobicy", "Remote job board", "https://jobicy.com/jobs-rss-feed"),
+    "remoteok": ("Remote OK", "Remote job board", "https://remoteok.com"),
+    "remotive": ("Remotive", "Remote job board", "https://remotive.com"),
+}
+
+
+def build_postings():
+    """Job-postings snapshot from public job APIs, cleaned and classified (src/postings.py)."""
+    raw = pd.read_csv(RAW_POSTINGS / f"postings_{POSTINGS_SNAPSHOT}.csv.gz", dtype=str, keep_default_na=False)
+    df = clean_postings(raw, POSTINGS_SNAPSHOT)
+    keep = ["posting_id", "snapshot_date", "source", "company", "sector", "sector_name", "title", "title_norm", "family",
+            "eng_type", "seniority", "is_data_analyst", "department", "location", "loc_bucket", "is_la", "is_ca", "is_us",
+            "is_remote", "employment_type", "posted_date", "days_old", "desc_fetched", "pay_min", "pay_max", "pay_period", "url"]
+    postings = df[keep].copy()
+    postings["desc_fetched"] = postings["desc_fetched"].astype(int)
+    companies = (df.groupby(["company", "sector", "sector_name", "source"]).size().reset_index(name="postings")
+                 .sort_values("postings", ascending=False))
+    companies = companies[~companies["source"].isin(BOARD_SOURCES)]
+    platforms = (df.groupby("source").agg(companies=("company", "nunique"), postings=("posting_id", "size"))
+                 .reset_index())
+    platforms["platform"] = platforms["source"].map(lambda s: PLATFORMS[s][0])
+    platforms["kind"] = platforms["source"].map(lambda s: PLATFORMS[s][1])
+    platforms["docs_url"] = platforms["source"].map(lambda s: PLATFORMS[s][2])
+    return postings, skills_long(df), companies, platforms
+
+
 def main() -> None:
     layoffs_monthly, layoffs_ytd = build_layoffs()
+    postings, posting_skills, posting_companies, posting_platforms = build_postings()
     tables = {
         "series": build_series(),
         "employment": build_employment(),
@@ -149,6 +185,10 @@ def main() -> None:
         "jolts": build_jolts(),
         "occupation_outlook": build_occupations(),
         "majors": build_majors(),
+        "postings": postings,
+        "posting_skills": posting_skills,
+        "posting_companies": posting_companies,
+        "posting_platforms": posting_platforms,
         "research_sources": pd.read_csv(RESEARCH / "sources.csv"),
     }
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -164,12 +204,16 @@ def main() -> None:
             CREATE INDEX IF NOT EXISTS idx_pm ON postings_metro(metro, date);
             CREATE INDEX IF NOT EXISTS idx_po ON postings_occ(occupation, date);
             CREATE INDEX IF NOT EXISTS idx_sp ON stock_prices(ticker, month);
+            CREATE INDEX IF NOT EXISTS idx_post_family ON postings(family, sector);
+            CREATE INDEX IF NOT EXISTS idx_post_skill ON posting_skills(posting_id);
             """
         )
     tables["employment"].to_csv(PROCESSED / "employment.csv", index=False)
     tables["series"].to_csv(PROCESSED / "series.csv", index=False)
     tables["stock_prices"].to_csv(PROCESSED / "stock_prices.csv", index=False)
     tables["stock_sectors"].to_csv(PROCESSED / "stock_sectors.csv", index=False)
+    tables["postings"].to_csv(PROCESSED / "postings.csv.gz", index=False)
+    tables["posting_skills"].to_csv(PROCESSED / "posting_skills.csv", index=False)
     # Postings are daily; the processed copies are monthly averages to stay small.
     for name, key in (("postings_state", "state"), ("postings_metro", "metro"), ("postings_occ", "occupation")):
         df = tables[name].copy()

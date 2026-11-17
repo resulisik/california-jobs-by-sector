@@ -1,10 +1,16 @@
-# Where California's Jobs Are Growing (2021–2026)
+# Sector Pulse: jobs and stock returns by sector, California and the U.S. (2021–2026)
 
-**Which industries in California are hiring, which are shrinking, and where should an entry-level data analyst in Los Angeles look?**
+**Which industries are hiring, which are shrinking, which ones did investors reward, and where should an entry-level data analyst look?**
 
-This project combines five years of official payroll data (U.S. Bureau of Labor Statistics) with daily job-posting data (Indeed Hiring Lab). Python cleans the files and loads them into SQLite. The analysis is written in SQL, and the results feed static charts and an interactive dashboard.
+This project puts three views of the same sectors side by side:
 
-📊 **Interactive dashboard:** [`docs/index.html`](docs/index.html). After GitHub Pages is turned on, it is published at `https://resulisik.github.io/california-jobs-by-sector/`.
+1. **Jobs**: five years of official payroll data for California and the whole United States (U.S. Bureau of Labor Statistics).
+2. **Stock market**: five-year and one-year total returns and momentum for the 11 S&P 500 sector funds.
+3. **The last three months**: a small dataset I collected by hand from primary reports (BLS JOLTS job openings and the Challenger, Gray & Christmas job-cut reports), with a source link for every table.
+
+Python cleans the files and loads them into one SQLite database. The analysis is 24 SQL queries, and the results feed static charts and an interactive dashboard.
+
+📊 **Interactive dashboard:** https://resulisik.github.io/california-jobs-by-sector/
 
 ---
 
@@ -12,21 +18,27 @@ This project combines five years of official payroll data (U.S. Bureau of Labor 
 
 | | |
 |---|---|
-| **Health care carried the state** | Since Sep 2021, California added **+1.18M jobs (+7.0%)**. Health care & social assistance accounted for **+728K of them (61%)**. In the last 12 months the share rose to **81%** (105K of 129K). Education & health was above its year-earlier level in **every one of the last 24 months**. |
-| **Tech and media are shrinking** | Information (tech, media, publishing) lost **−73K jobs (−12.5%)** and was below the year before in **22 of the last 24 months**. Within it, computer systems design fell **−9.0%** and motion picture & sound recording fell **−19.1%**. |
-| **Losing streaks** | Construction, financial activities and manufacturing were below their year-earlier level in **all 24** of the last 24 months. |
-| **Not fully recovered** | Seven of 11 sectors still have fewer jobs than in February 2020. Information is at **86%** of its pre-pandemic level and manufacturing at **93%**. |
-| **Bright spots** | Aerospace product & parts grew **+25.7%** in five years. Leisure & hospitality added **+264K** jobs. |
-| **Postings lag the nation** | Indeed postings in California are at **87** (Feb 2020 = 100), while the U.S. is at **104**. The gap has stayed between 17 and 19 points every year since 2023. |
-| **Bay Area rebounding, LA flat** | Compared with a year ago, postings are up **+15.4%** in San Francisco and **+10.6%** in San Jose. Los Angeles is flat (**−0.1%**). |
-| **Data roles** | U.S. postings for Data & Analytics rose **+5.9%** on the year. At an index of **63**, they are still far below 2020. Software development is **+22.9%** and engineering roles are up 34–44%. |
+| **1. Health care carried California** | Since Sep 2021 California added **+1.18M jobs (+7.0%)**. Health care & social assistance accounted for **+728K of them (61%)**, and for **81%** of the last 12 months' growth. |
+| **2. Outside health care, California trails the country** | The U.S. grew **+7.7%** over the same five years. California is behind in **8 of 11 sectors**. The widest gaps are construction (+0.6% vs +11.8%) and financial activities (−6.1% vs +2.6%). |
+| **3. Tech and media jobs are shrinking everywhere** | Information jobs fell **−12.5%** in California and **−6.2%** nationally. California's share of U.S. information jobs slipped from 19.8% to 18.5%. |
+| **4. Stock returns and jobs tell different stories** | Technology stocks returned **+131%** in five years while U.S. tech and media jobs fell **−6.9%**. Health care is the reverse: the fastest job growth (**+17.9%**) but a **+50%** return, below the S&P 500's **+76%**. |
+| **5. Market leadership rotated in the last 12 months** | Energy (**+63%**), health care (**+30%**) and materials (**+25%**) led. Technology slowed from +36% to +20%, and communication services turned negative (**−12%**). |
+| **6. U.S. hiring picked up in the last three months** | Payrolls rose **+411K** from July to October 2026, against about +85K per three months in the year before. Professional & business services added **+108K**; information lost 33K. |
+| **7. Layoff announcements are low, except in tech** | Employers announced **140K** job cuts in Aug–Oct 2026. Year to date they are **−44%** on 2025, but technology is **+21%** and accounts for 28% of all cuts this year. |
+| **8. Job openings moved toward goods and logistics** | Openings in Sep 2026 were up **+50%** on a year earlier in manufacturing and **+45%** in construction, and down **−32%** in leisure & hospitality. |
 
-**What I take from it:** for an entry-level analyst in Los Angeles, the largest and steadiest employers are hospital systems, insurers and public agencies. Healthcare data (claims, patient flow, quality measures) is the domain worth building skills in. That is why my next project is a hospital emergency-department analysis.
+**What I take from it:** for an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California job postings sit at 87 against 104 nationally (Feb 2020 = 100), so the search should include remote roles outside the state.
+
+The stock figures describe past returns. Nothing here is investment advice.
 
 ## Charts
 
 ![Five-year change by sector](charts/01_five_year_change.png)
+![California vs U.S.](charts/06_california_vs_us.png)
 ![Jobs indexed to Feb 2020](charts/02_recovery_index.png)
+![Stock sector returns](charts/07_stock_sector_returns.png)
+![Jobs vs stocks](charts/08_jobs_vs_stocks.png)
+![U.S. last three months](charts/09_us_last_three_months.png)
 ![Postings California vs U.S.](charts/03_postings_ca_vs_us.png)
 ![Postings by metro](charts/04_metro_postings.png)
 ![Postings by occupation](charts/05_occupation_postings.png)
@@ -35,50 +47,56 @@ This project combines five years of official payroll data (U.S. Bureau of Labor 
 
 | Source | What | Frequency | Coverage |
 |---|---|---|---|
-| BLS Current Employment Statistics, via [FRED](https://fred.stlouisfed.org/) | Payroll jobs for California: total, 11 supersectors, 8 industries, and Los Angeles County | Monthly | Jan 2020 – Sep 2026 |
-| [Indeed Hiring Lab](https://github.com/hiring-lab/job_postings_tracker) | Job postings index for California, the U.S., 30 California metros, and 47 occupations (U.S.) | Daily | Feb 2020 – Nov 6, 2026 |
+| BLS Current Employment Statistics, via [FRED](https://fred.stlouisfed.org/) | Payroll jobs: California (total, 11 sectors, 8 industries, Los Angeles County) and the U.S. (total, 11 sectors, health care) | Monthly | Jan 2020 – Sep 2026 (California), Oct 2026 (U.S.) |
+| Yahoo Finance | Month-end adjusted close (dividends reinvested) of the 11 SPDR Select Sector funds and SPY | Monthly | Dec 2020 – Oct 2026 |
+| [Indeed Hiring Lab](https://github.com/hiring-lab/job_postings_tracker) | Job postings index: California, U.S., 30 California metros, 47 occupations | Daily | Feb 2020 – Nov 6, 2026 |
+| **Hand-collected** ([`data/research/`](data/research)) | BLS JOLTS Table A (openings, hires, separations by industry); Challenger job-cut reports (cuts by industry, reasons, hiring plans) | Monthly | Aug – Oct 2026 |
 
-All 21 BLS series are listed with their IDs in [`src/config.py`](src/config.py). Supersectors are seasonally adjusted. Four industry series are only published unadjusted, so they are compared September to September.
+Every hand-collected table has its report and link in [`data/research/sources.csv`](data/research/sources.csv). All series IDs and tickers are in [`src/config.py`](src/config.py).
+
+Two mappings in this project are my own judgment and are approximate: Challenger industries to BLS jobs sectors (in `challenger_job_cuts.csv`), and stock sectors to the closest jobs sector (in `src/config.py`). Stock sectors group companies by what they sell; jobs sectors group employers by what they do.
 
 ## How it works
 
 ```
-download_data.py ──► data/raw/            FRED CSVs + Indeed CSVs
-build_database.py ─► data/ca_jobs.db      5 tables: series, employment, postings_state, postings_metro, postings_occ
-validate.py ───────► checks vs the EDD    12-month changes must match the state's published release
-run_queries.py ────► sql/results.md       12 SQL questions
+download_data.py ──► data/raw/            FRED, Yahoo Finance and Indeed files
+(by hand) ─────────► data/research/       JOLTS and Challenger tables with sources
+build_database.py ─► data/sectors.db      13 tables
+validate.py ───────► checks vs published  EDD, BLS, Challenger and JOLTS headline numbers
+run_queries.py ────► sql/results.md       24 SQL questions
 make_charts.py ────► charts/*.png
 build_dashboard.py ► docs/index.html      self-contained interactive page (no external libraries)
 ```
 
 ## SQL analysis
 
-[`sql/analysis_queries.sql`](sql/analysis_queries.sql) answers 12 questions. The output is in [`sql/results.md`](sql/results.md).
+[`sql/analysis_queries.sql`](sql/analysis_queries.sql) answers 24 questions. The output is in [`sql/results.md`](sql/results.md).
 
-1. Five-year job change by sector, ranked
-2. Last 12 months by sector
-3. Recovery against February 2020
-4. Each sector's share of all jobs, 2021 vs 2026
-5. How much of the net growth came from health care
-6. Industry spotlight (aerospace, motion pictures, computer systems design…)
-7. Year-by-year change, September to September
-8. Losing streaks: months below the same month a year earlier
-9. Postings: California vs U.S., by year
-10. Postings by large metro: now vs a year ago
-11. Postings by occupation: top and bottom movers, plus data roles
-12. Los Angeles County vs the state
+| Part | Questions |
+|---|---|
+| California jobs (Q1–Q12) | Five-year and 12-month change by sector, recovery against Feb 2020, sector shares, health care's share of growth, industry spotlight, losing streaks, postings by state, metro and occupation, Los Angeles County |
+| California vs U.S. (Q13–Q15) | Growth gap by sector, California's share of U.S. jobs, job momentum (last 12 months vs the 12 before) |
+| Stock sectors (Q16–Q20) | Returns over 5 years, 1 year, 6 and 3 months; momentum vs the S&P 500; year-by-year returns; maximum drawdown; stock returns vs job growth |
+| Last three months (Q21–Q24) | Payroll change vs the earlier pace, announced layoffs by sector, openings per hire, and a sector scorecard that joins all four sources |
 
-**Techniques:** CTEs; window functions (`LAG` for year-over-year change, `RANK`, `ROW_NUMBER`); conditional aggregation with `CASE` to pivot months into columns; self-joins to a base month for indexing; date arithmetic for rolling 28-day windows.
+**Techniques:** CTEs; window functions (`LAG`, `RANK`, `ROW_NUMBER`, running `MAX` and `AVG` with frames, named windows); conditional aggregation with `CASE` to pivot months into columns; self-joins; scalar subqueries; `LEFT JOIN` across sources; date arithmetic for rolling 28-day windows.
+
+[`sql/practice_queries.sql`](sql/practice_queries.sql) is a shorter file that walks from `SELECT` to window functions on the same database.
 
 ## Validation
 
-`python src/validate.py` checks that the 12-month change for all 11 sectors matches the California Employment Development Department's September 2026 release to the job (for example, education & health +125,600 and information −24,200). It also checks that every series has all 81 months with no gaps.
+`python src/validate.py` compares the database with published figures and stops on any mismatch:
+
+- California's 12-month change in all 11 sectors matches the state's (EDD) September 2026 release to the job.
+- U.S. October 2026 changes match the BLS Employment Situation release (total +165,000; professional & business services +70,000; manufacturing +19,000).
+- The hand-collected monthly layoff totals match the published headlines (52,881; 43,281; 43,994), and the JOLTS sectors add up to the published total.
+- Every jobs and price series has all its months with no gaps.
 
 ## Run it yourself
 
 ```bash
 pip install -r requirements.txt
-python src/download_data.py     # about 80 MB from FRED and GitHub
+python src/download_data.py     # about 80 MB; skips files that already exist
 python src/build_database.py
 python src/validate.py
 python src/run_queries.py
@@ -86,13 +104,17 @@ python src/make_charts.py
 python src/build_dashboard.py   # writes docs/index.html
 ```
 
-The BLS raw files and monthly processed CSVs are committed, so the data can be explored without downloading anything. Rebuilding the database needs the download step.
+The BLS, stock and hand-collected files are committed. Only the large Indeed files need the download step.
+
+To explore without Python: build the database once, open `data/sectors.db` in [DB Browser for SQLite](https://sqlitebrowser.org/), and paste queries from the `sql/` folder into the **Execute SQL** tab.
 
 ## Limitations
 
 - Payroll data counts jobs by the **employer's industry**, not by occupation. A data analyst at a hospital counts as a health care job.
-- The Indeed index measures the **trend** in postings relative to Feb 1, 2020, not the number of open jobs. Occupation-level postings are published only for the U.S.
-- BLS revises state data every March. Figures here are as published in October 2026.
+- Sector funds hold large listed companies. They do not represent every employer in a sector, and returns use month-end prices, so drawdowns inside a month are not visible.
+- Challenger counts **announced** job cuts, not actual layoffs, and my 22 industries cover 90–98% of each month's total. JOLTS September 2026 figures are preliminary.
+- The Indeed index measures the **trend** in postings relative to Feb 1, 2020, not the number of open jobs.
+- BLS revises data. Figures here are as published in early November 2026.
 
 ## Project structure
 
@@ -101,10 +123,12 @@ The BLS raw files and monthly processed CSVs are committed, so the data can be e
 ├── dashboard/template.html dashboard template (data is injected at build time)
 ├── data/
 │   ├── raw/bls/            BLS series from FRED (committed)
+│   ├── raw/stocks/         sector fund prices (committed)
 │   ├── raw/indeed/         Indeed files (downloaded, not committed)
-│   └── processed/          tidy CSV extracts (monthly)
+│   ├── research/           hand-collected tables and their sources
+│   └── processed/          tidy CSV extracts
 ├── docs/index.html         built dashboard (GitHub Pages)
-├── sql/                    analysis queries and results
+├── sql/                    analysis queries, results, practice queries
 └── src/                    Python pipeline
 ```
 

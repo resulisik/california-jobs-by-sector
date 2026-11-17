@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Where California's Jobs Are Growing (2021–2026)</title>
+<title>Sector Pulse: jobs and stocks by sector, California and the U.S. (2021–2026)</title>
 <style>
   :root {
     color-scheme: light;
@@ -90,11 +90,14 @@
   th:first-child, td:first-child { text-align: left; }
   th { font-weight: 600; color: var(--text-secondary); font-size: 12.5px; }
   tr.total td { font-weight: 600; }
+  td.up, td.down { white-space: nowrap; }
   .up { color: var(--text-primary); } .up::before { content: "▲ "; color: var(--pos); font-size: 10px; }
   .down { color: var(--text-primary); } .down::before { content: "▼ "; color: var(--neg); font-size: 10px; }
   .findings { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 28px; margin: 4px 0 0; padding: 0; list-style: none; }
   .findings li { font-size: 14px; color: var(--text-secondary); }
   .findings b { color: var(--text-primary); display: block; margin-bottom: 2px; }
+  .part { font-size: 12.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); margin: 36px 0 -4px; font-weight: 600; }
+  .findings.three { grid-template-columns: repeat(2, 1fr); }
   footer { margin-top: 28px; font-size: 12.5px; color: var(--text-muted); }
   footer a { color: inherit; }
   .scroll { overflow-x: auto; }
@@ -108,13 +111,21 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Where California's jobs are growing</h1>
-    <p>Five years of official payroll data (Sep 2021 – Sep 2026) and daily job-posting data, by sector.
-       Which industries are hiring, which are shrinking, and what that means for someone looking for an entry-level analyst role in Los Angeles.</p>
+    <h1>Sector Pulse: where the jobs are and where the money went</h1>
+    <p>Five years of payroll jobs, job postings and stock-market returns by sector, for California and the whole United States,
+       plus a hand-collected look at the last three months. Which industries are hiring, which are shrinking, which ones investors rewarded,
+       and what that means for someone looking for an entry-level analyst role.</p>
     <div class="byline">Resul Isik · Data Analyst portfolio · <span id="meta"></span></div>
   </header>
 
   <section class="kpis" id="kpis"></section>
+
+  <section class="card">
+    <h2>What the data says</h2>
+    <ul class="findings" id="findings"></ul>
+  </section>
+
+  <h3 class="part">Part 1 · Jobs in California</h3>
 
   <section class="card">
     <h2>Which sectors added jobs?</h2>
@@ -133,6 +144,19 @@
     <div class="controls" id="chips" role="group" aria-label="Sector"></div>
     <div class="legend" id="line-legend"></div>
     <div class="chart" id="lines"></div>
+  </section>
+
+  <h3 class="part">Part 2 · California vs the United States</h3>
+  <section class="card">
+    <h2>Is California keeping up with the country?</h2>
+    <p class="sub" id="cavus-sub"></p>
+    <div class="controls" role="group" aria-label="Period">
+      <button data-cv="5" aria-pressed="true">5 years</button>
+      <button data-cv="12" aria-pressed="false">Last 12 months</button>
+    </div>
+    <div class="legend"><span style="--c:var(--series-1)">California</span><span style="--c:var(--series-2)">United States</span></div>
+    <div class="chart" id="cavus"></div>
+    <p class="foot">Percent change in payroll jobs, seasonally adjusted, to Sep 2026. Sorted by the gap between California and the U.S.</p>
   </section>
 
   <div class="grid2">
@@ -160,11 +184,66 @@
     <div class="chart" id="occ"></div>
   </section>
 
+  <h3 class="part">Part 3 · The stock market by sector</h3>
   <section class="card">
-    <h2>What the data says</h2>
-    <ul class="findings" id="findings"></ul>
+    <h2>Which sectors did investors reward?</h2>
+    <p class="sub" id="stocks-sub"></p>
+    <div class="controls" role="group" aria-label="Measure">
+      <button data-st="5" aria-pressed="true">5 years</button>
+      <button data-st="1" aria-pressed="false">Last 12 months</button>
+      <button data-st="mom" aria-pressed="false">Momentum</button>
+    </div>
+    <div class="chart" id="stocks"></div>
+    <p class="foot">Total return (price change plus dividends) of the 11 S&amp;P 500 sector funds and the S&amp;P 500 itself, month-end prices to Oct 2026.
+      Momentum = the last 12 months' return minus the return of the 12 months before. Past returns describe what happened; this is not investment advice.</p>
   </section>
 
+  <section class="card">
+    <h2>Five years, month by month</h2>
+    <p class="sub">Value of 100 invested at the end of October 2021. Pick a sector to compare it with the S&amp;P 500.</p>
+    <div class="controls" id="schips" role="group" aria-label="Stock sector"></div>
+    <div class="legend" id="stock-legend"></div>
+    <div class="chart" id="stocklines"></div>
+  </section>
+
+  <div>
+    <section class="card">
+      <h2>Do stock returns follow jobs?</h2>
+      <p class="sub">Each dot is a stock sector: its 5-year return against U.S. job growth in the closest jobs sector (Oct 2021 – Oct 2026)</p>
+      <div class="chart" id="jvs"></div>
+      <p class="foot">The match between stock sectors and jobs sectors is approximate. Hover a dot for details.</p>
+    </section>
+    <section class="card">
+      <h2>Stock sectors (table view)</h2>
+      <div class="scroll"><table id="stocktable"></table></div>
+      <p class="foot">Max fall = largest drop from a previous month-end high since Oct 2021.</p>
+    </section>
+  </div>
+
+  <h3 class="part">Part 4 · The last three months (hand-collected data)</h3>
+  <div class="grid2">
+    <section class="card">
+      <h2>U.S. hiring by sector, Aug – Oct 2026</h2>
+      <p class="sub" id="last3-sub"></p>
+      <div class="chart" id="last3"></div>
+      <p class="foot">Change in payroll jobs, July to October 2026, thousands. BLS Employment Situation.</p>
+    </section>
+    <section class="card">
+      <h2>Announced layoffs, Aug – Oct 2026</h2>
+      <p class="sub" id="layoffs-sub"></p>
+      <div class="chart" id="layoffs"></div>
+      <p class="foot">Job cuts announced by U.S.-based employers, grouped into jobs sectors by me. Collected by hand from the Challenger, Gray &amp; Christmas monthly reports.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Sector scorecard: four signals side by side</h2>
+    <p class="sub">U.S. jobs (12 months to Oct 2026), job openings (Sep 2026 vs Sep 2025, BLS JOLTS), announced layoffs (Aug – Oct 2026) and the closest stock sector's 12-month return</p>
+    <div class="scroll"><table id="score"></table></div>
+    <p class="foot" id="sources"></p>
+  </section>
+
+  <h3 class="part">Reference tables</h3>
   <section class="card">
     <h2>Industry spotlight</h2>
     <p class="sub">Smaller industries behind the headlines. Some series are not seasonally adjusted, so they are compared September to September.</p>
@@ -172,13 +251,14 @@
   </section>
 
   <section class="card">
-    <h2>All sectors (table view)</h2>
+    <h2>All California sectors (table view)</h2>
     <div class="scroll"><table id="table"></table></div>
   </section>
 
   <footer>
-    <p><b>Data.</b> Payroll jobs: U.S. Bureau of Labor Statistics, Current Employment Statistics (state and metro),
-      via <a href="https://fred.stlouisfed.org/">FRED</a>. Job postings: <a href="https://github.com/hiring-lab/job_postings_tracker">Indeed Hiring Lab job postings index</a>
+    <p><b>Data.</b> Payroll jobs: U.S. Bureau of Labor Statistics, Current Employment Statistics (national, state and metro),
+      via <a href="https://fred.stlouisfed.org/">FRED</a>. Stock sectors: month-end adjusted prices of the SPDR Select Sector funds and SPY, from Yahoo Finance.
+      Last three months: BLS JOLTS and the Challenger, Gray &amp; Christmas job-cut reports, typed in by hand and checked against the published totals. Job postings: <a href="https://github.com/hiring-lab/job_postings_tracker">Indeed Hiring Lab job postings index</a>
       (seasonally adjusted, 7-day average, Feb 1 2020 = 100). An index measures the trend in postings, not the number of open jobs.</p>
     <p><b>Method.</b> Python (pandas) cleans the files and loads them into SQLite; the analysis is written in SQL (CTEs, window functions).
       Code, queries and results: <a href="https://github.com/resulisik/california-jobs-by-sector">github.com/resulisik/california-jobs-by-sector</a>.</p>
@@ -248,7 +328,7 @@ function barChart(host, rows, opts = {}) {
     const d = pos
       ? `M${zero},${y} H${xv - rr} Q${xv},${y} ${xv},${y + rr} V${y + barH - rr} Q${xv},${y + barH} ${xv - rr},${y + barH} H${zero} Z`
       : `M${zero},${y} H${xv + rr} Q${xv},${y} ${xv},${y + rr} V${y + barH - rr} Q${xv},${y + barH} ${xv + rr},${y + barH} H${zero} Z`;
-    if (len > 0.5) el("path", { d, fill: cssVar(pos ? "--pos" : "--neg") }, svg);
+    if (len > 0.5) el("path", { d, fill: cssVar(opts.neutral ? "--ref" : pos ? "--pos" : "--neg") }, svg);
     const vt = el("text", { x: pos ? xv + 6 : xv - 6, y: i * rowH + rowH / 2 + 4, "text-anchor": pos ? "start" : "end",
       "font-size": 12, fill: cssVar("--text-primary") }, svg);
     vt.textContent = r.text;
@@ -335,13 +415,18 @@ const K = D.kpi;
 const sectors = D.sectors.filter(s => !s.total);
 const totalRow = D.sectors.find(s => s.total);
 document.getElementById("meta").textContent =
-  `Jobs data through ${monthName(D.meta.end)} · postings through ${new Date(D.meta.postings_through + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+  `California jobs through ${monthName(D.meta.end)} · U.S. jobs and stocks through ${monthName(D.meta.stock_end)} · postings through ${new Date(D.meta.postings_through + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
 
+const usTot = D.ca_us.find(r => r.name === "Total nonfarm");
+const stockBy = Object.fromEntries(D.stocks.map(s => [s.sector, s]));
+const jvsBy = Object.fromEntries(D.jobs_vs_stocks.map(s => [s.stock_sector, s]));
+const cuts3 = D.layoff_totals.reduce((a, r) => a + r.job_cuts, 0);
+const ytdAll = D.layoff_ytd.find(r => r.industry === "TOTAL"), ytdTech = D.layoff_ytd.find(r => r.industry === "Technology");
 document.getElementById("kpis").innerHTML = [
-  ["Net new jobs, 5 years", fmtK(K.total_chg5), `${fmtPct(K.total_pct5)} since Sep 2021`],
-  ["Share of growth from health care", K.health_care_share.toFixed(0) + "%", `${fmtK(K.health_care_chg5)} jobs in health care & social assistance`],
-  ["Information sector (tech, media)", fmtPct(K.info_pct5), "change in jobs since Sep 2021"],
-  ["Job postings vs Feb 2020", Math.round(K.ca_postings).toString(), `California (U.S.: ${Math.round(K.us_postings)}); 100 = Feb 2020`],
+  ["Jobs added in 5 years", fmtPct(usTot.california_pct), `California (${fmtK(K.total_chg5)}); the U.S. grew ${fmtPct(usTot.us_pct)}`],
+  ["Health care's share of California job growth", K.health_care_share.toFixed(0) + "%", `${fmtK(K.health_care_chg5)} of ${fmtK(K.total_chg5)} net new jobs`],
+  ["Technology: stocks vs jobs, 5 years", fmtPct(stockBy["Technology"].return_5y_pct, 0), `stock return, while U.S. tech and media jobs changed ${fmtPct(jvsBy["Technology"].us_jobs_5y_pct)}`],
+  ["Announced layoffs, last 3 months", Math.round(cuts3 / 1000) + "K", `U.S., Aug to Oct 2026; year to date ${fmtPct(100 * (ytdAll.ytd_2026 / ytdAll.ytd_2025 - 1), 0)} vs 2025`],
 ].map(([l, v, n]) => `<div class="tile"><div class="label">${l}</div><div class="value">${v}</div><div class="note">${n}</div></div>`).join("");
 
 let period = "5";
@@ -431,13 +516,22 @@ const ed = sectors.find(s => s.name === "Private education & health services");
 const info = sectors.find(s => s.name === "Information");
 const lh = sectors.find(s => s.name === "Leisure & hospitality");
 const da = D.occupations.find(o => o.name === "Data & Analytics");
+const S = n => D.short[n] || n;
+const cu = Object.fromEntries(D.ca_us.map(r => [r.name, r]));
+const caBehind = D.ca_us.filter(r => r.name !== "Total nonfarm" && r.gap_pp < 0).length;
+const l3 = Object.fromEntries(D.last3.map(r => [r.name, r]));
+const bySt1 = [...D.stocks].filter(s => s.ticker !== "SPY").sort((a, b) => b.return_1y_pct - a.return_1y_pct);
+const sp = stockBy["S&P 500 (all sectors)"];
+const shareInfo = D.ca_share.find(r => r.name === "Information");
 document.getElementById("findings").innerHTML = [
-  ["Health care carried the state.", `Of ${fmtK(K.total_chg5)} net new jobs since Sep 2021, health care & social assistance added ${fmtK(K.health_care_chg5)} (${K.health_care_share.toFixed(0)}%). Education & health was above its year-earlier level ${monthsDown(ed.name) === 0 ? "in every one of the last 24 months" : `in ${24 - monthsDown(ed.name)} of the last 24 months`}.`],
-  ["Tech and media are shrinking.", `Information jobs fell ${Math.abs(info.pct5).toFixed(1)}% in five years and were below the year before in ${monthsDown(info.name)} of the last 24 months. Computer systems design ${fmtPct(spot["Computer systems design"].pct5)}, motion picture & sound recording ${fmtPct(spot["Motion picture & sound recording"].pct5)}.`],
-  ["California postings lag the nation.", `Postings sit at ${Math.round(K.ca_postings)} in California vs ${Math.round(K.us_postings)} nationally (Feb 2020 = 100). The Bay Area is rebounding (San Francisco ${fmtPct(metro["San Francisco"].pct)}, San Jose ${fmtPct(metro["San Jose"].pct)} in a year); Los Angeles is flat (${fmtPct(metro["Los Angeles"].pct)}).`],
-  ["Bright spots outside health care.", `Aerospace product & parts jobs grew ${fmtPct(spot["Aerospace product & parts"].pct5)} in five years. Leisure & hospitality added ${fmtK(lh.chg5)} but is still ${(100 - lh.idx20).toFixed(1)}% below February 2020.`],
-  ["Data roles: growing, from a low base.", `U.S. postings for Data & Analytics are ${fmtPct(da.pct)} on a year ago, but at ${Math.round(da.now)} they remain well below February 2020, so competition for entry-level roles stays high.`],
-  ["What I take from it.", `For an entry-level analyst in Los Angeles, the largest and steadiest employers are hospital systems, insurers and public agencies. Healthcare data (claims, patient flow, quality measures) is the domain to build skills in.`],
+  ["1. Health care carried California.", `Of ${fmtK(K.total_chg5)} net new jobs since Sep 2021, health care & social assistance added ${fmtK(K.health_care_chg5)} (${K.health_care_share.toFixed(0)}%). Education & health was above its year-earlier level ${monthsDown(ed.name) === 0 ? "in every one of the last 24 months" : `in ${24 - monthsDown(ed.name)} of the last 24 months`}.`],
+  ["2. Outside health care, California trails the country.", `California grew ${fmtPct(usTot.california_pct)} in five years against ${fmtPct(usTot.us_pct)} nationally, and it is behind in ${caBehind} of 11 sectors. The widest gaps: construction (${fmtPct(cu["Construction"].california_pct)} vs ${fmtPct(cu["Construction"].us_pct)}) and finance (${fmtPct(cu["Financial activities"].california_pct)} vs ${fmtPct(cu["Financial activities"].us_pct)}).`],
+  ["3. Tech and media jobs are shrinking everywhere, faster in California.", `Information jobs fell ${Math.abs(info.pct5).toFixed(1)}% in California and ${Math.abs(cu["Information"].us_pct).toFixed(1)}% nationally. California's share of U.S. information jobs slipped from ${shareInfo.ca_share_2021_pct.toFixed(1)}% to ${shareInfo.ca_share_2026_pct.toFixed(1)}%. Motion picture & sound recording: ${fmtPct(spot["Motion picture & sound recording"].pct5)}.`],
+  ["4. Stock returns and jobs tell different stories.", `Technology stocks returned ${fmtPct(stockBy["Technology"].return_5y_pct, 0)} in five years while tech and media jobs fell ${Math.abs(jvsBy["Technology"].us_jobs_5y_pct).toFixed(1)}%. Health care is the reverse: the most new jobs (${fmtPct(jvsBy["Health care"].us_jobs_5y_pct)}) but a ${fmtPct(stockBy["Health care"].return_5y_pct, 0)} return, below the S&P 500's ${fmtPct(sp.return_5y_pct, 0)}.`],
+  ["5. Market leadership rotated in the last 12 months.", `${bySt1[0].sector} (${fmtPct(bySt1[0].return_1y_pct, 0)}), ${bySt1[1].sector.toLowerCase()} (${fmtPct(bySt1[1].return_1y_pct, 0)}) and ${bySt1[2].sector.toLowerCase()} (${fmtPct(bySt1[2].return_1y_pct, 0)}) led. Technology slowed from ${fmtPct(stockBy["Technology"].prior_12m_pct, 0)} to ${fmtPct(stockBy["Technology"].return_1y_pct, 0)}, and communication services turned negative (${fmtPct(stockBy["Communication services"].return_1y_pct, 0)}).`],
+  ["6. U.S. hiring picked up in the last three months.", `Payrolls rose ${fmtK(l3["Total nonfarm"].last_3m_k)} from July to October, against about ${fmtK(l3["Total nonfarm"].typical_3m_k)} per three months in the year before. Professional & business services, where many analyst jobs sit, added ${fmtK(l3["Professional & business services"].last_3m_k)}; information lost ${fmtK(Math.abs(l3["Information"].last_3m_k)).replace("+", "")}.`],
+  ["7. Layoff announcements are low, except in tech.", `Employers announced ${Math.round(cuts3 / 1000)}K job cuts in Aug – Oct 2026. Year to date they are ${fmtPct(100 * (ytdAll.ytd_2026 / ytdAll.ytd_2025 - 1), 0)} on 2025, but technology is ${fmtPct(100 * (ytdTech.ytd_2026 / ytdTech.ytd_2025 - 1), 0)} and accounts for ${(100 * ytdTech.ytd_2026 / ytdAll.ytd_2026).toFixed(0)}% of all cuts this year.`],
+  ["8. What I take from it.", `For an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California postings sit at ${Math.round(K.ca_postings)} vs ${Math.round(K.us_postings)} nationally (Feb 2020 = 100), and U.S. Data & Analytics postings are ${fmtPct(da.pct)} on a year ago, so the search should not stop at state lines: remote roles matter.`],
 ].map(([h, t]) => `<li><b>${h}</b>${t}</li>`).join("");
 
 const cls = v => (v > 0 ? "up" : v < 0 ? "down" : "");
@@ -451,7 +545,187 @@ document.getElementById("table").innerHTML =
   D.sectors.map(s => `<tr class="${s.total ? "total" : ""}"><td>${s.name}</td><td>${fmtJobs(s.j26)}</td><td>${s.share26.toFixed(1)}%</td>
     <td class="${cls(s.chg5)}">${fmtK(s.chg5)}</td><td>${fmtPct(s.pct5)}</td><td class="${cls(s.chg12)}">${fmtK(s.chg12)}</td><td>${s.idx20.toFixed(1)}</td></tr>`).join("") + "</tbody>";
 
-function drawAll() { drawBars(); drawLines(); drawPostings(); drawMetros(); drawOcc(); }
+
+/* Two bars per row: a (series 1) and b (series 2). */
+function pairChart(host, rows, opts = {}) {
+  host.innerHTML = "";
+  const W = host.clientWidth, narrow = W < 560, rowH = 36, bh = 10;
+  const labelW = Math.min(opts.labelW || 170, W * 0.4);
+  const H = rows.length * rowH + 24;
+  const svg = el("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "bar chart" }, host);
+  const vals = rows.flatMap(r => [r.a, r.b]);
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+  const pad = narrow ? 44 : 56, x0 = labelW + 8 + (lo < 0 ? pad : 0), x1 = W - pad;
+  const scale = v => x0 + (v - lo) / (hi - lo || 1) * (x1 - x0), zero = scale(0);
+  const step = niceStep((hi - lo) / (narrow ? 2 : 4));
+  for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) {
+    el("line", { x1: scale(t), x2: scale(t), y1: 0, y2: rows.length * rowH, stroke: cssVar("--grid") }, svg);
+    el("text", { x: scale(t), y: rows.length * rowH + 16, "text-anchor": "middle", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = opts.tick ? opts.tick(t) : t;
+  }
+  rows.forEach((r, i) => {
+    el("text", { x: labelW, y: i * rowH + rowH / 2 + 4, "text-anchor": "end", "font-size": narrow ? 11.5 : 12.5,
+      fill: cssVar(r.strong ? "--text-primary" : "--text-secondary"), "font-weight": r.strong ? 600 : 400 }, svg).textContent = r.label;
+    [[r.a, "--series-1"], [r.b, "--series-2"]].forEach(([v, c], k) => {
+      const y = i * rowH + 7 + k * (bh + 2), xv = scale(v), pos = v >= 0;
+      if (Math.abs(xv - zero) > 0.5) el("rect", { x: Math.min(zero, xv), y, width: Math.abs(xv - zero), height: bh, rx: 2, fill: cssVar(c) }, svg);
+      el("text", { x: pos ? xv + 5 : xv - 5, y: y + bh - 1, "text-anchor": pos ? "start" : "end", "font-size": 10.5, fill: cssVar("--text-primary") }, svg)
+        .textContent = opts.fmt(v);
+    });
+    const hit = el("rect", { x: 0, y: i * rowH, width: W, height: rowH, fill: "transparent" }, svg);
+    hit.addEventListener("pointermove", ev => showTip(r.tip, ev));
+    hit.addEventListener("pointerleave", hideTip);
+  });
+  el("line", { x1: zero, x2: zero, y1: 0, y2: rows.length * rowH, stroke: cssVar("--text-secondary"), "stroke-width": 1 }, svg);
+}
+
+/* Scatter with direct labels. pts: [{x, y, label, tip}] */
+function scatterChart(host, pts, opts = {}) {
+  host.innerHTML = "";
+  const W = host.clientWidth, H = opts.height || 420, m = { t: 14, r: 16, b: 42, l: 64 };
+  const svg = el("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "scatter" }, host);
+  let xlo = Math.min(0, ...pts.map(p => p.x)), xhi = Math.max(0, ...pts.map(p => p.x));
+  let ylo = Math.min(0, ...pts.map(p => p.y)), yhi = Math.max(0, ...pts.map(p => p.y));
+  const xs = niceStep((xhi - xlo) / 5), ys = niceStep((yhi - ylo) / 5);
+  xlo = Math.floor(xlo / xs) * xs; xhi = Math.ceil(xhi / xs) * xs + xs * 0.6; ylo = Math.floor(ylo / ys) * ys; yhi = Math.ceil(yhi / ys) * ys;
+  const X = v => m.l + (v - xlo) / (xhi - xlo) * (W - m.l - m.r), Y = v => m.t + (yhi - v) / (yhi - ylo) * (H - m.t - m.b);
+  for (let t = ylo; t <= yhi + 1e-9; t += ys) {
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: cssVar("--grid") }, svg);
+    el("text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = t + "%";
+  }
+  for (let t = xlo; t <= xhi - xs * 0.5; t += xs) {
+    el("line", { x1: X(t), x2: X(t), y1: m.t, y2: H - m.b, stroke: cssVar("--grid") }, svg);
+    el("text", { x: X(t), y: H - m.b + 15, "text-anchor": "middle", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = t + "%";
+  }
+  el("line", { x1: X(0), x2: X(0), y1: m.t, y2: H - m.b, stroke: cssVar("--text-secondary") }, svg);
+  el("line", { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), stroke: cssVar("--text-secondary") }, svg);
+  el("text", { x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle", "font-size": 11.5, fill: cssVar("--text-secondary") }, svg).textContent = opts.xLabel;
+  const yl = el("text", { x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", "font-size": 11.5, fill: cssVar("--text-secondary"),
+    transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})` }, svg); yl.textContent = opts.yLabel;
+  // dots first, then labels nudged so they do not sit on a dot or on each other
+  const boxes = pts.map(p => ({ x0: X(p.x) - 8, x1: X(p.x) + 8, y0: Y(p.y) - 8, y1: Y(p.y) + 8 }));
+  const hits = (b, list) => list.some(o => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
+  pts.forEach(p => el("circle", { cx: X(p.x), cy: Y(p.y), r: 6, fill: cssVar(p.ref ? "--ref" : "--series-1"), stroke: cssVar("--surface-1"), "stroke-width": 2 }, svg));
+  [...pts].sort((a, b) => Y(a.y) - Y(b.y)).forEach(p => {
+    const cx = X(p.x), cy = Y(p.y), w = p.label.length * 6.6;
+    const mine = boxes.find(b => b.x0 === cx - 8 && b.y0 === cy - 8), others = boxes.filter(b => b !== mine);
+    let best = null;
+    search: for (const dy of [0, -14, 14, -28, 28, -42, 42]) for (const side of [1, -1]) {
+      const x0 = side > 0 ? cx + 11 : cx - 11 - w, b = { x0, x1: x0 + w, y0: cy + dy - 9, y1: cy + dy + 4 };
+      if (b.x0 < m.l || b.x1 > W - 4 || hits(b, others)) continue;
+      best = { side, dy, b }; break search;
+    }
+    best = best || { side: 1, dy: 0, b: { x0: cx + 11, x1: cx + 11 + w, y0: cy - 9, y1: cy + 4 } };
+    boxes.push(best.b);
+    if (best.dy !== 0) el("line", { x1: cx, y1: cy, x2: best.side > 0 ? best.b.x0 - 2 : best.b.x1 + 2, y2: cy + best.dy - 3, stroke: cssVar("--text-muted"), "stroke-width": 1 }, svg);
+    el("text", { x: best.side > 0 ? best.b.x0 : best.b.x1, y: cy + best.dy + 1, "text-anchor": best.side > 0 ? "start" : "end", "font-size": 11.5, fill: cssVar("--text-primary") }, svg).textContent = p.label;
+    const hit = el("circle", { cx, cy, r: 15, fill: "transparent" }, svg);
+    hit.addEventListener("pointermove", ev => showTip(p.tip, ev));
+    hit.addEventListener("pointerleave", hideTip);
+  });
+}
+
+let cvPeriod = "5";
+function drawCaUs() {
+  const a = cvPeriod === "5" ? "california_pct" : "ca12", b = cvPeriod === "5" ? "us_pct" : "us12";
+  const tot = D.ca_us.find(r => r.name === "Total nonfarm");
+  const rows = D.ca_us.filter(r => r.name !== "Total nonfarm").sort((x, y) => (y[a] - y[b]) - (x[a] - x[b]));
+  const ahead = rows.filter(r => r[a] > r[b]).length;
+  document.getElementById("cavus-sub").textContent =
+    `${cvPeriod === "5" ? "Sep 2021 to Sep 2026" : "Sep 2025 to Sep 2026"}: all jobs ${fmtPct(tot[a])} in California vs ${fmtPct(tot[b])} in the U.S. California is ahead in ${ahead} of 11 sectors.`;
+  pairChart(document.getElementById("cavus"), rows.map(r => ({ label: S(r.name), a: r[a], b: r[b],
+    tip: `<b>${r.name}</b><div class="row"><span class="k" style="--c:var(--series-1)">California</span><span>${fmtPct(r[a])}</span></div>
+          <div class="row"><span class="k" style="--c:var(--series-2)">United States</span><span>${fmtPct(r[b])}</span></div>
+          <div class="row"><span>Gap</span><span>${fmtPct(r[a] - r[b])} pts</span></div>` })),
+    { fmt: v => fmtPct(v), tick: t => t + "%", aria: "California vs U.S. job growth by sector" });
+}
+document.querySelectorAll("[data-cv]").forEach(b => b.addEventListener("click", () => {
+  cvPeriod = b.dataset.cv; document.querySelectorAll("[data-cv]").forEach(x => x.setAttribute("aria-pressed", x === b)); drawCaUs();
+}));
+
+let stMode = "5";
+function drawStocks() {
+  const key = { 5: "return_5y_pct", 1: "return_1y_pct", mom: "momentum_pp" }[stMode];
+  const end = monthName(D.meta.stock_end);
+  document.getElementById("stocks-sub").textContent = {
+    5: `Total return, ${monthName(D.meta.stock_start)} to ${end}. S&P 500: ${fmtPct(sp.return_5y_pct)}.`,
+    1: `Total return in the 12 months to ${end}. S&P 500: ${fmtPct(sp.return_1y_pct)}.`,
+    mom: `Last 12 months' return minus the 12 months before, in percentage points. Above zero = speeding up.`,
+  }[stMode];
+  const rows = [...D.stocks].sort((a, b) => b[key] - a[key]).map(s => ({
+    label: s.sector, value: s[key], strong: s.ticker === "SPY",
+    text: stMode === "mom" ? fmtPct(s[key]).replace("%", " pts") : fmtPct(s[key]),
+    tip: `<b>${s.sector} (${s.ticker})</b><div class="row"><span>5 years</span><span>${fmtPct(s.return_5y_pct)}</span></div>
+          <div class="row"><span>Last 12 months</span><span>${fmtPct(s.return_1y_pct)}</span></div>
+          <div class="row"><span>12 months before</span><span>${fmtPct(s.prior_12m_pct)}</span></div>
+          <div class="row"><span>Last 3 months</span><span>${fmtPct(s.return_3m_pct)}</span></div>` }));
+  barChart(document.getElementById("stocks"), rows, { labelW: 180, rowH: 28, tick: t => t + (stMode === "mom" ? "" : "%"), aria: "Stock sector returns" });
+}
+document.querySelectorAll("[data-st]").forEach(b => b.addEventListener("click", () => {
+  stMode = b.dataset.st; document.querySelectorAll("[data-st]").forEach(x => x.setAttribute("aria-pressed", x === b)); drawStocks();
+}));
+
+let stPick = "Technology";
+const SPN = "S&P 500 (all sectors)";
+const schips = document.getElementById("schips");
+[...D.stocks].filter(s => s.ticker !== "SPY").forEach(s => {
+  const b = document.createElement("button");
+  b.textContent = s.sector; b.setAttribute("aria-pressed", s.sector === stPick);
+  b.addEventListener("click", () => { stPick = s.sector; schips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawStockLines(); });
+  schips.appendChild(b);
+});
+function drawStockLines() {
+  document.getElementById("stock-legend").innerHTML =
+    `<span style="--c:var(--series-1)">${stPick}</span><span style="--c:var(--ref)">S&amp;P 500</span><span style="--c:var(--faint)">Other sectors</span>`;
+  const ser = Object.entries(D.stock_lines).map(([name, pts]) => {
+    const isSel = name === stPick, isRef = name === SPN;
+    return { name, label: isRef ? "S&P 500" : name, points: pts, emph: isSel || isRef,
+             color: isSel ? cssVar("--series-1") : isRef ? cssVar("--ref") : cssVar("--faint"), width: isSel || isRef ? 2 : 1 };
+  });
+  lineChart(document.getElementById("stocklines"), ser, { ref: 100, height: 340, right: 190, aria: "Sector fund value, October 2021 = 100", tipFmt: p => p[1].toFixed(0) });
+}
+
+function drawJvs() {
+  scatterChart(document.getElementById("jvs"), D.jobs_vs_stocks.map(r => ({ x: r.us_jobs_5y_pct, y: r.stock_return_5y_pct,
+    label: r.stock_sector.replace(" (all sectors)", ""), ref: r.stock_sector === SPN,
+    tip: `<b>${r.stock_sector}</b><div class="row"><span>Stock return, 5 years</span><span>${fmtPct(r.stock_return_5y_pct)}</span></div>
+          <div class="row"><span>${S(r.closest_jobs_sector)} jobs</span><span>${fmtPct(r.us_jobs_5y_pct)}</span></div>` })),
+    { xLabel: "U.S. job growth in the closest jobs sector, 5 years", yLabel: "Stock sector total return, 5 years", aria: "Stock returns vs job growth" });
+}
+
+function drawLast3() {
+  const tot = l3["Total nonfarm"];
+  document.getElementById("last3-sub").textContent = `All jobs: ${fmtK(tot.last_3m_k)} in three months (Aug ${fmtK(tot.aug_k)}, Sep ${fmtK(tot.sep_k)}, Oct ${fmtK(tot.oct_k)})`;
+  barChart(document.getElementById("last3"), D.last3.filter(r => r.name !== "Total nonfarm").map(r => ({ label: S(r.name), value: r.last_3m_k, text: fmtK(r.last_3m_k),
+    tip: `<b>${r.name}</b><div class="row"><span>Aug / Sep / Oct</span><span>${fmtK(r.aug_k)} / ${fmtK(r.sep_k)} / ${fmtK(r.oct_k)}</span></div>
+          <div class="row"><span>Three months</span><span>${fmtK(r.last_3m_k)}</span></div>
+          <div class="row"><span>Typical three months, year before</span><span>${fmtK(r.typical_3m_k)}</span></div>` })),
+    { labelW: 150, rowH: 28, tick: t => t + "K", aria: "U.S. payroll change by sector, last three months" });
+}
+function drawLayoffs() {
+  document.getElementById("layoffs-sub").textContent =
+    D.layoff_totals.map(r => `${monthName(r.month).slice(0, 3)} ${r.job_cuts.toLocaleString()}`).join(" · ") + ` · total ${cuts3.toLocaleString()}`;
+  barChart(document.getElementById("layoffs"), D.layoffs.map(r => ({ label: S(r.jobs_sector), value: r.last_3m, text: (r.last_3m / 1000).toFixed(1) + "K",
+    tip: `<b>${r.jobs_sector}</b><div class="row"><span>Aug / Sep / Oct</span><span>${r.aug.toLocaleString()} / ${r.sep.toLocaleString()} / ${r.oct.toLocaleString()}</span></div>
+          <div class="row"><span>Share of the three months</span><span>${r.share_of_3m_pct}%</span></div>
+          <div class="row"><span>Year to date vs 2025</span><span>${fmtPct(r.ytd_change_pct, 0)}</span></div>` })),
+    { labelW: 150, rowH: 28, tick: t => t / 1000 + "K", aria: "Announced layoffs by sector, last three months", neutral: true });
+}
+
+const nz = (v, f) => (v == null ? "–" : f(v));
+document.getElementById("stocktable").innerHTML =
+  `<thead><tr><th>Sector</th><th>5 years</th><th>12 months</th><th>3 months</th><th>Momentum</th><th>Max fall</th></tr></thead><tbody>` +
+  D.stocks.map(s => `<tr class="${s.ticker === "SPY" ? "total" : ""}"><td>${s.sector}</td><td class="${cls(s.return_5y_pct)}">${fmtPct(s.return_5y_pct)}</td>
+    <td class="${cls(s.return_1y_pct)}">${fmtPct(s.return_1y_pct)}</td><td class="${cls(s.return_3m_pct)}">${fmtPct(s.return_3m_pct)}</td>
+    <td>${fmtPct(s.momentum_pp).replace("%", "")}</td><td>${fmtPct(s.max_drawdown_pct)}</td></tr>`).join("") + "</tbody>";
+document.getElementById("score").innerHTML =
+  `<thead><tr><th>Jobs sector</th><th>Jobs, 12 months</th><th>Jobs, last 3 months</th><th>Job openings, 12 months</th><th>Announced layoffs, 3 months</th><th>Closest stock sector, 12 months</th><th>Hiring signals</th></tr></thead><tbody>` +
+  D.scorecard.map(r => `<tr><td>${r.sector}</td><td class="${cls(r.jobs_12m_pct)}">${fmtPct(r.jobs_12m_pct)}</td><td class="${cls(r.jobs_last_3m_k)}">${fmtK(r.jobs_last_3m_k)}</td>
+    <td class="${cls(r.openings_12m_pct)}">${fmtPct(r.openings_12m_pct)}</td><td>${r.announced_layoffs_3m.toLocaleString()}</td>
+    <td>${nz(r.stock_1y_pct, v => fmtPct(v) + " <span style='color:var(--text-muted)'>(" + r.stock_sectors + ")</span>")}</td><td>${r.hiring_signals_of_3} of 3</td></tr>`).join("") + "</tbody>";
+document.getElementById("sources").innerHTML = "Hiring signals = jobs up over 12 months, jobs up over 3 months, openings up over 12 months. Sources: " +
+  D.sources.map(s => `<a href="${s.url}">${s.report}</a>`).join(" · ");
+
+function drawAll() { drawBars(); drawLines(); drawCaUs(); drawPostings(); drawMetros(); drawOcc(); drawStocks(); drawStockLines(); drawJvs(); drawLast3(); drawLayoffs(); }
 drawAll();
 let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);

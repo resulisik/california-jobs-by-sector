@@ -1,6 +1,8 @@
--- California jobs by sector, Sept 2021 - Sept 2026
--- Database: data/ca_jobs.db (built by src/build_database.py)
+-- Sector Pulse: jobs and stock market by sector, California and the U.S., 2021 - 2026
+-- Database: data/sectors.db (built by src/build_database.py)
 -- jobs_k = thousands of jobs. postings_index = Indeed postings, Feb 1 2020 = 100.
+-- adj_close = month-end price with dividends reinvested. Months are stored as YYYY-MM-01.
+-- Q1-Q12 California, Q13-Q15 California vs U.S., Q16-Q20 stock sectors, Q21-Q24 last three months.
 -- Each query starts with a "-- Qn: title" line so src/run_queries.py can split the file.
 
 -- Q1: Five-year job change by sector (Sep 2021 -> Sep 2026)
@@ -10,7 +12,7 @@ WITH ends AS (
            MAX(CASE WHEN e.month = '2026-09-01' THEN e.jobs_k END) AS jobs_2026
     FROM employment e
     JOIN series s USING (series_id)
-    WHERE s.level IN ('supersector', 'total')
+    WHERE s.region = 'CA' AND s.level IN ('supersector', 'total')
     GROUP BY s.name
 )
 SELECT name,
@@ -28,7 +30,7 @@ WITH yoy AS (
            e.jobs_k - LAG(e.jobs_k, 12) OVER (PARTITION BY e.series_id ORDER BY e.month) AS change_k
     FROM employment e
     JOIN series s USING (series_id)
-    WHERE s.level IN ('supersector', 'total')
+    WHERE s.region = 'CA' AND s.level IN ('supersector', 'total')
 )
 SELECT name,
        jobs_k                                   AS jobs_sep_2026,
@@ -50,7 +52,7 @@ SELECT s.name,
 FROM employment e
 JOIN base b USING (series_id)
 JOIN series s USING (series_id)
-WHERE e.month = '2026-09-01' AND s.level IN ('supersector', 'total') AND s.seasonally_adjusted = 1
+WHERE e.month = '2026-09-01' AND s.region = 'CA' AND s.level IN ('supersector', 'total')
 ORDER BY index_feb2020_100 DESC;
 
 -- Q4: Each sector's share of all California jobs, 2021 vs 2026
@@ -61,7 +63,7 @@ WITH totals AS (
     FROM employment e
     JOIN totals t USING (month)
     JOIN series s USING (series_id)
-    WHERE s.level = 'supersector' AND e.month IN ('2021-09-01', '2026-09-01')
+    WHERE s.region = 'CA' AND s.level = 'supersector' AND e.month IN ('2021-09-01', '2026-09-01')
 )
 SELECT name,
        ROUND(MAX(CASE WHEN month = '2021-09-01' THEN share_pct END), 1) AS share_2021,
@@ -109,7 +111,7 @@ SELECT s.name,
             WHEN p.j26 < p.j25 AND p.j26 < p.j21 THEN 'shrinking'
             ELSE 'mixed' END                     AS trend
 FROM pts p JOIN series s USING (series_id)
-WHERE s.level IN ('subsector', 'area')
+WHERE s.region = 'CA' AND s.level IN ('subsector', 'area')
 ORDER BY change_5y_pct DESC;
 
 -- Q7: Year-by-year change, September to September (thousands of jobs)
@@ -117,7 +119,7 @@ WITH yoy AS (
     SELECT s.name, e.month,
            e.jobs_k - LAG(e.jobs_k, 12) OVER (PARTITION BY e.series_id ORDER BY e.month) AS chg
     FROM employment e JOIN series s USING (series_id)
-    WHERE s.level IN ('supersector', 'total')
+    WHERE s.region = 'CA' AND s.level IN ('supersector', 'total')
 )
 SELECT name,
        ROUND(MAX(CASE WHEN month = '2022-09-01' THEN chg END), 1) AS y2022,
@@ -134,12 +136,13 @@ WITH yoy AS (
     SELECT s.name, e.month,
            e.jobs_k - LAG(e.jobs_k, 12) OVER (PARTITION BY e.series_id ORDER BY e.month) AS chg
     FROM employment e JOIN series s USING (series_id)
+    WHERE s.region = 'CA'
 )
 SELECT name,
        SUM(CASE WHEN chg < 0 THEN 1 ELSE 0 END) AS months_down_of_24,
        SUM(CASE WHEN chg > 0 THEN 1 ELSE 0 END) AS months_up_of_24
 FROM yoy
-WHERE month > '2024-09-01'
+WHERE month > '2024-09-01' AND month <= '2026-09-01'
 GROUP BY name
 ORDER BY months_down_of_24 DESC, name;
 
@@ -232,3 +235,276 @@ FROM la JOIN ca USING (month)
 WHERE substr(month, 6, 2) = '09'
 ORDER BY year
 LIMIT -1 OFFSET 1;
+
+-- Q13: California vs U.S. - five-year job growth by sector (Sep 2021 -> Sep 2026)
+WITH g AS (
+    SELECT s.region, s.name,
+           100.0 * (MAX(CASE WHEN e.month = '2026-09-01' THEN e.jobs_k END)
+                  - MAX(CASE WHEN e.month = '2021-09-01' THEN e.jobs_k END))
+                  / MAX(CASE WHEN e.month = '2021-09-01' THEN e.jobs_k END) AS pct
+    FROM employment e
+    JOIN series s USING (series_id)
+    WHERE s.level IN ('supersector', 'total')
+    GROUP BY s.region, s.name
+)
+SELECT ca.name,
+       ROUND(ca.pct, 1)          AS california_pct,
+       ROUND(us.pct, 1)          AS us_pct,
+       ROUND(ca.pct - us.pct, 1) AS gap_pp,
+       CASE WHEN ca.pct > us.pct THEN 'CA ahead' ELSE 'CA behind' END AS verdict
+FROM g ca
+JOIN g us ON us.name = ca.name AND us.region = 'US'
+WHERE ca.region = 'CA'
+ORDER BY (ca.name = 'Total nonfarm') DESC, gap_pp DESC;
+
+-- Q14: California's share of U.S. jobs by sector, 2021 vs 2026
+WITH j AS (
+    SELECT s.region, s.name, e.month, e.jobs_k
+    FROM employment e
+    JOIN series s USING (series_id)
+    WHERE s.level IN ('supersector', 'total') AND e.month IN ('2021-09-01', '2026-09-01')
+)
+SELECT ca.name,
+       ROUND(100.0 * MAX(CASE WHEN ca.month = '2021-09-01' THEN ca.jobs_k / us.jobs_k END), 2) AS ca_share_2021_pct,
+       ROUND(100.0 * MAX(CASE WHEN ca.month = '2026-09-01' THEN ca.jobs_k / us.jobs_k END), 2) AS ca_share_2026_pct,
+       ROUND(100.0 * MAX(CASE WHEN ca.month = '2026-09-01' THEN ca.jobs_k / us.jobs_k END)
+           - 100.0 * MAX(CASE WHEN ca.month = '2021-09-01' THEN ca.jobs_k / us.jobs_k END), 2) AS change_pp
+FROM j ca
+JOIN j us ON us.name = ca.name AND us.month = ca.month AND us.region = 'US'
+WHERE ca.region = 'CA'
+GROUP BY ca.name
+ORDER BY ca_share_2026_pct DESC;
+
+-- Q15: Job momentum - is each sector speeding up or slowing down? (last 12 months vs the 12 before)
+WITH p AS (
+    SELECT s.region, s.name, e.month, e.jobs_k,
+           LAG(e.jobs_k, 12) OVER w AS year_ago,
+           LAG(e.jobs_k, 24) OVER w AS two_years_ago
+    FROM employment e
+    JOIN series s USING (series_id)
+    WHERE s.level IN ('supersector', 'total')
+    WINDOW w AS (PARTITION BY e.series_id ORDER BY e.month)
+)
+SELECT region, name,
+       ROUND(100.0 * (jobs_k - year_ago) / year_ago, 2)                AS last_12m_pct,
+       ROUND(100.0 * (year_ago - two_years_ago) / two_years_ago, 2)    AS prior_12m_pct,
+       ROUND(100.0 * (jobs_k - year_ago) / year_ago
+           - 100.0 * (year_ago - two_years_ago) / two_years_ago, 2)    AS momentum_pp,
+       CASE WHEN (jobs_k - year_ago) / year_ago > (year_ago - two_years_ago) / two_years_ago
+            THEN 'speeding up' ELSE 'slowing down' END                 AS direction
+FROM p
+WHERE month = '2026-09-01'
+ORDER BY region, momentum_pp DESC;
+
+-- Q16: Stock market sectors - total return over 5 years, 1 year, 6 and 3 months (to Oct 2026)
+WITH p AS (
+    SELECT ticker, month, adj_close,
+           LAG(adj_close, 3)  OVER w AS p3,
+           LAG(adj_close, 6)  OVER w AS p6,
+           LAG(adj_close, 12) OVER w AS p12,
+           LAG(adj_close, 60) OVER w AS p60
+    FROM stock_prices
+    WINDOW w AS (PARTITION BY ticker ORDER BY month)
+)
+SELECT k.sector, p.ticker,
+       ROUND(100.0 * (adj_close / p60 - 1), 1) AS return_5y_pct,
+       ROUND(100.0 * (adj_close / p12 - 1), 1) AS return_1y_pct,
+       ROUND(100.0 * (adj_close / p6 - 1), 1)  AS return_6m_pct,
+       ROUND(100.0 * (adj_close / p3 - 1), 1)  AS return_3m_pct,
+       RANK() OVER (ORDER BY adj_close / p60 DESC) AS rank_5y,
+       RANK() OVER (ORDER BY adj_close / p12 DESC) AS rank_1y
+FROM p
+JOIN stock_sectors k USING (ticker)
+WHERE p.month = '2026-10-01'
+ORDER BY return_5y_pct DESC;
+
+-- Q17: Stock momentum - last 12 months vs the 12 before, and vs the S&P 500
+WITH p AS (
+    SELECT ticker, month, adj_close,
+           LAG(adj_close, 12) OVER w AS p12,
+           LAG(adj_close, 24) OVER w AS p24
+    FROM stock_prices
+    WINDOW w AS (PARTITION BY ticker ORDER BY month)
+), r AS (
+    SELECT ticker,
+           100.0 * (adj_close / p12 - 1) AS last_12m,
+           100.0 * (p12 / p24 - 1)       AS prior_12m
+    FROM p WHERE month = '2026-10-01'
+)
+SELECT k.sector,
+       ROUND(r.last_12m, 1)                AS last_12m_pct,
+       ROUND(r.prior_12m, 1)               AS prior_12m_pct,
+       ROUND(r.last_12m - r.prior_12m, 1)  AS momentum_pp,
+       ROUND(r.last_12m - (SELECT last_12m FROM r WHERE ticker = 'SPY'), 1) AS vs_sp500_pp,
+       CASE WHEN r.last_12m > r.prior_12m THEN 'accelerating' ELSE 'decelerating' END AS direction
+FROM r
+JOIN stock_sectors k USING (ticker)
+ORDER BY momentum_pp DESC;
+
+-- Q18: Stock sectors year by year (October to October total return, %)
+WITH y AS (
+    SELECT ticker, month,
+           100.0 * (adj_close / LAG(adj_close, 12) OVER (PARTITION BY ticker ORDER BY month) - 1) AS ret
+    FROM stock_prices
+)
+SELECT k.sector,
+       ROUND(MAX(CASE WHEN month = '2022-10-01' THEN ret END), 1) AS y2022,
+       ROUND(MAX(CASE WHEN month = '2023-10-01' THEN ret END), 1) AS y2023,
+       ROUND(MAX(CASE WHEN month = '2024-10-01' THEN ret END), 1) AS y2024,
+       ROUND(MAX(CASE WHEN month = '2025-10-01' THEN ret END), 1) AS y2025,
+       ROUND(MAX(CASE WHEN month = '2026-10-01' THEN ret END), 1) AS y2026,
+       SUM(CASE WHEN month IN ('2022-10-01','2023-10-01','2024-10-01','2025-10-01','2026-10-01') AND ret > 0
+                THEN 1 ELSE 0 END) AS years_up_of_5
+FROM y
+JOIN stock_sectors k USING (ticker)
+GROUP BY k.sector
+ORDER BY y2026 DESC;
+
+-- Q19: Worst fall from a previous high in the five years (maximum drawdown, month-end prices)
+WITH run AS (
+    SELECT ticker, month, adj_close,
+           MAX(adj_close) OVER (PARTITION BY ticker ORDER BY month
+                                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS peak_so_far
+    FROM stock_prices
+    WHERE month >= '2021-10-01'
+), dd AS (
+    SELECT ticker, month, 100.0 * (adj_close / peak_so_far - 1) AS drawdown,
+           ROW_NUMBER() OVER (PARTITION BY ticker ORDER BY adj_close / peak_so_far) AS rn
+    FROM run
+)
+SELECT k.sector,
+       ROUND(dd.drawdown, 1)  AS max_drawdown_pct,
+       substr(dd.month, 1, 7) AS lowest_month
+FROM dd
+JOIN stock_sectors k USING (ticker)
+WHERE dd.rn = 1
+ORDER BY max_drawdown_pct;
+
+-- Q20: Do stock returns follow jobs? Sector fund return vs U.S. job growth in the closest jobs sector (Oct 2021 -> Oct 2026)
+WITH stock AS (
+    SELECT ticker,
+           100.0 * (MAX(CASE WHEN month = '2026-10-01' THEN adj_close END)
+                  / MAX(CASE WHEN month = '2021-10-01' THEN adj_close END) - 1) AS ret_5y,
+           100.0 * (MAX(CASE WHEN month = '2026-10-01' THEN adj_close END)
+                  / MAX(CASE WHEN month = '2025-10-01' THEN adj_close END) - 1) AS ret_1y
+    FROM stock_prices GROUP BY ticker
+), jobs AS (
+    SELECT s.name,
+           100.0 * (MAX(CASE WHEN e.month = '2026-10-01' THEN e.jobs_k END)
+                  / MAX(CASE WHEN e.month = '2021-10-01' THEN e.jobs_k END) - 1) AS jobs_5y,
+           100.0 * (MAX(CASE WHEN e.month = '2026-10-01' THEN e.jobs_k END)
+                  / MAX(CASE WHEN e.month = '2025-10-01' THEN e.jobs_k END) - 1) AS jobs_1y
+    FROM employment e JOIN series s USING (series_id)
+    WHERE s.region = 'US' AND s.level IN ('supersector', 'total')
+    GROUP BY s.name
+)
+SELECT k.sector              AS stock_sector,
+       k.jobs_sector         AS closest_jobs_sector,
+       ROUND(stock.ret_5y, 1) AS stock_return_5y_pct,
+       ROUND(jobs.jobs_5y, 1) AS us_jobs_5y_pct,
+       ROUND(stock.ret_1y, 1) AS stock_return_1y_pct,
+       ROUND(jobs.jobs_1y, 1) AS us_jobs_1y_pct,
+       CASE WHEN stock.ret_5y > 0 AND jobs.jobs_5y < 0 THEN 'stocks up, jobs down'
+            WHEN stock.ret_5y > 0 AND jobs.jobs_5y > 0 THEN 'both up'
+            ELSE 'other' END  AS pattern
+FROM stock_sectors k
+JOIN stock USING (ticker)
+JOIN jobs ON jobs.name = k.jobs_sector
+ORDER BY stock_return_5y_pct DESC;
+
+-- Q21: Last three months - U.S. payroll change by sector (Jul -> Oct 2026) vs the pace of the year before
+WITH p AS (
+    SELECT s.name, e.month, e.jobs_k,
+           LAG(e.jobs_k, 1)  OVER w AS m1,
+           LAG(e.jobs_k, 2)  OVER w AS m2,
+           LAG(e.jobs_k, 3)  OVER w AS m3,
+           LAG(e.jobs_k, 15) OVER w AS m15
+    FROM employment e
+    JOIN series s USING (series_id)
+    WHERE s.region = 'US' AND s.level IN ('supersector', 'total')
+    WINDOW w AS (PARTITION BY e.series_id ORDER BY e.month)
+)
+SELECT name,
+       ROUND(m2 - m3)        AS aug_k,
+       ROUND(m1 - m2)        AS sep_k,
+       ROUND(jobs_k - m1)    AS oct_k,
+       ROUND(jobs_k - m3)    AS last_3m_k,
+       ROUND((m3 - m15) / 4.0) AS typical_3m_k,
+       CASE WHEN jobs_k - m3 > (m3 - m15) / 4.0 THEN 'faster than before' ELSE 'slower than before' END AS pace
+FROM p
+WHERE month = '2026-10-01'
+ORDER BY (name = 'Total nonfarm') DESC, last_3m_k DESC;
+
+-- Q22: Last three months - announced layoffs by jobs sector (hand-collected from the Challenger reports)
+WITH m AS (
+    SELECT jobs_sector,
+           SUM(CASE WHEN month = '2026-08-01' THEN cuts END) AS aug,
+           SUM(CASE WHEN month = '2026-09-01' THEN cuts END) AS sep,
+           SUM(CASE WHEN month = '2026-10-01' THEN cuts END) AS oct,
+           SUM(cuts) AS last_3m
+    FROM layoffs_monthly WHERE industry <> 'TOTAL' GROUP BY jobs_sector
+), y AS (
+    SELECT jobs_sector, SUM(ytd_2026) AS ytd_2026, SUM(ytd_2025) AS ytd_2025
+    FROM layoffs_ytd WHERE industry <> 'TOTAL' GROUP BY jobs_sector
+)
+SELECT m.jobs_sector, m.aug, m.sep, m.oct, m.last_3m,
+       ROUND(100.0 * m.last_3m / SUM(m.last_3m) OVER (), 1)        AS share_of_3m_pct,
+       y.ytd_2026, y.ytd_2025,
+       ROUND(100.0 * (y.ytd_2026 - y.ytd_2025) / y.ytd_2025, 0)    AS ytd_change_pct
+FROM m JOIN y USING (jobs_sector)
+ORDER BY m.last_3m DESC;
+
+-- Q23: Job openings and hiring by sector (BLS JOLTS, Sep 2026 vs Sep 2025; hand-collected, thousands)
+WITH a AS (SELECT * FROM jolts WHERE month = '2026-09-01' AND level IN ('supersector', 'total')),
+     b AS (SELECT * FROM jolts WHERE month = '2025-09-01')
+SELECT a.jobs_sector,
+       a.openings_k                                                     AS openings_sep_2026,
+       ROUND(100.0 * (a.openings_k - b.openings_k) / b.openings_k, 1)   AS openings_change_12m_pct,
+       a.hires_k                                                        AS hires_sep_2026,
+       a.hires_k - a.separations_k                                      AS hires_minus_separations,
+       ROUND(1.0 * a.openings_k / a.hires_k, 2)                         AS openings_per_hire,
+       RANK() OVER (ORDER BY 1.0 * a.openings_k / a.hires_k DESC)       AS hardest_to_fill_rank
+FROM a JOIN b USING (industry)
+ORDER BY (a.level = 'total') DESC, openings_change_12m_pct DESC;
+
+-- Q24: Sector scorecard - jobs, openings, layoffs and stocks side by side (U.S.)
+WITH jobs AS (
+    SELECT s.name,
+           100.0 * (MAX(CASE WHEN e.month = '2026-10-01' THEN e.jobs_k END)
+                  / MAX(CASE WHEN e.month = '2025-10-01' THEN e.jobs_k END) - 1) AS jobs_12m_pct,
+           MAX(CASE WHEN e.month = '2026-10-01' THEN e.jobs_k END)
+         - MAX(CASE WHEN e.month = '2026-07-01' THEN e.jobs_k END)               AS jobs_3m_k
+    FROM employment e JOIN series s USING (series_id)
+    WHERE s.region = 'US' AND s.level = 'supersector'
+    GROUP BY s.name
+), openings AS (
+    SELECT a.jobs_sector AS name,
+           100.0 * (a.openings_k - b.openings_k) / b.openings_k AS openings_12m_pct
+    FROM jolts a JOIN jolts b USING (industry)
+    WHERE a.month = '2026-09-01' AND b.month = '2025-09-01' AND a.level = 'supersector'
+), layoffs AS (
+    SELECT jobs_sector AS name, SUM(cuts) AS layoffs_3m
+    FROM layoffs_monthly WHERE industry <> 'TOTAL' GROUP BY jobs_sector
+), stocks AS (
+    SELECT k.jobs_sector AS name,
+           AVG(100.0 * (n.adj_close / o.adj_close - 1)) AS stock_1y_pct,
+           GROUP_CONCAT(k.sector, ' + ')                 AS stock_sectors
+    FROM stock_sectors k
+    JOIN stock_prices n ON n.ticker = k.ticker AND n.month = '2026-10-01'
+    JOIN stock_prices o ON o.ticker = k.ticker AND o.month = '2025-10-01'
+    WHERE k.ticker <> 'SPY'
+    GROUP BY k.jobs_sector
+)
+SELECT j.name                              AS sector,
+       ROUND(j.jobs_12m_pct, 1)            AS jobs_12m_pct,
+       ROUND(j.jobs_3m_k)                  AS jobs_last_3m_k,
+       ROUND(o.openings_12m_pct, 1)        AS openings_12m_pct,
+       l.layoffs_3m                        AS announced_layoffs_3m,
+       ROUND(st.stock_1y_pct, 1)           AS stock_1y_pct,
+       st.stock_sectors,
+       (j.jobs_12m_pct > 0) + (j.jobs_3m_k > 0) + (o.openings_12m_pct > 0) AS hiring_signals_of_3
+FROM jobs j
+LEFT JOIN openings o USING (name)
+LEFT JOIN layoffs l USING (name)
+LEFT JOIN stocks st USING (name)
+ORDER BY hiring_signals_of_3 DESC, j.jobs_12m_pct DESC;

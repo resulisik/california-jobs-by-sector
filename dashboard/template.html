@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sector Pulse: jobs and stocks by sector, California and the U.S. (2021–2026)</title>
+<title>Sector Pulse: jobs, stocks, careers and live postings by sector (2021–2026)</title>
 <style>
   :root {
     color-scheme: light;
@@ -108,6 +108,9 @@
     .grid2, .findings { grid-template-columns: 1fr; }
     header h1 { font-size: 24px; }
   }
+  #pjobs th, #pjobs td { text-align: left; }
+  #pjobs td:nth-child(n+3), #pjobs th:nth-child(n+3) { white-space: nowrap; }
+  #pjobs td:first-child { min-width: 260px; }
 </style>
 </head>
 <body>
@@ -115,7 +118,8 @@
   <header>
     <h1>Sector Pulse: where the jobs are and where the money went</h1>
     <p>Five years of payroll jobs, job postings and stock-market returns by sector, for California and the whole United States,
-       plus a hand-collected look at the last three months and at which occupations and college majors the numbers favor. Which industries are hiring, which are shrinking, which ones investors rewarded,
+       plus a hand-collected look at the last three months, at which occupations and college majors the numbers favor,
+       and at a one-day snapshot of about 39,000 live job postings. Which industries are hiring, which are shrinking, which ones investors rewarded,
        and what that means for someone looking for an entry-level analyst role.</p>
     <div class="byline">Resul Isik · Data Analyst portfolio · <span id="meta"></span></div>
   </header>
@@ -283,6 +287,49 @@
     <div class="scroll tall"><table id="majtable"></table></div>
   </section>
 
+  <h3 class="part">Part 6 · Live job postings (snapshot)</h3>
+  <section class="card">
+    <h2>What employers are hiring for right now</h2>
+    <p class="sub" id="pf-sub"></p>
+    <div class="controls" id="pchips" role="group" aria-label="Where"></div>
+    <div class="chart" id="pfam"></div>
+    <p class="foot" id="pf-foot"></p>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>The most common job titles by sector</h2>
+      <p class="sub">U.S. postings, seniority words removed</p>
+      <div class="controls" id="tchips" role="group" aria-label="Sector"></div>
+      <div class="scroll"><table id="ptitles"></table></div>
+    </section>
+    <section class="card">
+      <h2>Engineering postings by kind of engineer</h2>
+      <p class="sub">U.S. postings with "engineer" or "developer" in the title</p>
+      <div class="chart" id="peng"></div>
+    </section>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Skills named in data &amp; analytics postings</h2>
+      <p class="sub" id="psk-sub"></p>
+      <div class="chart" id="pskills"></div>
+    </section>
+    <section class="card">
+      <h2>Who is posting in Los Angeles</h2>
+      <p class="sub">Employers with the most postings in the Los Angeles area (incl. Orange County)</p>
+      <div class="scroll"><table id="pla"></table></div>
+      <p class="foot" id="ppay"></p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Analyst roles open now: Los Angeles, California and remote U.S.</h2>
+    <p class="sub">Entry-level, internship or no level stated, newest first. Links go to the employer's own posting.</p>
+    <div class="scroll tall"><table id="pjobs"></table></div>
+  </section>
+
   <h3 class="part">Reference tables</h3>
   <section class="card">
     <h2>Industry spotlight</h2>
@@ -299,7 +346,9 @@
     <p><b>Data.</b> Payroll jobs: U.S. Bureau of Labor Statistics, Current Employment Statistics (national, state and metro),
       via <a href="https://fred.stlouisfed.org/">FRED</a>. Stock sectors: month-end adjusted prices of the SPDR Select Sector funds and SPY, from Yahoo Finance.
       Last three months: BLS JOLTS and the Challenger, Gray &amp; Christmas job-cut reports, typed in by hand and checked against the published totals.
-      Careers and majors: BLS Employment Projections 2025–35 and the Federal Reserve Bank of New York's outcomes by college major. Job postings: <a href="https://github.com/hiring-lab/job_postings_tracker">Indeed Hiring Lab job postings index</a>
+      Careers and majors: BLS Employment Projections 2025–35 and the Federal Reserve Bank of New York's outcomes by college major.
+      Live postings: public job APIs of Greenhouse, Ashby, Lever and SmartRecruiters (the systems behind employers' careers pages) and the remote job boards
+      <a href="https://remotive.com">Remotive</a>, <a href="https://remoteok.com">Remote OK</a> and <a href="https://jobicy.com">Jobicy</a>, collected on one day. Job postings: <a href="https://github.com/hiring-lab/job_postings_tracker">Indeed Hiring Lab job postings index</a>
       (seasonally adjusted, 7-day average, Feb 1 2020 = 100). An index measures the trend in postings, not the number of open jobs.</p>
     <p><b>Method.</b> Python (pandas) cleans the files and loads them into SQLite; the analysis is written in SQL (CTEs, window functions).
       Code, queries and results: <a href="https://github.com/resulisik/california-jobs-by-sector">github.com/resulisik/california-jobs-by-sector</a>.</p>
@@ -364,7 +413,7 @@ function barChart(host, rows, opts = {}) {
     const y = i * rowH + (rowH - barH) / 2, xv = scale(r.value), pos = r.value >= 0;
     const lab = el("text", { x: labelW, y: i * rowH + rowH / 2 + 4, "text-anchor": "end", "font-size": narrow ? 11.5 : 12.5,
       fill: cssVar(r.strong ? "--text-primary" : "--text-secondary"), "font-weight": r.strong ? 600 : 400 }, svg);
-    lab.textContent = r.label;
+    lab.textContent = narrow && r.short ? r.short : r.label;
     const len = Math.abs(xv - zero), rr = Math.min(4, len / 2, barH / 2);
     const d = pos
       ? `M${zero},${y} H${xv - rr} Q${xv},${y} ${xv},${y + rr} V${y + barH - rr} Q${xv},${y + barH} ${xv - rr},${y + barH} H${zero} Z`
@@ -560,6 +609,10 @@ const da = D.occupations.find(o => o.name === "Data & Analytics");
 const S = n => D.short[n] || n;
 const majBy = Object.fromEntries(D.majors.map(m => [m.major, m]));
 const occBy = Object.fromEntries(D.occ_top.map(o => [o.title, o]));
+const PK = D.post_kpi;
+const pfBy = Object.fromEntries(D.post_families.map(f => [f.family, f]));
+const pf = name => 100 * pfBy[name].junior / pfBy[name].us;
+const skill = k => (D.post_skills.find(s => s.skill === k) || { share_pct: 0 }).share_pct.toFixed(0);
 const cu = Object.fromEntries(D.ca_us.map(r => [r.name, r]));
 const caBehind = D.ca_us.filter(r => r.name !== "Total nonfarm" && r.gap_pp < 0).length;
 const l3 = Object.fromEntries(D.last3.map(r => [r.name, r]));
@@ -576,7 +629,9 @@ document.getElementById("findings").innerHTML = [
   ["7. Layoff announcements are low, except in tech.", `Employers announced ${Math.round(cuts3 / 1000)}K job cuts in Aug – Oct 2026. Year to date they are ${fmtPct(100 * (ytdAll.ytd_2026 / ytdAll.ytd_2025 - 1), 0)} on 2025, but technology is ${fmtPct(100 * (ytdTech.ytd_2026 / ytdTech.ytd_2025 - 1), 0)} and accounts for ${(100 * ytdTech.ytd_2026 / ytdAll.ytd_2026).toFixed(0)}% of all cuts this year.`],
   ["8. For a four-year degree, the major matters as much as the degree.", `The share of recent graduates in jobs that do not need a degree runs from ${majBy["Nursing"].underemployment_pct}% in nursing to ${majBy["Criminal Justice"].underemployment_pct}% in criminal justice. Only ${D.major_tests.find(r => r.tests_passed === 3).majors} of 73 majors beat the average graduate on unemployment, underemployment and early pay together. Computer science pays $${(majBy["Computer Science"].wage_early / 1000).toFixed(0)}K early but has ${majBy["Computer Science"].unemployment_pct.toFixed(1)}% unemployment against ${majBy["Overall"].unemployment_pct}% overall.`],
   ["9. The openings are in nursing, accounting and software.", `BLS projects ${occBy["Registered nurses"].openings_per_year_k}K openings a year for registered nurses, ${occBy["Accountants and auditors"].openings_per_year_k}K for accountants and ${occBy["Software developers"].openings_per_year_k}K for software developers. Among bachelor's-level jobs, data scientists grow fastest (${fmtPct(D.occ_growth[0].growth_2025_35_pct)} by 2035). Film and media is small: the largest occupation there has about ${occBy["Art directors"].openings_per_year_k}K openings a year.`],
-  ["10. What I take from it.", `For an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California postings sit at ${Math.round(K.ca_postings)} vs ${Math.round(K.us_postings)} nationally (Feb 2020 = 100), and U.S. Data & Analytics postings are ${fmtPct(da.pct)} on a year ago, so the search should not stop at state lines: remote roles matter.`],
+  ["10. In live postings, juniors are scarce.", `Of ${PK.postings.toLocaleString()} postings collected on ${PK.snapshot} from ${PK.ats_companies} employers' careers pages and 3 remote job boards, ${(100 * PK.us_junior / PK.us).toFixed(1)}% of U.S. postings are entry-level or internships. In software engineering it is ${pf("Software engineering & IT").toFixed(1)}%, in data &amp; analytics ${pf("Data & analytics").toFixed(1)}%. Data postings name SQL (${skill("sql")}%) and Python (${skill("python")}%) far more than Excel (${skill("excel")}%) or Power BI (${skill("power_bi")}%).`],
+  ["11. Los Angeles postings are an aerospace story.", `${D.post_la[0].company} and ${D.post_la[1].company} alone account for ${(100 * (D.post_la[0].la_postings + D.post_la[1].la_postings) / PK.la).toFixed(0)}% of the ${PK.la.toLocaleString()} Los Angeles-area postings in the snapshot. The sample leans to companies that use these hiring systems; hospitals, studios and banks mostly do not.`],
+  ["12. What I take from it.", `For an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California postings sit at ${Math.round(K.ca_postings)} vs ${Math.round(K.us_postings)} nationally (Feb 2020 = 100), and U.S. Data & Analytics postings are ${fmtPct(da.pct)} on a year ago, so the search should not stop at state lines: remote roles matter.`],
 ].map(([h, t]) => `<li><b>${h}</b>${t}</li>`).join("");
 
 const cls = v => (v > 0 ? "up" : v < 0 ? "down" : "");
@@ -848,7 +903,73 @@ document.getElementById("majtable").innerHTML =
   `<thead><tr><th>Major (lowest underemployment first)</th><th>Family</th><th>Underemployment</th><th>Unemployment</th><th>Early pay</th><th>Mid-career pay</th><th>Graduate degree</th></tr></thead><tbody>` +
   D.majors.map(m => `<tr class="${m.major === "Overall" ? "total" : ""}"><td>${m.major === "Overall" ? "All graduates" : m.major}</td><td>${m.major_group}</td><td>${m.underemployment_pct}%</td><td>${m.unemployment_pct}%</td><td>${money(m.wage_early)}</td><td>${money(m.wage_mid)}</td><td>${m.grad_share_pct}%</td></tr>`).join("") + "</tbody>";
 
-function drawAll() { drawBars(); drawLines(); drawCaUs(); drawPostings(); drawMetros(); drawOcc(); drawStocks(); drawStockLines(); drawJvs(); drawLast3(); drawLayoffs(); drawOccTop(); drawOccGrow(); drawMajors(); }
+
+const MEAS = [["us", "All U.S."], ["la", "Los Angeles area"], ["ca", "California"], ["remote_us", "Remote (U.S.)"], ["junior", "Entry level & internships (U.S.)"]];
+let pMeas = "us";
+const pchips = document.getElementById("pchips");
+MEAS.forEach(([k, label]) => {
+  const b = document.createElement("button");
+  b.textContent = label; b.setAttribute("aria-pressed", k === pMeas);
+  b.addEventListener("click", () => { pMeas = k; pchips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawPFam(); });
+  pchips.appendChild(b);
+});
+function drawPFam() {
+  const label = MEAS.find(m => m[0] === pMeas)[1];
+  const tot = D.post_families.reduce((a, f) => a + f[pMeas], 0);
+  document.getElementById("pf-sub").textContent =
+    `${tot.toLocaleString()} postings · ${label} · from the careers pages of ${PK.ats_companies} employers plus 3 remote job boards, collected on ${PK.snapshot}.`;
+  barChart(document.getElementById("pfam"), [...D.post_families].sort((a, b) => b[pMeas] - a[pMeas]).map(f => ({
+    label: f.family, short: f.family.split(/[,&]/)[0].trim(), value: f[pMeas],
+    text: pchips.clientWidth < 560 ? (100 * f[pMeas] / tot).toFixed(1) + "%" : f[pMeas].toLocaleString() + "  (" + (100 * f[pMeas] / tot).toFixed(1) + "%)",
+    strong: f.family === "Data & analytics",
+    tip: `<b>${f.family}</b><div class="row"><span>U.S.</span><span>${f.us.toLocaleString()}</span></div>
+          <div class="row"><span>Los Angeles area</span><span>${f.la.toLocaleString()}</span></div>
+          <div class="row"><span>Remote (U.S.)</span><span>${f.remote_us.toLocaleString()}</span></div>
+          <div class="row"><span>Entry level or internship</span><span>${(100 * f.junior / Math.max(1, f.us)).toFixed(1)}% of U.S.</span></div>
+          <div class="row"><span>Senior or management</span><span>${(100 * f.senior / Math.max(1, f.us)).toFixed(1)}% of U.S.</span></div>` })),
+    { labelW: 250, rowH: 28, tick: t => t.toLocaleString(), aria: "Postings by job family" });
+  document.getElementById("pf-foot").innerHTML = "Platforms: " + D.post_platforms.map(p => `${p.platform} ${p.postings.toLocaleString()}`).join(" · ") +
+    ". Job family, seniority and location come from keyword rules on the title and location text.";
+}
+const PSEC = [...new Set(D.post_titles.map(r => r.sector_name))].filter(s => !s.startsWith("Various"));
+let tPick = "Health care & life sciences";
+const tchips = document.getElementById("tchips");
+PSEC.forEach(s => {
+  const b = document.createElement("button");
+  b.textContent = s.split(/[,&]/)[0].trim(); b.title = s; b.setAttribute("aria-pressed", s === tPick);
+  b.addEventListener("click", () => { tPick = s; tchips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawPTitles(); });
+  tchips.appendChild(b);
+});
+function drawPTitles() {
+  document.getElementById("ptitles").innerHTML = `<thead><tr><th>${tPick}</th><th>U.S. postings</th></tr></thead><tbody>` +
+    D.post_titles.filter(r => r.sector_name === tPick).map(r => `<tr><td>${r.rank}. ${r.job_title}</td><td>${r.us_postings.toLocaleString()}</td></tr>`).join("") + "</tbody>";
+}
+function drawPEng() {
+  barChart(document.getElementById("peng"), D.post_eng.map(e => ({ label: e.eng_type, short: e.eng_type.split(/[,&/]/)[0].trim(), value: e.us_postings, text: e.us_postings.toLocaleString(),
+    tip: `<b>${e.eng_type}</b><div class="row"><span>U.S. postings</span><span>${e.us_postings.toLocaleString()}</span></div>
+          <div class="row"><span>Entry level or internship</span><span>${e.entry_or_intern_pct}%</span></div>
+          <div class="row"><span>Top hiring sector</span><span>${e.top_sector}</span></div>` })),
+    { labelW: 230, rowH: 24, tick: t => t.toLocaleString(), aria: "Engineering postings by type" });
+}
+const SKN = { sql: "SQL", python: "Python", statistics: "Statistics", machine_learning: "Machine learning", ab_testing: "A/B testing", dbt: "dbt",
+  snowflake: "Snowflake", tableau: "Tableau", r: "R", spark: "Spark", looker: "Looker", airflow: "Airflow", excel: "Excel", aws: "AWS", bigquery: "BigQuery", power_bi: "Power BI" };
+function drawPSkills() {
+  const n = Math.round(D.post_skills[0].postings / (D.post_skills[0].share_pct / 100));
+  document.getElementById("psk-sub").textContent = `Share of ${n.toLocaleString()} U.S. data & analytics postings whose description names the skill`;
+  barChart(document.getElementById("pskills"), D.post_skills.map(s => ({ label: SKN[s.skill] || s.skill, value: s.share_pct, text: s.share_pct.toFixed(0) + "%",
+    strong: ["sql", "python", "tableau", "power_bi", "excel"].includes(s.skill),
+    tip: `<b>${SKN[s.skill] || s.skill}</b><div class="row"><span>Postings naming it</span><span>${s.postings.toLocaleString()}</span></div>` })),
+    { labelW: 140, rowH: 24, tick: t => t + "%", aria: "Skills in data postings" });
+}
+document.getElementById("pla").innerHTML = `<thead><tr><th>Employer</th><th>Sector</th><th>Postings</th><th>Entry/intern</th><th>Data roles</th></tr></thead><tbody>` +
+  D.post_la.map(r => `<tr><td>${r.company}</td><td>${r.sector_name.split(/[,&]/)[0]}</td><td>${r.la_postings.toLocaleString()}</td><td>${r.entry_or_intern}</td><td>${r.data_roles}</td></tr>`).join("") + "</tbody>";
+const payMid = D.post_pay.find(p => p.seniority === "Mid or not stated"), paySen = D.post_pay.find(p => p.seniority === "Senior & management");
+document.getElementById("ppay").textContent = `Advertised pay in U.S. data & analytics postings (midpoint of the range): median ${money(payMid.median_midpoint)} with no level stated (${payMid.postings_with_pay} postings) and ${money(paySen.median_midpoint)} for senior roles (${paySen.postings_with_pay}). Few entry-level postings state pay.`;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+document.getElementById("pjobs").innerHTML = `<thead><tr><th>Role</th><th>Employer</th><th>Where</th><th>Level</th><th>Posted</th><th>Advertised pay</th></tr></thead><tbody>` +
+  D.post_jobs.map(j => `<tr><td><a href="${esc(j.url)}">${esc(j.title)}</a></td><td>${esc(j.company)}</td><td>${esc(j.loc_bucket)}</td><td>${esc(j.seniority)}</td><td>${esc(j.posted_date)}</td><td>${esc(j.advertised_pay)}</td></tr>`).join("") + "</tbody>";
+
+function drawAll() { drawBars(); drawLines(); drawCaUs(); drawPostings(); drawMetros(); drawOcc(); drawStocks(); drawStockLines(); drawJvs(); drawLast3(); drawLayoffs(); drawOccTop(); drawOccGrow(); drawMajors(); drawPFam(); drawPTitles(); drawPEng(); drawPSkills(); }
 drawAll();
 let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);

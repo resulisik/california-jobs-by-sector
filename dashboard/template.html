@@ -357,6 +357,9 @@
 <div id="tip" role="tooltip"></div>
 
 <script>
+// Format every number in U.S. English (1,234.5) whatever the viewer's browser language is.
+const toLocaleNumber = Number.prototype.toLocaleString;
+Number.prototype.toLocaleString = function (locale, options) { return toLocaleNumber.call(this, locale || "en-US", options); };
 const D = /*__DATA__*/null;
 const NS = "http://www.w3.org/2000/svg";
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();

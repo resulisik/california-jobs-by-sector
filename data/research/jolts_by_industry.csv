@@ -1,0 +1,18 @@
+industry,jobs_sector,level,openings_sep2025,openings_aug2026,openings_sep2026,hires_sep2025,hires_aug2026,hires_sep2026,separations_sep2025,separations_aug2026,separations_sep2026
+Total,Total nonfarm,total,7169,7190,7523,5244,5271,5402,5161,5175,5319
+Mining and logging,Mining & logging,supersector,22,26,26,18,24,20,19,22,21
+Construction,Construction,supersector,206,262,298,337,307,356,330,282,359
+Manufacturing,Manufacturing,supersector,389,530,584,300,347,313,308,324,318
+"Trade, transportation, and utilities","Trade, transportation & utilities",supersector,1054,1238,1283,955,1133,1163,934,1132,1078
+Retail trade,"Trade, transportation & utilities",detail,588,699,698,550,664,704,495,669,639
+"Transportation, warehousing, and utilities","Trade, transportation & utilities",detail,305,335,360,254,272,290,286,276,278
+Information,Information,supersector,119,91,116,71,70,94,65,92,93
+Financial activities,Financial activities,supersector,390,383,364,212,168,156,216,171,172
+Finance and insurance,Financial activities,detail,257,331,289,152,112,104,151,125,112
+Professional and business services,Professional & business services,supersector,1267,1204,1310,1003,957,927,1048,968,955
+Private education and health services,Private education & health services,supersector,1548,1634,1614,896,805,798,834,807,784
+Health care and social assistance,Private education & health services,detail,1417,1514,1479,811,704,705,738,709,682
+Leisure and hospitality,Leisure & hospitality,supersector,1152,797,779,929,878,1041,820,840,1013
+Accommodation and food services,Leisure & hospitality,detail,989,676,659,766,721,879,687,688,883
+Other services,Other services,supersector,258,244,270,179,236,211,170,233,203
+Government,Government,supersector,764,782,880,346,348,324,418,304,322

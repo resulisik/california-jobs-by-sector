@@ -1,0 +1,6 @@
+dataset,report,published,url,collected_on,notes
+challenger_job_cuts,Challenger Report August 2026,2026-09,https://www.challengergray.com/wp-content/uploads/2026/09/Challenger-Report-August-2026.pdf,2026-11-16,Industry table; announced job cuts by U.S.-based employers
+challenger_job_cuts,Challenger Report September 2026,2026-10-01,https://www.challengergray.com/wp-content/uploads/2026/10/Challenger-Report-September-2026.pdf,2026-11-16,Industry table; used to cross-check August values
+challenger_job_cuts,Challenger Report October 2026,2026-11-05,https://www.challengergray.com/wp-content/uploads/2026/11/Challenger-Report-October-2026.pdf,2026-11-16,Industry table and reasons table; year-to-date columns
+jolts_by_industry,BLS JOLTS September 2026 Table A,2026-11,https://www.bls.gov/news.release/jolts.a.htm,2026-11-16,Levels in thousands; seasonally adjusted; September 2026 is preliminary
+employment,BLS Employment Situation October 2026,2026-11-06,https://www.bls.gov/news.release/empsit.nr0.htm,2026-11-16,Used to cross-check monthly payroll changes computed from FRED series

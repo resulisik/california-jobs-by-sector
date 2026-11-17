@@ -1,0 +1,24 @@
+industry,jobs_sector,aug_2026,sep_2026,oct_2026,ytd_2026,ytd_2025
+Aerospace/Defense,Manufacturing,149,501,51,6518,3278
+Automotive,Manufacturing,2297,245,1651,21074,26149
+Chemical,Manufacturing,94,80,543,5835,2800
+Construction,Construction,315,1038,931,4837,7032
+Consumer Products,Manufacturing,10057,2078,3672,34324,41033
+Electronics,Manufacturing,414,63,383,5987,7112
+Energy,Mining & logging,93,309,31,2690,15161
+Entertainment/Leisure,Leisure & hospitality,865,1572,2191,14910,22132
+Financial,Financial activities,4286,850,778,24540,48968
+Food,Manufacturing,7982,7326,9677,39370,27457
+Government,Government,1477,781,39,23049,307638
+Health Care/Products,Private education & health services,1211,1780,320,37737,44256
+Industrial Goods,Manufacturing,808,534,551,13508,16656
+Insurance,Financial activities,77,792,433,8210,5324
+Media,Information,480,266,385,5559,16680
+Non-Profit,Other services,3844,4742,1310,17841,27651
+Pharmaceutical,Manufacturing,1029,777,797,16269,24689
+Retail,"Trade, transportation & utilities",423,1065,3692,18126,88664
+Services,Professional & business services,2836,3306,5458,35542,63580
+Technology,Information,6103,10799,5576,171501,141159
+Transportation,"Trade, transportation & utilities",531,2151,408,44838,15544
+Warehousing,"Trade, transportation & utilities",2261,1292,670,20551,90418
+TOTAL,Total nonfarm,52881,43281,43994,617189,1099500

@@ -1,8 +1,13 @@
 """Clean the raw files and load them into one SQLite database (data/ca_jobs.db).
 
 Tables
-  series          one row per BLS series (id, name, level, seasonally_adjusted)
+  series          one row per BLS series (id, name, level, seasonally_adjusted, region CA/US)
   employment      long format: series_id, month, jobs_k (thousands of jobs)
+  stock_prices    month-end adjusted close for 11 sector funds and the S&P 500
+  stock_sectors   ticker -> sector name and the closest jobs sector
+  layoffs_*       announced job cuts by industry, last 3 months (hand-collected)
+  jolts           job openings, hires, separations by industry (hand-collected)
+  research_sources where every hand-collected number came from
   postings_state  Indeed job postings index for California and the U.S. (daily)
   postings_metro  Indeed index for California metro areas (daily)
   postings_occ    Indeed index by occupational category, U.S. (daily)
@@ -15,13 +20,13 @@ import sqlite3
 
 import pandas as pd
 
-from config import DB_PATH, PROCESSED, RAW_BLS, RAW_INDEED, SERIES
+from config import DB_PATH, PROCESSED, RAW_BLS, RAW_INDEED, RAW_STOCKS, RESEARCH, SERIES, STOCKS
 
 
 def build_series() -> pd.DataFrame:
     return pd.DataFrame(
-        [(sid, name, level, int(sa)) for sid, name, level, sa, _ in SERIES],
-        columns=["series_id", "name", "level", "seasonally_adjusted"],
+        [(sid, name, level, int(sa), region) for sid, name, level, sa, _, region in SERIES],
+        columns=["series_id", "name", "level", "seasonally_adjusted", "region"],
     )
 
 
@@ -69,13 +74,57 @@ def build_postings_occ() -> pd.DataFrame:
     )[["date", "occupation", "postings_index"]].reset_index(drop=True)
 
 
+def build_stock_prices() -> pd.DataFrame:
+    """Month-end adjusted close (dividends reinvested), one row per fund and month."""
+    wide = pd.read_csv(RAW_STOCKS / "sector_etf_monthly.csv")
+    long = wide.melt(id_vars="month", var_name="ticker", value_name="adj_close")
+    long["month"] = long["month"] + "-01"
+    return long.sort_values(["ticker", "month"]).reset_index(drop=True)
+
+
+def build_stock_sectors() -> pd.DataFrame:
+    return pd.DataFrame(STOCKS, columns=["ticker", "sector", "jobs_sector"])
+
+
+def build_layoffs():
+    """Challenger announced job cuts, hand-collected from the monthly reports."""
+    wide = pd.read_csv(RESEARCH / "challenger_job_cuts.csv")
+    ytd = wide[["industry", "jobs_sector", "ytd_2026", "ytd_2025"]]
+    monthly = wide.melt(id_vars=["industry", "jobs_sector"], value_vars=["aug_2026", "sep_2026", "oct_2026"],
+                        var_name="m", value_name="cuts")
+    monthly["month"] = monthly["m"].map({"aug_2026": "2026-08-01", "sep_2026": "2026-09-01", "oct_2026": "2026-10-01"})
+    return monthly[["industry", "jobs_sector", "month", "cuts"]], ytd
+
+
+def build_jolts() -> pd.DataFrame:
+    """BLS JOLTS Table A, hand-collected: openings, hires, separations (thousands)."""
+    wide = pd.read_csv(RESEARCH / "jolts_by_industry.csv")
+    frames = []
+    for suffix, month in (("sep2025", "2025-09-01"), ("aug2026", "2026-08-01"), ("sep2026", "2026-09-01")):
+        f = wide[["industry", "jobs_sector", "level"]].copy()
+        f["month"] = month
+        for measure in ("openings", "hires", "separations"):
+            f[f"{measure}_k"] = wide[f"{measure}_{suffix}"]
+        frames.append(f)
+    return pd.concat(frames).reset_index(drop=True)
+
+
 def main() -> None:
+    layoffs_monthly, layoffs_ytd = build_layoffs()
     tables = {
         "series": build_series(),
         "employment": build_employment(),
         "postings_state": build_postings_state(),
         "postings_metro": build_postings_metro(),
         "postings_occ": build_postings_occ(),
+        "stock_prices": build_stock_prices(),
+        "stock_sectors": build_stock_sectors(),
+        "layoffs_monthly": layoffs_monthly,
+        "layoffs_ytd": layoffs_ytd,
+        "layoff_totals": pd.read_csv(RESEARCH / "challenger_totals.csv"),
+        "layoff_reasons": pd.read_csv(RESEARCH / "challenger_reasons.csv"),
+        "jolts": build_jolts(),
+        "research_sources": pd.read_csv(RESEARCH / "sources.csv"),
     }
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     PROCESSED.mkdir(parents=True, exist_ok=True)
@@ -89,10 +138,13 @@ def main() -> None:
             CREATE INDEX IF NOT EXISTS idx_ps ON postings_state(state, date);
             CREATE INDEX IF NOT EXISTS idx_pm ON postings_metro(metro, date);
             CREATE INDEX IF NOT EXISTS idx_po ON postings_occ(occupation, date);
+            CREATE INDEX IF NOT EXISTS idx_sp ON stock_prices(ticker, month);
             """
         )
     tables["employment"].to_csv(PROCESSED / "employment.csv", index=False)
     tables["series"].to_csv(PROCESSED / "series.csv", index=False)
+    tables["stock_prices"].to_csv(PROCESSED / "stock_prices.csv", index=False)
+    tables["stock_sectors"].to_csv(PROCESSED / "stock_sectors.csv", index=False)
     # Postings are daily; the processed copies are monthly averages to stay small.
     for name, key in (("postings_state", "state"), ("postings_metro", "metro"), ("postings_occ", "occupation")):
         df = tables[name].copy()

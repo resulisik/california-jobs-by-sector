@@ -73,7 +73,7 @@ def chart_five_year(conn):
                MAX(CASE WHEN month='2026-09-01' THEN jobs_k END)
              - MAX(CASE WHEN month='2021-09-01' THEN jobs_k END) AS chg
         FROM employment e JOIN series s USING (series_id)
-        WHERE s.level='supersector' GROUP BY s.name ORDER BY chg DESC""")
+        WHERE s.region='CA' AND s.level='supersector' GROUP BY s.name ORDER BY chg DESC""")
     fig, ax = plt.subplots(figsize=(9, 5.2))
     hbar(ax, df["name"].tolist(), df["chg"].round(1).tolist(),
          lambda v: f"{v:+,.0f}K")
@@ -178,6 +178,108 @@ def chart_occupations(conn):
     finish(fig, "05_occupation_postings.png", "Indeed Hiring Lab occupational categories, U.S. (data through Nov 6, 2026)")
 
 
+def chart_ca_vs_us(conn):
+    df = q(conn, """
+        SELECT s.region, s.name,
+               100.0 * (MAX(CASE WHEN month='2026-09-01' THEN jobs_k END)
+                      / MAX(CASE WHEN month='2021-09-01' THEN jobs_k END) - 1) AS pct
+        FROM employment e JOIN series s USING (series_id)
+        WHERE s.level='supersector' GROUP BY s.region, s.name""")
+    w = df.pivot(index="name", columns="region", values="pct")
+    w = w.assign(gap=w["CA"] - w["US"]).sort_values("gap")
+    fig, ax = plt.subplots(figsize=(9, 6))
+    y = range(len(w))
+    ax.barh([i + 0.2 for i in y], w["CA"], height=0.36, color=BLUE, label="California")
+    ax.barh([i - 0.2 for i in y], w["US"], height=0.36, color=ORANGE, label="United States")
+    for i, (ca, us) in enumerate(zip(w["CA"], w["US"])):
+        for v, dy in ((ca, 0.2), (us, -0.2)):
+            ax.text(v + (0.4 if v >= 0 else -0.4), i + dy, f"{v:+.1f}%", va="center",
+                    ha="left" if v >= 0 else "right", fontsize=8.5, color=TEXT)
+    ax.set_yticks(list(y), w.index)
+    ax.axvline(0, color=TEXT2, linewidth=0.8)
+    ax.grid(axis="y", visible=False)
+    ax.set_axisbelow(True)
+    ax.set_xlim(w[["CA", "US"]].min().min() - 4, w[["CA", "US"]].max().max() + 5)
+    ax.legend(frameon=False, loc="lower right")
+    ax.set_title("California beats the U.S. in health care and little else", pad=26)
+    subtitle(ax, "Change in payroll jobs by sector, Sep 2021 to Sep 2026 (percent)")
+    finish(fig, "06_california_vs_us.png", "BLS Current Employment Statistics via FRED, seasonally adjusted")
+
+
+def stock_returns(conn):
+    return q(conn, """
+        SELECT k.sector, k.ticker, k.jobs_sector,
+               100.0 * (n.adj_close / a.adj_close - 1) AS r5,
+               100.0 * (n.adj_close / b.adj_close - 1) AS r1,
+               100.0 * (b.adj_close / c.adj_close - 1) AS r1_prior
+        FROM stock_sectors k
+        JOIN stock_prices n ON n.ticker = k.ticker AND n.month = '2026-10-01'
+        JOIN stock_prices a ON a.ticker = k.ticker AND a.month = '2021-10-01'
+        JOIN stock_prices b ON b.ticker = k.ticker AND b.month = '2025-10-01'
+        JOIN stock_prices c ON c.ticker = k.ticker AND c.month = '2024-10-01'
+        ORDER BY r5 DESC""")
+
+
+def chart_stock_returns(conn):
+    df = stock_returns(conn)
+    fig, axes = plt.subplots(1, 2, figsize=(11, 5.4))
+    for ax, col, title in ((axes[0], "r5", "5 years (Oct 2021 to Oct 2026)"), (axes[1], "r1", "Last 12 months")):
+        hbar(ax, df["sector"].tolist(), df[col].round(1).tolist(), lambda v: f"{v:+.0f}%")
+        ax.set_xlabel(title)
+    axes[1].set_yticklabels([])
+    axes[1].tick_params(axis="y", length=0)
+    for lbl in axes[0].get_yticklabels():
+        if lbl.get_text().startswith("S&P"):
+            lbl.set_fontweight("bold")
+    axes[0].set_title("Energy and technology led over five years; the last year looks different", pad=26)
+    subtitle(axes[0], "Total return of S&P 500 sector funds, dividends reinvested (percent)")
+    fig.subplots_adjust(wspace=0.08)
+    finish(fig, "07_stock_sector_returns.png", "Yahoo Finance month-end adjusted prices (SPDR sector funds, SPY). Not investment advice.")
+
+
+def chart_jobs_vs_stocks(conn):
+    df = stock_returns(conn)
+    jobs = q(conn, """
+        SELECT s.name AS jobs_sector,
+               100.0 * (MAX(CASE WHEN month='2026-10-01' THEN jobs_k END)
+                      / MAX(CASE WHEN month='2021-10-01' THEN jobs_k END) - 1) AS j5
+        FROM employment e JOIN series s USING (series_id)
+        WHERE s.region='US' AND s.level IN ('supersector','total') GROUP BY s.name""")
+    df = df.merge(jobs, on="jobs_sector")
+    fig, ax = plt.subplots(figsize=(9, 5.6))
+    ax.axhline(0, color=TEXT2, linewidth=0.8)
+    ax.axvline(0, color=TEXT2, linewidth=0.8)
+    offsets = {"Financials": (-8, 6, "right"), "Materials": (-8, -4, "right"), "Utilities": (8, 8, "left"),
+               "Consumer staples": (8, -10, "left"), "Communication services": (-6, -14, "left")}
+    for r in df.itertuples():
+        color = GREY if r.ticker == "SPY" else BLUE
+        ax.scatter([r.j5], [r.r5], s=64, color=color, edgecolor=SURFACE, linewidth=1.5, zorder=3)
+        dx, dy, ha = offsets.get(r.sector, (8, 0, "left"))
+        ax.annotate(r.sector.replace(" (all sectors)", ""), (r.j5, r.r5), xytext=(dx, dy),
+                    textcoords="offset points", va="center", ha=ha, fontsize=9, color=TEXT)
+    ax.set_xlim(df["j5"].min() - 3, df["j5"].max() + 5)
+    ax.set_xlabel("U.S. job growth in the closest jobs sector, 5 years (%)")
+    ax.set_ylabel("Stock sector total return, 5 years (%)")
+    ax.set_title("Stock returns do not follow jobs: tech stocks soared while tech jobs fell", pad=26)
+    subtitle(ax, "Each dot is a stock sector, Oct 2021 to Oct 2026. The sector match is approximate.")
+    finish(fig, "08_jobs_vs_stocks.png", "BLS via FRED; Yahoo Finance month-end adjusted prices")
+
+
+def chart_last_three_months(conn):
+    df = q(conn, """
+        SELECT s.name,
+               MAX(CASE WHEN month='2026-10-01' THEN jobs_k END)
+             - MAX(CASE WHEN month='2026-07-01' THEN jobs_k END) AS chg
+        FROM employment e JOIN series s USING (series_id)
+        WHERE s.region='US' AND s.level='supersector' GROUP BY s.name ORDER BY chg DESC""")
+    fig, ax = plt.subplots(figsize=(9, 5.2))
+    hbar(ax, df["name"].tolist(), df["chg"].round(0).tolist(), lambda v: f"{v:+,.0f}K")
+    ax.set_title("U.S. hiring in the last three months: health care and business services lead", pad=26)
+    subtitle(ax, "Change in U.S. payroll jobs by sector, July to October 2026 (thousands)")
+    ax.set_xlabel("Thousands of jobs")
+    finish(fig, "09_us_last_three_months.png", "BLS Employment Situation via FRED, seasonally adjusted")
+
+
 def main() -> None:
     CHARTS.mkdir(exist_ok=True)
     with sqlite3.connect(DB_PATH) as conn:
@@ -186,6 +288,10 @@ def main() -> None:
         chart_postings(conn)
         chart_metros(conn)
         chart_occupations(conn)
+        chart_ca_vs_us(conn)
+        chart_stock_returns(conn)
+        chart_jobs_vs_stocks(conn)
+        chart_last_three_months(conn)
 
 
 if __name__ == "__main__":

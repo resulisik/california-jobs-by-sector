@@ -91,6 +91,8 @@
   th { font-weight: 600; color: var(--text-secondary); font-size: 12.5px; }
   tr.total td { font-weight: 600; }
   td.up, td.down { white-space: nowrap; }
+  .tall { max-height: 440px; overflow: auto; }
+  .tall thead th { position: sticky; top: 0; background: var(--surface-1); }
   .up { color: var(--text-primary); } .up::before { content: "▲ "; color: var(--pos); font-size: 10px; }
   .down { color: var(--text-primary); } .down::before { content: "▼ "; color: var(--neg); font-size: 10px; }
   .findings { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 28px; margin: 4px 0 0; padding: 0; list-style: none; }
@@ -113,7 +115,7 @@
   <header>
     <h1>Sector Pulse: where the jobs are and where the money went</h1>
     <p>Five years of payroll jobs, job postings and stock-market returns by sector, for California and the whole United States,
-       plus a hand-collected look at the last three months. Which industries are hiring, which are shrinking, which ones investors rewarded,
+       plus a hand-collected look at the last three months and at which occupations and college majors the numbers favor. Which industries are hiring, which are shrinking, which ones investors rewarded,
        and what that means for someone looking for an entry-level analyst role.</p>
     <div class="byline">Resul Isik · Data Analyst portfolio · <span id="meta"></span></div>
   </header>
@@ -243,6 +245,44 @@
     <p class="foot" id="sources"></p>
   </section>
 
+  <h3 class="part">Part 5 · Careers and college majors</h3>
+  <section class="card">
+    <h2>Where the openings are: top five occupations in each field</h2>
+    <p class="sub" id="occ-sub"></p>
+    <div class="controls" id="fchips" role="group" aria-label="Field"></div>
+    <div class="chart" id="occtop"></div>
+    <div class="scroll"><table id="occtable"></table></div>
+    <p class="foot">Openings per year = new jobs plus replacements for people who retire or change occupation, 2025–35 average. BLS Employment Projections; U.S., all industries.</p>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Bachelor's-level jobs: growing and shrinking</h2>
+      <p class="sub">Projected change in employment, 2025–35, occupations with at least 50,000 jobs</p>
+      <div class="chart" id="occgrow"></div>
+    </section>
+    <section class="card">
+      <h2>Major families compared</h2>
+      <p class="sub">Recent graduates (aged 22–27), 2024. Simple averages across the majors in each family.</p>
+      <div class="scroll"><table id="mgroups"></table></div>
+      <p class="foot">Underemployed = working in a job that typically does not require a degree. The grouping into families is mine.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>College majors: early pay against the risk of a non-degree job</h2>
+    <p class="sub" id="maj-sub"></p>
+    <div class="controls" id="mchips" role="group" aria-label="Major family"></div>
+    <div class="chart" id="mscatter"></div>
+    <p class="foot">Each dot is one of 73 majors. Up and to the left is better: higher early-career pay and fewer graduates in jobs that do not need a degree.
+      These are averages for past graduates, not a forecast for any one person. Federal Reserve Bank of New York, figures for 2024.</p>
+  </section>
+
+  <section class="card">
+    <h2>All 73 majors (table view)</h2>
+    <div class="scroll tall"><table id="majtable"></table></div>
+  </section>
+
   <h3 class="part">Reference tables</h3>
   <section class="card">
     <h2>Industry spotlight</h2>
@@ -258,7 +298,8 @@
   <footer>
     <p><b>Data.</b> Payroll jobs: U.S. Bureau of Labor Statistics, Current Employment Statistics (national, state and metro),
       via <a href="https://fred.stlouisfed.org/">FRED</a>. Stock sectors: month-end adjusted prices of the SPDR Select Sector funds and SPY, from Yahoo Finance.
-      Last three months: BLS JOLTS and the Challenger, Gray &amp; Christmas job-cut reports, typed in by hand and checked against the published totals. Job postings: <a href="https://github.com/hiring-lab/job_postings_tracker">Indeed Hiring Lab job postings index</a>
+      Last three months: BLS JOLTS and the Challenger, Gray &amp; Christmas job-cut reports, typed in by hand and checked against the published totals.
+      Careers and majors: BLS Employment Projections 2025–35 and the Federal Reserve Bank of New York's outcomes by college major. Job postings: <a href="https://github.com/hiring-lab/job_postings_tracker">Indeed Hiring Lab job postings index</a>
       (seasonally adjusted, 7-day average, Feb 1 2020 = 100). An index measures the trend in postings, not the number of open jobs.</p>
     <p><b>Method.</b> Python (pandas) cleans the files and loads them into SQLite; the analysis is written in SQL (CTEs, window functions).
       Code, queries and results: <a href="https://github.com/resulisik/california-jobs-by-sector">github.com/resulisik/california-jobs-by-sector</a>.</p>
@@ -517,6 +558,8 @@ const info = sectors.find(s => s.name === "Information");
 const lh = sectors.find(s => s.name === "Leisure & hospitality");
 const da = D.occupations.find(o => o.name === "Data & Analytics");
 const S = n => D.short[n] || n;
+const majBy = Object.fromEntries(D.majors.map(m => [m.major, m]));
+const occBy = Object.fromEntries(D.occ_top.map(o => [o.title, o]));
 const cu = Object.fromEntries(D.ca_us.map(r => [r.name, r]));
 const caBehind = D.ca_us.filter(r => r.name !== "Total nonfarm" && r.gap_pp < 0).length;
 const l3 = Object.fromEntries(D.last3.map(r => [r.name, r]));
@@ -531,7 +574,9 @@ document.getElementById("findings").innerHTML = [
   ["5. Market leadership rotated in the last 12 months.", `${bySt1[0].sector} (${fmtPct(bySt1[0].return_1y_pct, 0)}), ${bySt1[1].sector.toLowerCase()} (${fmtPct(bySt1[1].return_1y_pct, 0)}) and ${bySt1[2].sector.toLowerCase()} (${fmtPct(bySt1[2].return_1y_pct, 0)}) led. Technology slowed from ${fmtPct(stockBy["Technology"].prior_12m_pct, 0)} to ${fmtPct(stockBy["Technology"].return_1y_pct, 0)}, and communication services turned negative (${fmtPct(stockBy["Communication services"].return_1y_pct, 0)}).`],
   ["6. U.S. hiring picked up in the last three months.", `Payrolls rose ${fmtK(l3["Total nonfarm"].last_3m_k)} from July to October, against about ${fmtK(l3["Total nonfarm"].typical_3m_k)} per three months in the year before. Professional & business services, where many analyst jobs sit, added ${fmtK(l3["Professional & business services"].last_3m_k)}; information lost ${fmtK(Math.abs(l3["Information"].last_3m_k)).replace("+", "")}.`],
   ["7. Layoff announcements are low, except in tech.", `Employers announced ${Math.round(cuts3 / 1000)}K job cuts in Aug – Oct 2026. Year to date they are ${fmtPct(100 * (ytdAll.ytd_2026 / ytdAll.ytd_2025 - 1), 0)} on 2025, but technology is ${fmtPct(100 * (ytdTech.ytd_2026 / ytdTech.ytd_2025 - 1), 0)} and accounts for ${(100 * ytdTech.ytd_2026 / ytdAll.ytd_2026).toFixed(0)}% of all cuts this year.`],
-  ["8. What I take from it.", `For an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California postings sit at ${Math.round(K.ca_postings)} vs ${Math.round(K.us_postings)} nationally (Feb 2020 = 100), and U.S. Data & Analytics postings are ${fmtPct(da.pct)} on a year ago, so the search should not stop at state lines: remote roles matter.`],
+  ["8. For a four-year degree, the major matters as much as the degree.", `The share of recent graduates in jobs that do not need a degree runs from ${majBy["Nursing"].underemployment_pct}% in nursing to ${majBy["Criminal Justice"].underemployment_pct}% in criminal justice. Only ${D.major_tests.find(r => r.tests_passed === 3).majors} of 73 majors beat the average graduate on unemployment, underemployment and early pay together. Computer science pays $${(majBy["Computer Science"].wage_early / 1000).toFixed(0)}K early but has ${majBy["Computer Science"].unemployment_pct.toFixed(1)}% unemployment against ${majBy["Overall"].unemployment_pct}% overall.`],
+  ["9. The openings are in nursing, accounting and software.", `BLS projects ${occBy["Registered nurses"].openings_per_year_k}K openings a year for registered nurses, ${occBy["Accountants and auditors"].openings_per_year_k}K for accountants and ${occBy["Software developers"].openings_per_year_k}K for software developers. Among bachelor's-level jobs, data scientists grow fastest (${fmtPct(D.occ_growth[0].growth_2025_35_pct)} by 2035). Film and media is small: the largest occupation there has about ${occBy["Art directors"].openings_per_year_k}K openings a year.`],
+  ["10. What I take from it.", `For an entry-level analyst, the steadiest demand is in health care (hospitals, insurers, public agencies), with professional & business services recovering nationally. California postings sit at ${Math.round(K.ca_postings)} vs ${Math.round(K.us_postings)} nationally (Feb 2020 = 100), and U.S. Data & Analytics postings are ${fmtPct(da.pct)} on a year ago, so the search should not stop at state lines: remote roles matter.`],
 ].map(([h, t]) => `<li><b>${h}</b>${t}</li>`).join("");
 
 const cls = v => (v > 0 ? "up" : v < 0 ? "down" : "");
@@ -579,37 +624,52 @@ function pairChart(host, rows, opts = {}) {
 }
 
 /* Scatter with direct labels. pts: [{x, y, label, tip}] */
-function scatterChart(host, pts, opts = {}) {
+function scatterChart(host, pts0, opts = {}) {
+  let pts = pts0;
   host.innerHTML = "";
   const W = host.clientWidth, H = opts.height || 420, m = { t: 14, r: 16, b: 42, l: 64 };
   const svg = el("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "scatter" }, host);
-  let xlo = Math.min(0, ...pts.map(p => p.x)), xhi = Math.max(0, ...pts.map(p => p.x));
-  let ylo = Math.min(0, ...pts.map(p => p.y)), yhi = Math.max(0, ...pts.map(p => p.y));
+  const z = opts.free ? [] : [0], xf = opts.xFmt || (v => v + "%"), yf = opts.yFmt || (v => v + "%");
+  let xlo = Math.min(...z, ...pts.map(p => p.x)), xhi = Math.max(...z, ...pts.map(p => p.x));
+  let ylo = Math.min(...z, ...pts.map(p => p.y)), yhi = Math.max(...z, ...pts.map(p => p.y));
   const xs = niceStep((xhi - xlo) / 5), ys = niceStep((yhi - ylo) / 5);
   xlo = Math.floor(xlo / xs) * xs; xhi = Math.ceil(xhi / xs) * xs + xs * 0.6; ylo = Math.floor(ylo / ys) * ys; yhi = Math.ceil(yhi / ys) * ys;
   const X = v => m.l + (v - xlo) / (xhi - xlo) * (W - m.l - m.r), Y = v => m.t + (yhi - v) / (yhi - ylo) * (H - m.t - m.b);
   for (let t = ylo; t <= yhi + 1e-9; t += ys) {
     el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: cssVar("--grid") }, svg);
-    el("text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = t + "%";
+    el("text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = yf(t);
   }
   for (let t = xlo; t <= xhi - xs * 0.5; t += xs) {
     el("line", { x1: X(t), x2: X(t), y1: m.t, y2: H - m.b, stroke: cssVar("--grid") }, svg);
-    el("text", { x: X(t), y: H - m.b + 15, "text-anchor": "middle", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = t + "%";
+    el("text", { x: X(t), y: H - m.b + 15, "text-anchor": "middle", "font-size": 11, fill: cssVar("--text-muted") }, svg).textContent = xf(t);
   }
-  el("line", { x1: X(0), x2: X(0), y1: m.t, y2: H - m.b, stroke: cssVar("--text-secondary") }, svg);
-  el("line", { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), stroke: cssVar("--text-secondary") }, svg);
+  if (!opts.free) {
+    el("line", { x1: X(0), x2: X(0), y1: m.t, y2: H - m.b, stroke: cssVar("--text-secondary") }, svg);
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), stroke: cssVar("--text-secondary") }, svg);
+  }
+  (opts.guides || []).forEach(g => {
+    if (g.x != null) el("line", { x1: X(g.x), x2: X(g.x), y1: m.t, y2: H - m.b, stroke: cssVar("--text-muted"), "stroke-dasharray": "4 4" }, svg);
+    if (g.y != null) el("line", { x1: m.l, x2: W - m.r, y1: Y(g.y), y2: Y(g.y), stroke: cssVar("--text-muted"), "stroke-dasharray": "4 4" }, svg);
+    el("text", { x: g.x != null ? X(g.x) + 5 : W - m.r - 4, y: g.y != null ? Y(g.y) - 5 : m.t + 10, "text-anchor": g.x != null ? "start" : "end", "font-size": 10.5, fill: cssVar("--text-muted") }, svg).textContent = g.label;
+  });
   el("text", { x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle", "font-size": 11.5, fill: cssVar("--text-secondary") }, svg).textContent = opts.xLabel;
   const yl = el("text", { x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", "font-size": 11.5, fill: cssVar("--text-secondary"),
     transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})` }, svg); yl.textContent = opts.yLabel;
   // dots first, then labels nudged so they do not sit on a dot or on each other
-  const boxes = pts.map(p => ({ x0: X(p.x) - 8, x1: X(p.x) + 8, y0: Y(p.y) - 8, y1: Y(p.y) + 8 }));
+  pts = [...pts].sort((a, b) => (b.faint ? 1 : 0) - (a.faint ? 1 : 0));
+  const boxes = pts.filter(p => !p.faint).map(p => ({ x0: X(p.x) - 8, x1: X(p.x) + 8, y0: Y(p.y) - 8, y1: Y(p.y) + 8 }));
   const hits = (b, list) => list.some(o => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
-  pts.forEach(p => el("circle", { cx: X(p.x), cy: Y(p.y), r: 6, fill: cssVar(p.ref ? "--ref" : "--series-1"), stroke: cssVar("--surface-1"), "stroke-width": 2 }, svg));
+  pts.forEach(p => el("circle", { cx: X(p.x), cy: Y(p.y), r: p.faint ? 4 : 6, fill: cssVar(p.ref ? "--ref" : p.faint ? "--faint" : "--series-1"), stroke: cssVar("--surface-1"), "stroke-width": p.faint ? 1 : 2 }, svg));
   [...pts].sort((a, b) => Y(a.y) - Y(b.y)).forEach(p => {
     const cx = X(p.x), cy = Y(p.y), w = p.label.length * 6.6;
+    if (p.faint) {
+      const h = el("circle", { cx, cy, r: 8, fill: "transparent" }, svg);
+      h.addEventListener("pointermove", ev => showTip(p.tip, ev)); h.addEventListener("pointerleave", hideTip);
+      return;
+    }
     const mine = boxes.find(b => b.x0 === cx - 8 && b.y0 === cy - 8), others = boxes.filter(b => b !== mine);
     let best = null;
-    search: for (const dy of [0, -14, 14, -28, 28, -42, 42]) for (const side of [1, -1]) {
+    search: for (const dy of [0, -14, 14, -28, 28, -42, 42, -56, 56, -70, 70]) for (const side of [1, -1]) {
       const x0 = side > 0 ? cx + 11 : cx - 11 - w, b = { x0, x1: x0 + w, y0: cy + dy - 9, y1: cy + dy + 4 };
       if (b.x0 < m.l || b.x1 > W - 4 || hits(b, others)) continue;
       best = { side, dy, b }; break search;
@@ -725,7 +785,70 @@ document.getElementById("score").innerHTML =
 document.getElementById("sources").innerHTML = "Hiring signals = jobs up over 12 months, jobs up over 3 months, openings up over 12 months. Sources: " +
   D.sources.map(s => `<a href="${s.url}">${s.report}</a>`).join(" · ");
 
-function drawAll() { drawBars(); drawLines(); drawCaUs(); drawPostings(); drawMetros(); drawOcc(); drawStocks(); drawStockLines(); drawJvs(); drawLast3(); drawLayoffs(); }
+
+const money = v => (v == null ? "–" : "$" + Math.round(v).toLocaleString());
+const FIELDS = [...new Set(D.occ_top.map(o => o.field))].sort((a, b) => ["Engineering", "Health care", "Finance", "Computer & data", "Film & media"].indexOf(a) - ["Engineering", "Health care", "Finance", "Computer & data", "Film & media"].indexOf(b));
+let fPick = FIELDS[0];
+const fchips = document.getElementById("fchips");
+FIELDS.forEach(f => {
+  const b = document.createElement("button");
+  b.textContent = f; b.setAttribute("aria-pressed", f === fPick);
+  b.addEventListener("click", () => { fPick = f; fchips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawOccTop(); });
+  fchips.appendChild(b);
+});
+function drawOccTop() {
+  const rows = D.occ_top.filter(o => o.field === fPick);
+  document.getElementById("occ-sub").textContent = `${fPick}: projected job openings per year, 2025–35 (thousands). The five largest occupations by openings.`;
+  barChart(document.getElementById("occtop"), rows.map(o => ({ label: o.title, value: o.openings_per_year_k, text: o.openings_per_year_k.toFixed(1) + "K",
+    tip: `<b>${o.title}</b><div class="row"><span>Openings per year</span><span>${o.openings_per_year_k.toFixed(1)}K</span></div>
+          <div class="row"><span>Growth 2025–35</span><span>${fmtPct(o.growth_2025_35_pct)}</span></div>
+          <div class="row"><span>Median pay</span><span>${money(o.median_wage)}</span></div>
+          <div class="row"><span>Typical education</span><span>${o.typical_education}</span></div>` })),
+    { labelW: 330, rowH: 30, tick: t => t + "K", aria: "Top occupations by openings" });
+  document.getElementById("occtable").innerHTML =
+    `<thead><tr><th>${fPick}</th><th>Openings / year</th><th>Growth 2025–35</th><th>Median pay</th><th>Typical education</th></tr></thead><tbody>` +
+    rows.map(o => `<tr><td>${o.rank_in_field}. ${o.title}</td><td>${o.openings_per_year_k.toFixed(1)}K</td><td class="${cls(o.growth_2025_35_pct)}">${fmtPct(o.growth_2025_35_pct)}</td>
+      <td>${money(o.median_wage)}</td><td>${o.typical_education}</td></tr>`).join("") + "</tbody>";
+}
+function drawOccGrow() {
+  barChart(document.getElementById("occgrow"), D.occ_growth.map(o => ({ label: o.title.replace(", preschool and daycare", ""), value: o.growth_2025_35_pct, text: fmtPct(o.growth_2025_35_pct),
+    tip: `<b>${o.title}</b><div class="row"><span>Growth 2025–35</span><span>${fmtPct(o.growth_2025_35_pct)}</span></div>
+          <div class="row"><span>Openings per year</span><span>${o.openings_per_year_k.toFixed(1)}K</span></div>
+          <div class="row"><span>Median pay</span><span>${money(o.median_wage)}</span></div>` })),
+    { labelW: 250, rowH: 24, tick: t => t + "%", aria: "Fastest growing and shrinking bachelor's-level occupations" });
+}
+const MG = D.major_groups.map(g => g.major_group);
+let mPick = "Engineering & architecture";
+const mchips = document.getElementById("mchips");
+MG.forEach(g => {
+  const b = document.createElement("button");
+  b.textContent = g; b.setAttribute("aria-pressed", g === mPick);
+  b.addEventListener("click", () => { mPick = g; mchips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawMajors(); });
+  mchips.appendChild(b);
+});
+function drawMajors() {
+  const ov = majBy["Overall"], g = D.major_groups.find(x => x.major_group === mPick);
+  document.getElementById("maj-sub").textContent =
+    `${mPick}: average underemployment ${g.avg_underemployment_pct}% (all graduates ${ov.underemployment_pct}%), average early-career pay ${money(g.avg_wage_early)} (all graduates ${money(ov.wage_early)}).`;
+  scatterChart(document.getElementById("mscatter"), D.majors.filter(m => m.major !== "Overall").map(m => ({ x: m.underemployment_pct, y: m.wage_early / 1000,
+    label: m.major.replace("Miscellaneous", "Misc."), faint: m.major_group !== mPick,
+    tip: `<b>${m.major}</b><div class="row"><span>Underemployment</span><span>${m.underemployment_pct}%</span></div>
+          <div class="row"><span>Unemployment</span><span>${m.unemployment_pct}%</span></div>
+          <div class="row"><span>Median pay, early career</span><span>${money(m.wage_early)}</span></div>
+          <div class="row"><span>Median pay, mid-career</span><span>${money(m.wage_mid)}</span></div>
+          <div class="row"><span>With a graduate degree</span><span>${m.grad_share_pct}%</span></div>` })),
+    { free: true, height: 460, xFmt: v => v + "%", yFmt: v => "$" + v + "K", xLabel: "Underemployment rate of recent graduates", yLabel: "Median pay, early career",
+      guides: [{ x: ov.underemployment_pct, label: "all graduates" }, { y: ov.wage_early / 1000, label: "all graduates" }], aria: "Majors: underemployment vs early pay" });
+}
+document.getElementById("mgroups").innerHTML =
+  `<thead><tr><th>Family</th><th>Majors</th><th>Unemployment</th><th>Underemployment</th><th>Early pay</th><th>Mid-career pay</th></tr></thead><tbody>` +
+  D.major_groups.map(g => `<tr><td>${g.major_group}</td><td>${g.majors}</td><td>${g.avg_unemployment_pct}%</td><td>${g.avg_underemployment_pct}%</td><td>${money(g.avg_wage_early)}</td><td>${money(g.avg_wage_mid)}</td></tr>`).join("") +
+  `<tr class="total"><td>All graduates</td><td>73</td><td>${majBy["Overall"].unemployment_pct}%</td><td>${majBy["Overall"].underemployment_pct}%</td><td>${money(majBy["Overall"].wage_early)}</td><td>${money(majBy["Overall"].wage_mid)}</td></tr></tbody>`;
+document.getElementById("majtable").innerHTML =
+  `<thead><tr><th>Major (lowest underemployment first)</th><th>Family</th><th>Underemployment</th><th>Unemployment</th><th>Early pay</th><th>Mid-career pay</th><th>Graduate degree</th></tr></thead><tbody>` +
+  D.majors.map(m => `<tr class="${m.major === "Overall" ? "total" : ""}"><td>${m.major === "Overall" ? "All graduates" : m.major}</td><td>${m.major_group}</td><td>${m.underemployment_pct}%</td><td>${m.unemployment_pct}%</td><td>${money(m.wage_early)}</td><td>${money(m.wage_mid)}</td><td>${m.grad_share_pct}%</td></tr>`).join("") + "</tbody>";
+
+function drawAll() { drawBars(); drawLines(); drawCaUs(); drawPostings(); drawMetros(); drawOcc(); drawStocks(); drawStockLines(); drawJvs(); drawLast3(); drawLayoffs(); drawOccTop(); drawOccGrow(); drawMajors(); }
 drawAll();
 let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);

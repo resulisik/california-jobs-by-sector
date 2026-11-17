@@ -3,7 +3,7 @@
 -- jobs_k = thousands of jobs. postings_index = Indeed postings, Feb 1 2020 = 100.
 -- adj_close = month-end price with dividends reinvested. Months are stored as YYYY-MM-01.
 -- Q1-Q12 California, Q13-Q15 California vs U.S., Q16-Q20 stock sectors, Q21-Q24 last three months,
--- Q25-Q30 occupations and college majors.
+-- Q25-Q30 occupations and college majors, Q31-Q43 live job postings (snapshot of 17 Nov 2026).
 -- Each query starts with a "-- Qn: title" line so src/run_queries.py can split the file.
 
 -- Q1: Five-year job change by sector (Sep 2021 -> Sep 2026)
@@ -592,3 +592,169 @@ WHERE m.major <> 'Overall'
   AND m.wage_early > o.wage_early
   AND m.unemployment_pct > o.unemployment_pct
 ORDER BY m.unemployment_pct DESC;
+
+-- Q31: Live postings snapshot - what was collected, by platform
+SELECT p.platform, p.kind, p.companies, p.postings,
+       ROUND(100.0 * SUM(s.is_us) / COUNT(*), 1)     AS us_pct,
+       ROUND(100.0 * SUM(s.is_remote) / COUNT(*), 1) AS remote_pct
+FROM posting_platforms p
+JOIN postings s USING (source)
+GROUP BY p.platform, p.kind, p.companies, p.postings
+ORDER BY p.postings DESC;
+
+-- Q32: Live postings by job family, U.S. only, with the share at entry level or internship
+SELECT family,
+       COUNT(*)                                                            AS us_postings,
+       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1)                  AS share_pct,
+       SUM(seniority IN ('Entry level', 'Internship'))                     AS entry_or_intern,
+       ROUND(100.0 * SUM(seniority IN ('Entry level', 'Internship')) / COUNT(*), 1) AS entry_or_intern_pct,
+       ROUND(100.0 * SUM(seniority = 'Senior & management') / COUNT(*), 1) AS senior_pct
+FROM postings
+WHERE is_us = 1
+GROUP BY family
+ORDER BY us_postings DESC;
+
+-- Q33: Top five job families in each employer sector (U.S. postings)
+WITH f AS (
+    SELECT sector_name, family, COUNT(*) AS n,
+           ROW_NUMBER() OVER (PARTITION BY sector_name ORDER BY COUNT(*) DESC) AS rn
+    FROM postings
+    WHERE is_us = 1 AND family <> 'Other'
+    GROUP BY sector_name, family
+)
+SELECT sector_name, rn AS rank, family, n AS us_postings
+FROM f WHERE rn <= 5
+ORDER BY sector_name, rn;
+
+-- Q34: The five most common job titles in each employer sector (U.S. postings, seniority words removed)
+WITH t AS (
+    SELECT sector_name, title_norm, COUNT(*) AS n,
+           ROW_NUMBER() OVER (PARTITION BY sector_name ORDER BY COUNT(*) DESC, title_norm) AS rn
+    FROM postings
+    WHERE is_us = 1
+    GROUP BY sector_name, title_norm
+)
+SELECT sector_name, rn AS rank, title_norm AS job_title, n AS us_postings
+FROM t WHERE rn <= 5
+ORDER BY sector_name, rn;
+
+-- Q35: Engineering postings by kind of engineer (U.S.), with the entry-level share and the top hiring sector
+WITH e AS (
+    SELECT eng_type, sector_name, seniority
+    FROM postings
+    WHERE is_us = 1 AND eng_type <> ''
+), top_sector AS (
+    SELECT eng_type, sector_name,
+           ROW_NUMBER() OVER (PARTITION BY eng_type ORDER BY COUNT(*) DESC) AS rn
+    FROM e GROUP BY eng_type, sector_name
+)
+SELECT e.eng_type,
+       COUNT(*)                                                             AS us_postings,
+       ROUND(100.0 * SUM(e.seniority IN ('Entry level', 'Internship')) / COUNT(*), 1) AS entry_or_intern_pct,
+       ts.sector_name                                                       AS top_sector
+FROM e
+JOIN top_sector ts ON ts.eng_type = e.eng_type AND ts.rn = 1
+GROUP BY e.eng_type, ts.sector_name
+ORDER BY us_postings DESC;
+
+-- Q36: Where the jobs are - location of postings by job family
+SELECT family,
+       SUM(loc_bucket = 'Los Angeles area')  AS los_angeles,
+       SUM(loc_bucket = 'Other California')  AS other_california,
+       SUM(loc_bucket = 'Other U.S.')        AS other_us,
+       SUM(loc_bucket = 'Remote (U.S.)')     AS remote_us,
+       SUM(loc_bucket = 'Outside U.S.')      AS outside_us,
+       ROUND(100.0 * SUM(is_ca) / NULLIF(SUM(is_us), 0), 1) AS california_share_of_us_pct
+FROM postings
+GROUP BY family
+ORDER BY SUM(is_us) DESC;
+
+-- Q37: Which sectors post the most entry-level jobs and internships? (U.S.)
+SELECT sector_name,
+       COUNT(*)                                                   AS us_postings,
+       SUM(seniority = 'Entry level')                             AS entry_level,
+       SUM(seniority = 'Internship')                              AS internships,
+       ROUND(100.0 * SUM(seniority IN ('Entry level', 'Internship')) / COUNT(*), 1) AS junior_pct
+FROM postings
+WHERE is_us = 1
+GROUP BY sector_name
+ORDER BY junior_pct DESC;
+
+-- Q38: Data & analytics postings by sector and seniority (U.S.)
+SELECT sector_name,
+       COUNT(*)                                     AS data_postings,
+       SUM(is_data_analyst)                         AS analyst_titles,
+       SUM(seniority IN ('Entry level', 'Internship')) AS entry_or_intern,
+       SUM(seniority = 'Mid or not stated')         AS mid_or_not_stated,
+       SUM(seniority = 'Senior & management')       AS senior,
+       SUM(is_ca)                                   AS in_california,
+       SUM(loc_bucket = 'Remote (U.S.)')            AS remote_us
+FROM postings
+WHERE is_us = 1 AND family = 'Data & analytics'
+GROUP BY sector_name
+ORDER BY data_postings DESC;
+
+-- Q39: Skills named in data & analytics postings (share of postings whose description was read)
+WITH d AS (
+    SELECT posting_id FROM postings
+    WHERE family = 'Data & analytics' AND desc_fetched = 1 AND is_us = 1
+)
+SELECT ps.skill,
+       COUNT(*)                                                  AS postings,
+       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM d), 1)     AS share_pct,
+       RANK() OVER (ORDER BY COUNT(*) DESC)                      AS rank
+FROM posting_skills ps
+JOIN d USING (posting_id)
+GROUP BY ps.skill
+ORDER BY postings DESC;
+
+-- Q40: Advertised yearly pay for data & analytics postings in the U.S., by seniority
+WITH p AS (
+    SELECT seniority, pay_min, pay_max, (pay_min + pay_max) / 2.0 AS mid
+    FROM postings
+    WHERE family = 'Data & analytics' AND is_us = 1 AND pay_period = 'year'
+), ranked AS (
+    SELECT seniority, mid,
+           ROW_NUMBER() OVER (PARTITION BY seniority ORDER BY mid) AS rn,
+           COUNT(*)     OVER (PARTITION BY seniority)              AS n
+    FROM p
+)
+SELECT seniority,
+       MAX(n)                                                     AS postings_with_pay,
+       ROUND(MIN(mid), -3)                                        AS lowest_midpoint,
+       ROUND(AVG(CASE WHEN rn IN ((n + 1) / 2, (n + 2) / 2) THEN mid END), -3) AS median_midpoint,
+       ROUND(MAX(mid), -3)                                        AS highest_midpoint
+FROM ranked
+GROUP BY seniority
+ORDER BY median_midpoint;
+
+-- Q41: Employers with the most postings in the Los Angeles area
+SELECT company, sector_name,
+       COUNT(*)                                        AS la_postings,
+       SUM(seniority IN ('Entry level', 'Internship'))  AS entry_or_intern,
+       SUM(family = 'Data & analytics')                AS data_roles
+FROM postings
+WHERE loc_bucket = 'Los Angeles area'
+GROUP BY company, sector_name
+ORDER BY la_postings DESC
+LIMIT 15;
+
+-- Q42: How fresh are the postings? Share published (or last updated) in the 30 days before the snapshot
+SELECT sector_name,
+       COUNT(*)                                                   AS postings,
+       ROUND(100.0 * SUM(days_old <= 30) / COUNT(*), 1)           AS last_30_days_pct,
+       ROUND(100.0 * SUM(days_old > 180) / COUNT(*), 1)           AS older_than_180_days_pct
+FROM postings
+WHERE days_old IS NOT NULL
+GROUP BY sector_name
+ORDER BY last_30_days_pct DESC;
+
+-- Q43: A job list for me - entry-level or unstated-level analyst roles in Los Angeles, elsewhere in California, or remote in the U.S.
+SELECT company, title, loc_bucket, seniority, posted_date,
+       CASE WHEN pay_period = 'year' THEN printf('$%,d - $%,d', pay_min, pay_max) ELSE '' END AS advertised_pay,
+       url
+FROM postings
+WHERE (is_data_analyst = 1 OR (family = 'Data & analytics' AND title LIKE '%analyst%'))
+  AND seniority IN ('Entry level', 'Mid or not stated', 'Internship')
+  AND loc_bucket IN ('Los Angeles area', 'Other California', 'Remote (U.S.)')
+ORDER BY CASE loc_bucket WHEN 'Los Angeles area' THEN 1 WHEN 'Remote (U.S.)' THEN 2 ELSE 3 END, posted_date DESC;

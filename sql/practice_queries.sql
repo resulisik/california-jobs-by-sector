@@ -14,6 +14,11 @@
 --   postings_metro(date, metro, cbsa_code, postings_index)
 --   postings_occ(date, occupation, postings_index)
 --   research_sources(dataset, report, published, url, collected_on, notes)
+--   postings(posting_id, source, company, sector_name, title, family, eng_type, seniority, loc_bucket,
+--            is_la, is_ca, is_us, is_remote, posted_date, days_old, pay_min, pay_max, pay_period, url, ...)
+--                                                                    one row per open job, snapshot of 17 Nov 2026
+--   posting_skills(posting_id, skill)                                skills named in data-related descriptions
+--   posting_companies(platform, slug, company, sector, postings)     the employers in the snapshot
 
 -- ---------- Level 1: SELECT, WHERE, ORDER BY ----------
 
@@ -127,9 +132,39 @@ FROM yearly
 WHERE substr(month, 6, 2) = '10' AND ret IS NOT NULL
 ORDER BY year, rank_in_year;
 
+-- ---------- Level 6: job postings ----------
+
+-- 6.1 How many open jobs does each employer have in the Los Angeles area?
+SELECT company, COUNT(*) AS postings
+FROM postings
+WHERE loc_bucket = 'Los Angeles area'
+GROUP BY company
+ORDER BY postings DESC
+LIMIT 10;
+
+-- 6.2 Entry-level share by job family, U.S. postings (CASE inside SUM counts the rows that match)
+SELECT family,
+       COUNT(*) AS postings,
+       SUM(CASE WHEN seniority IN ('Entry level', 'Internship') THEN 1 ELSE 0 END) AS junior,
+       ROUND(100.0 * SUM(CASE WHEN seniority IN ('Entry level', 'Internship') THEN 1 ELSE 0 END) / COUNT(*), 1) AS junior_pct
+FROM postings
+WHERE is_us = 1
+GROUP BY family
+ORDER BY junior_pct DESC;
+
+-- 6.3 Data postings that ask for both SQL and Tableau (a JOIN to the same table twice)
+SELECT p.company, p.title, p.loc_bucket, p.url
+FROM postings p
+JOIN posting_skills s1 ON s1.posting_id = p.posting_id AND s1.skill = 'sql'
+JOIN posting_skills s2 ON s2.posting_id = p.posting_id AND s2.skill = 'tableau'
+WHERE p.family = 'Data & analytics' AND p.is_us = 1
+ORDER BY p.posted_date DESC;
+
 -- ---------- Your turn (answers are in sql/analysis_queries.sql) ----------
 -- A. Which California sector lost the most jobs between Sep 2021 and Sep 2026?            (see Q1)
 -- B. In which sectors is California ahead of the U.S. over five years?                    (see Q13)
 -- C. Which stock sector had the largest fall from its previous high?                      (see Q19)
 -- D. Which jobs sector has the most job openings per hire?                                (see Q23)
 -- E. Build one table with jobs, openings, layoffs and stock returns per sector.           (see Q24)
+-- F. Which five job titles are most common in each sector's postings?                     (see Q34)
+-- G. Which skills appear most often in data & analytics postings?                         (see Q39)

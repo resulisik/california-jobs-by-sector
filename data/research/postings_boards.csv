@@ -1,0 +1,284 @@
+platform,slug,company,sector,postings_2026_11_17
+ashby,1x,1X,A,100
+ashby,abridge,Abridge,H,23
+ashby,airbyte,Airbyte,T,14
+ashby,alma,Alma,H,27
+ashby,anyscale,Anyscale,T,24
+ashby,ashby,Ashby,T,77
+ashby,atomic,Atomic (venture studio),T,6
+ashby,attio,Attio,T,22
+ashby,baseten,Baseten,T,103
+ashby,character,Character.AI,T,13
+ashby,clickhouse,ClickHouse,T,207
+ashby,cognition,Cognition,T,112
+ashby,cohere,Cohere,T,124
+ashby,commure,Commure,H,71
+ashby,cursor,Cursor,T,95
+ashby,decagon,Decagon,T,118
+ashby,deepgram,Deepgram,A,59
+ashby,eightsleep,Eight Sleep,C,34
+ashby,elevenlabs,ElevenLabs,T,122
+ashby,fable,Fable,T,8
+ashby,flock,Flock (UK insurtech),F,11
+ashby,found,Found,F,3
+ashby,freed,Freed,H,5
+ashby,granola,Granola,T,20
+ashby,harvey,Harvey,T,386
+ashby,headway,Headway,H,95
+ashby,hex,Hex,T,39
+ashby,hightouch,Hightouch,T,1
+ashby,kalshi,Kalshi,F,42
+ashby,krea,Krea,M,14
+ashby,langchain,LangChain,T,103
+ashby,linear,Linear,T,33
+ashby,lovable,Lovable,T,78
+ashby,mercor,Mercor,T,105
+ashby,midjourney,Midjourney,M,16
+ashby,modal,Modal,T,50
+ashby,motherduck,MotherDuck,T,6
+ashby,nabla,Nabla,H,7
+ashby,notion,Notion,T,164
+ashby,openai,OpenAI,T,840
+ashby,openevidence,OpenEvidence,H,8
+ashby,perplexity,Perplexity,T,148
+ashby,physicalintelligence,Physical Intelligence,A,48
+ashby,pika,Pika,M,19
+ashby,pinecone,Pinecone,T,6
+ashby,plaid,Plaid,F,140
+ashby,polymarket,Polymarket,F,34
+ashby,posthog,PostHog,T,10
+ashby,railway,Railway,T,7
+ashby,ramp,Ramp,F,179
+ashby,render,Render,T,36
+ashby,replit,Replit,T,31
+ashby,rho,Rho,F,48
+ashby,rula,Rula,H,31
+ashby,runway,Runway,T,3
+ashby,sardine,Sardine,F,39
+ashby,saronic,Saronic,A,271
+ashby,sierra,Sierra,T,197
+ashby,sleeper,Sleeper,M,7
+ashby,suno,Suno,T,62
+ashby,supabase,Supabase,T,77
+ashby,superpower,Superpower,H,29
+ashby,synthesia,Synthesia,T,29
+ashby,tennr,Tennr,H,23
+ashby,titan,Titan,F,9
+ashby,vanta,Vanta,T,80
+ashby,warp,Warp,T,17
+ashby,watershed,Watershed,T,40
+ashby,wealthsimple,Wealthsimple,F,42
+ashby,whoop,WHOOP,H,111
+ashby,writer,Writer,T,45
+ashby,zapier,Zapier,T,10
+greenhouse,2k,2K,M,89
+greenhouse,abnormalsecurity,Abnormal Security,T,88
+greenhouse,affirm,Affirm,F,213
+greenhouse,agilityrobotics,Agility Robotics,A,74
+greenhouse,airbnb,Airbnb,T,206
+greenhouse,airtable,Airtable,T,9
+greenhouse,albedo,Albedo,A,9
+greenhouse,algolia,Algolia,T,30
+greenhouse,alloy,Alloy,F,32
+greenhouse,andurilindustries,Anduril,A,2614
+greenhouse,anthropic,Anthropic,T,660
+greenhouse,apptronik,Apptronik,A,82
+greenhouse,asana,Asana,T,113
+greenhouse,astranis,Astranis,A,182
+greenhouse,axios,Axios,M,34
+greenhouse,bark,BARK,C,1
+greenhouse,barstoolsports,Barstool Sports,M,5
+greenhouse,betterment,Betterment,F,25
+greenhouse,bird,Bird,C,28
+greenhouse,blend,Blend,F,10
+greenhouse,block,Block,T,185
+greenhouse,bombas,Bombas,C,8
+greenhouse,branch,Branch Insurance,F,3
+greenhouse,braze,Braze,T,334
+greenhouse,brex,Brex,F,277
+greenhouse,bungie,Bungie,M,2
+greenhouse,butterflynetwork,Butterfly Network,H,17
+greenhouse,buzzfeed,BuzzFeed,M,4
+greenhouse,calendly,Calendly,T,5
+greenhouse,cameo,Cameo,M,1
+greenhouse,carta,Carta,F,77
+greenhouse,carvana,Carvana,C,1655
+greenhouse,celonis,Celonis,T,264
+greenhouse,chime,Chime,F,74
+greenhouse,clearstreet,Clear Street,F,39
+greenhouse,cloudflare,Cloudflare,T,473
+greenhouse,coalition,Coalition,F,46
+greenhouse,cockroachlabs,Cockroach Labs,T,13
+greenhouse,coherehealth,Cohere Health,H,64
+greenhouse,coinbase,Coinbase,F,260
+greenhouse,contentful,Contentful,T,51
+greenhouse,coursera,Coursera,T,38
+greenhouse,crunchyroll,Crunchyroll,M,99
+greenhouse,current,Current,F,4
+greenhouse,databricks,Databricks,T,892
+greenhouse,datadog,Datadog,T,382
+greenhouse,discord,Discord,T,25
+greenhouse,divergent,Divergent,A,145
+greenhouse,dollarshaveclub,Dollar Shave Club,C,8
+greenhouse,doma,Doma,F,2
+greenhouse,doordashusa,DoorDash,C,426
+greenhouse,doximity,Doximity,H,13
+greenhouse,dropbox,Dropbox,T,41
+greenhouse,duolingo,Duolingo,T,59
+greenhouse,elastic,Elastic,T,387
+greenhouse,epicgames,Epic Games,M,139
+greenhouse,epirus,Epirus,A,30
+greenhouse,ethos,Ethos,F,2
+greenhouse,everlane,Everlane,C,28
+greenhouse,faire,Faire,C,70
+greenhouse,fandom,Fandom,M,8
+greenhouse,fashionnova,Fashion Nova,C,95
+greenhouse,figma,Figma,T,140
+greenhouse,figure,Figure,F,27
+greenhouse,figureai,Figure AI,A,106
+greenhouse,fireblocks,Fireblocks,F,23
+greenhouse,fivetran,Fivetran,T,185
+greenhouse,flatironhealth,Flatiron Health,H,23
+greenhouse,flexport,Flexport,C,203
+greenhouse,flyzipline,Zipline,A,329
+greenhouse,formlabs,Formlabs,A,265
+greenhouse,fourkites,FourKites,C,13
+greenhouse,freenome,Freenome,H,27
+greenhouse,fubotv,Fubo,M,7
+greenhouse,galileo,Galileo,H,13
+greenhouse,garnerhealth,Garner Health,H,55
+greenhouse,gemini,Gemini,F,26
+greenhouse,gitlab,GitLab,T,253
+greenhouse,glossier,Glossier,C,20
+greenhouse,gusto,Gusto,T,78
+greenhouse,harrys,Harry's,C,13
+greenhouse,hawkeye360,HawkEye 360,A,28
+greenhouse,hellofresh,HelloFresh,C,368
+greenhouse,imc,IMC Trading,F,148
+greenhouse,instacart,Instacart,C,83
+greenhouse,intercom,Fin (Intercom),T,115
+greenhouse,ionq,IonQ,A,102
+greenhouse,janestreet,Jane Street,F,216
+greenhouse,jumptrading,Jump Trading,F,89
+greenhouse,kairospower,Kairos Power,A,67
+greenhouse,kickstarter,Kickstarter,M,4
+greenhouse,komodohealth,Komodo Health,H,17
+greenhouse,lattice,Lattice,T,4
+greenhouse,launchdarkly,LaunchDarkly,T,33
+greenhouse,lightmatter,Lightmatter,A,72
+greenhouse,liquiddeath,Liquid Death,C,1
+greenhouse,lucidmotors,Lucid Motors,A,491
+greenhouse,lyft,Lyft,T,144
+greenhouse,mercury,Mercury,F,76
+greenhouse,misfitsmarket,Misfits Market,C,66
+greenhouse,mixpanel,Mixpanel,T,40
+greenhouse,mobilityware,MobilityWare,M,8
+greenhouse,modernhealth,Modern Health,H,2
+greenhouse,mongodb,MongoDB,T,399
+greenhouse,monzo,Monzo,F,62
+greenhouse,motional,Motional,A,77
+greenhouse,natera,Natera,H,217
+greenhouse,naughtydog,Naughty Dog,M,14
+greenhouse,neo4j,Neo4j,T,64
+greenhouse,netskope,Netskope,T,124
+greenhouse,neuralink,Neuralink,H,75
+greenhouse,newrelic,New Relic,T,40
+greenhouse,nextdoor,Nextdoor,T,21
+greenhouse,nuro,Nuro,A,101
+greenhouse,offerup,OfferUp,C,4
+greenhouse,okta,Okta,T,358
+greenhouse,olipop,Olipop,C,10
+greenhouse,omadahealth,Omada Health,H,24
+greenhouse,oportun,Oportun,F,30
+greenhouse,oscar,Oscar Health,H,180
+greenhouse,pacaso,Pacaso,F,6
+greenhouse,pagerduty,PagerDuty,T,46
+greenhouse,papa,Papa,H,2
+greenhouse,parsleyhealth,Parsley Health,H,6
+greenhouse,pathai,PathAI,H,15
+greenhouse,peloton,Peloton,C,36
+greenhouse,pinterest,Pinterest,T,167
+greenhouse,planetlabs,Planet,A,116
+greenhouse,point72,Point72,F,196
+greenhouse,prizepicks,PrizePicks,M,33
+greenhouse,project44,project44,C,17
+greenhouse,psiquantum,PsiQuantum,A,101
+greenhouse,public,Public.com,F,3
+greenhouse,quince,Quince,C,154
+greenhouse,recursionpharmaceuticals,Recursion,H,16
+greenhouse,reddit,Reddit,T,148
+greenhouse,redwoodmaterials,Redwood Materials,A,115
+greenhouse,reformation,Reformation,C,146
+greenhouse,relativity,Relativity Space,A,394
+greenhouse,riotgames,Riot Games,M,199
+greenhouse,ripple,Ripple,F,111
+greenhouse,robinhood,Robinhood,F,166
+greenhouse,roblox,Roblox,T,265
+greenhouse,rocketlab,Rocket Lab,A,534
+greenhouse,rockstargames,Rockstar Games,M,15
+greenhouse,roku,Roku,M,97
+greenhouse,roofstock,Roofstock,F,13
+greenhouse,rubrik,Rubrik,T,186
+greenhouse,sambanovasystems,SambaNova,A,75
+greenhouse,samsara,Samsara,T,314
+greenhouse,samsungresearchamerica,Samsung Research America,T,20
+greenhouse,scaleai,Scale AI,T,169
+greenhouse,scopely,Scopely,M,178
+greenhouse,septerna,Septerna,H,5
+greenhouse,sigmacomputing,Sigma Computing,T,81
+greenhouse,smartsheet,Smartsheet,T,72
+greenhouse,sofi,SoFi,F,50
+greenhouse,sonyinteractiveentertainmentglobal,Sony Interactive Entertainment,M,229
+greenhouse,spacex,SpaceX,A,2788
+greenhouse,squarespace,Squarespace,T,17
+greenhouse,stockx,StockX,C,37
+greenhouse,stripe,Stripe,T,792
+greenhouse,sumologic,Sumo Logic,T,24
+greenhouse,sweetgreen,Sweetgreen,C,75
+greenhouse,talkspace,Talkspace,H,19
+greenhouse,tanium,Tanium,T,67
+greenhouse,tenstorrent,Tenstorrent,A,133
+greenhouse,thenewyorktimes,The New York Times,M,160
+greenhouse,thrivemarket,Thrive Market,C,20
+greenhouse,toast,Toast,T,331
+greenhouse,towerresearchcapital,Tower Research,F,92
+greenhouse,tripadvisor,Tripadvisor,T,15
+greenhouse,twilio,Twilio,T,113
+greenhouse,twitch,Twitch,M,51
+greenhouse,udemy,Udemy,T,1
+greenhouse,upstart,Upstart,F,75
+greenhouse,ursamajor,Ursa Major,A,125
+greenhouse,vardaspace,Varda Space,A,138
+greenhouse,vast,Vast,A,201
+greenhouse,vercel,Vercel,T,87
+greenhouse,verkada,Verkada,T,347
+greenhouse,virtu,Virtu Financial,F,45
+greenhouse,voxmedia,Vox Media,M,22
+greenhouse,waymo,Waymo,A,369
+greenhouse,weee,Weee!,C,17
+greenhouse,wizinc,Wiz,T,107
+greenhouse,wpp,WPP,M,211
+greenhouse,xai,xAI (SpaceX),T,302
+greenhouse,zestai,Zest AI,F,1
+greenhouse,zocdoc,Zocdoc,H,67
+greenhouse,zola,Zola,C,3
+greenhouse,zoominfo,ZoomInfo,T,88
+greenhouse,zscaler,Zscaler,T,382
+lever,anchorage,Anchorage Digital,F,21
+lever,binance,Binance,F,4
+lever,gopuff,Gopuff,C,774
+lever,jamcity,Jam City,M,15
+lever,lyrahealth,Lyra Health,H,480
+lever,matchgroup,Match Group,T,69
+lever,outreach,Outreach,T,14
+lever,palantir,Palantir,T,303
+lever,rover,Rover,C,27
+lever,spotify,Spotify,M,88
+lever,veeva,Veeva,H,859
+lever,zoox,Zoox,A,238
+smartrecruiters,AveryDennison,Avery Dennison,A,130
+smartrecruiters,BoschGroup,Bosch,A,355
+smartrecruiters,Equinox,Equinox,C,745
+smartrecruiters,Experian,Experian,F,47
+smartrecruiters,ServiceNow,ServiceNow,T,480
+smartrecruiters,WesternDigital,Western Digital,A,81

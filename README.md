@@ -15,6 +15,10 @@ This project puts six views of the same sectors side by side:
 Python cleans the files and loads them into one SQLite database. The analysis is 52 SQL queries, and the results feed static charts and an interactive dashboard.
 
 📊 **Interactive dashboard:** https://resulisik.github.io/california-jobs-by-sector/
+🎞️ **Presentation (PDF, 21 slides):** [presentation/Sector_Pulse_EN.pdf](presentation/Sector_Pulse_EN.pdf)
+📚 **Documentation:** [data dictionary](documentation/DATA_DICTIONARY.md) · [methodology](documentation/METHODOLOGY.md) · [roadmap](documentation/ROADMAP.md)
+
+**Contents:** [Key findings](#key-findings) · [Charts](#charts) · [Data](#data) · [How it works](#how-it-works) · [SQL analysis](#sql-analysis) · [Validation](#validation) · [Run it yourself](#run-it-yourself) · [Documentation](#documentation) · [Limitations](#limitations) · [Project structure](#project-structure)
 
 ---
 
@@ -129,6 +133,7 @@ validate.py ───────► checks vs published  EDD, BLS, Challenger a
 run_queries.py ────► sql/results.md       52 SQL questions
 make_charts.py ────► charts/*.png
 build_dashboard.py ► docs/index.html      self-contained interactive page (no external libraries)
+make_data_dictionary.py ► documentation/DATA_DICTIONARY.md   every table and column, written from the database
 ```
 
 ## SQL analysis
@@ -171,6 +176,8 @@ python src/validate.py
 python src/run_queries.py
 python src/make_charts.py
 python src/build_dashboard.py   # writes docs/index.html
+python src/make_data_dictionary.py  # writes documentation/DATA_DICTIONARY.md
+python tests/test_postings.py   # classification rule tests
 python src/collect_postings.py  # optional: a new postings snapshot (then set POSTINGS_SNAPSHOT in src/config.py)
 ```
 
@@ -180,6 +187,15 @@ The BLS, stock and hand-collected files are committed. Only the large Indeed fil
 
 To explore without Python: build the database once, open `data/sectors.db` in [DB Browser for SQLite](https://sqlitebrowser.org/), and paste queries from the `sql/` folder into the **Execute SQL** tab.
 
+## Documentation
+
+| File | What it holds |
+|---|---|
+| [`documentation/DATA_DICTIONARY.md`](documentation/DATA_DICTIONARY.md) | All 23 tables and every column, with type, an example value, a description, the row count and the source. Generated from the database, and the script fails if a column has no description. |
+| [`documentation/METHODOLOGY.md`](documentation/METHODOLOGY.md) | The questions, how each kind of data is collected, definitions (index, momentum, openings per unemployed, announced vs measured layoffs), the postings classification rules, validation and limits. |
+| [`documentation/ROADMAP.md`](documentation/ROADMAP.md) | Data that could be added next (OEWS wages for Los Angeles, California WARN layoff notices, EDD projections, O*NET skills, QCEW, Adzuna, H-1B wage filings) and project improvements. |
+| [`presentation/Sector_Pulse_EN.pdf`](presentation/Sector_Pulse_EN.pdf) | The project as a 21-slide presentation: questions, method, findings, what to add next and limits. |
+
 ## Limitations
 
 - Payroll data counts jobs by the **employer's industry**, not by occupation. A data analyst at a hospital counts as a health care job.
@@ -187,9 +203,8 @@ To explore without Python: build the database once, open `data/sectors.db` in [D
 - Challenger counts **announced** job cuts, not actual layoffs, and my 22 industries cover 90–98% of each month's total. JOLTS September 2026 figures are preliminary.
 - The occupation table holds 64 of 831 detailed occupations, selected as described above, so it cannot answer questions about other fields. Projections are estimates and are revised every year.
 - Major outcomes come from a survey of people who already graduated; they mix the effect of the major with who chooses it.
-- The Indeed index measures the **trend** in postings relative to Feb 1, 2020, not the number of open jobs.
 - BLS revises data. Figures here are as published in early November 2026.
-- The Indeed index measures the trend in postings, not the number of jobs, and Indeed revises it when it updates its seasonal adjustment. Industry openings from JOLTS are not seasonally adjusted on FRED, so they are compared as yearly averages, and 2026 against the same months of 2025. Announced job cuts are plans; the BLS layoffs figure is what happened. 2026 is a partial year everywhere.
+- The Indeed index measures the **trend** in postings relative to Feb 1, 2020, not the number of open jobs, and Indeed revises it when it updates its seasonal adjustment. Industry openings from JOLTS are not seasonally adjusted on FRED, so they are compared as yearly averages, and 2026 against the same months of 2025. Announced job cuts are plans; the BLS layoffs figure is what happened. 2026 is a partial year everywhere.
 - The postings snapshot covers one day and the employers whose hiring systems have an open API, so it leans toward tech, aerospace and startups, and toward California. Job family, seniority and location come from keyword rules on the title and location text (about right, not exact). "Mid or not stated" includes every posting without a level word. Greenhouse reports the last update date for some postings, so "posted" can be later than the first posting date. Skills are matched by keyword in descriptions, and pay is the first range a posting states.
 
 ## Project structure
@@ -207,6 +222,8 @@ To explore without Python: build the database once, open `data/sectors.db` in [D
 │   ├── research/           hand-collected tables and their sources
 │   └── processed/          tidy CSV extracts
 ├── docs/index.html         built dashboard (GitHub Pages)
+├── documentation/          data dictionary, methodology, roadmap
+├── presentation/           the project as a PDF presentation
 ├── sql/                    analysis queries, results, practice queries
 ├── src/                    Python pipeline
 └── tests/                  tests for the postings classification rules

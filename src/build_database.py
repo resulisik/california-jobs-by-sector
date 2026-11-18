@@ -1,4 +1,4 @@
-"""Clean the raw files and load them into one SQLite database (data/ca_jobs.db).
+"""Clean the raw files and load them into one SQLite database (data/sectors.db).
 
 Tables
   series          one row per BLS series (id, name, level, seasonally_adjusted, region CA/US)

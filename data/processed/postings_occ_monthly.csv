@@ -162,7 +162,7 @@ Administrative Assistance,2026-07-01,94.85
 Administrative Assistance,2026-08-01,95.01
 Administrative Assistance,2026-09-01,95.96
 Administrative Assistance,2026-10-01,94.21
-Administrative Assistance,2026-11-01,92.32
+Administrative Assistance,2026-11-01,92.71
 Architecture,2020-02-01,100.84
 Architecture,2020-03-01,95.38
 Architecture,2020-04-01,60.81
@@ -244,7 +244,7 @@ Architecture,2026-07-01,89.18
 Architecture,2026-08-01,90.33
 Architecture,2026-09-01,93.83
 Architecture,2026-10-01,92.0
-Architecture,2026-11-01,91.6
+Architecture,2026-11-01,92.02
 Arts & Entertainment,2020-02-01,99.17
 Arts & Entertainment,2020-03-01,92.69
 Arts & Entertainment,2020-04-01,58.41
@@ -253,11 +253,11 @@ Arts & Entertainment,2020-06-01,51.95
 Arts & Entertainment,2020-07-01,56.57
 Arts & Entertainment,2020-08-01,59.92
 Arts & Entertainment,2020-09-01,63.54
-Arts & Entertainment,2020-10-01,67.56
+Arts & Entertainment,2020-10-01,67.55
 Arts & Entertainment,2020-11-01,70.37
 Arts & Entertainment,2020-12-01,73.68
-Arts & Entertainment,2021-01-01,77.04
-Arts & Entertainment,2021-02-01,80.83
+Arts & Entertainment,2021-01-01,77.03
+Arts & Entertainment,2021-02-01,80.82
 Arts & Entertainment,2021-03-01,90.15
 Arts & Entertainment,2021-04-01,101.0
 Arts & Entertainment,2021-05-01,111.41
@@ -266,19 +266,19 @@ Arts & Entertainment,2021-07-01,119.17
 Arts & Entertainment,2021-08-01,124.1
 Arts & Entertainment,2021-09-01,128.08
 Arts & Entertainment,2021-10-01,136.28
-Arts & Entertainment,2021-11-01,138.22
+Arts & Entertainment,2021-11-01,138.21
 Arts & Entertainment,2021-12-01,144.64
 Arts & Entertainment,2022-01-01,140.14
 Arts & Entertainment,2022-02-01,146.57
-Arts & Entertainment,2022-03-01,150.12
-Arts & Entertainment,2022-04-01,149.95
-Arts & Entertainment,2022-05-01,153.65
-Arts & Entertainment,2022-06-01,148.57
-Arts & Entertainment,2022-07-01,141.58
-Arts & Entertainment,2022-08-01,136.46
+Arts & Entertainment,2022-03-01,150.11
+Arts & Entertainment,2022-04-01,149.94
+Arts & Entertainment,2022-05-01,153.64
+Arts & Entertainment,2022-06-01,148.56
+Arts & Entertainment,2022-07-01,141.57
+Arts & Entertainment,2022-08-01,136.45
 Arts & Entertainment,2022-09-01,133.41
 Arts & Entertainment,2022-10-01,130.79
-Arts & Entertainment,2022-11-01,126.59
+Arts & Entertainment,2022-11-01,126.58
 Arts & Entertainment,2022-12-01,120.74
 Arts & Entertainment,2023-01-01,114.96
 Arts & Entertainment,2023-02-01,108.55
@@ -304,10 +304,10 @@ Arts & Entertainment,2024-09-01,84.99
 Arts & Entertainment,2024-10-01,83.59
 Arts & Entertainment,2024-11-01,86.05
 Arts & Entertainment,2024-12-01,89.45
-Arts & Entertainment,2025-01-01,85.48
+Arts & Entertainment,2025-01-01,85.47
 Arts & Entertainment,2025-02-01,83.49
-Arts & Entertainment,2025-03-01,81.68
-Arts & Entertainment,2025-04-01,79.46
+Arts & Entertainment,2025-03-01,81.67
+Arts & Entertainment,2025-04-01,79.45
 Arts & Entertainment,2025-05-01,77.09
 Arts & Entertainment,2025-06-01,77.15
 Arts & Entertainment,2025-07-01,76.83
@@ -326,7 +326,7 @@ Arts & Entertainment,2026-07-01,80.95
 Arts & Entertainment,2026-08-01,81.59
 Arts & Entertainment,2026-09-01,84.22
 Arts & Entertainment,2026-10-01,87.31
-Arts & Entertainment,2026-11-01,86.86
+Arts & Entertainment,2026-11-01,87.3
 Aviation,2020-02-01,99.79
 Aviation,2020-03-01,92.97
 Aviation,2020-04-01,66.45
@@ -408,7 +408,7 @@ Aviation,2026-07-01,111.4
 Aviation,2026-08-01,114.64
 Aviation,2026-09-01,117.51
 Aviation,2026-10-01,119.06
-Aviation,2026-11-01,117.96
+Aviation,2026-11-01,119.08
 Banking & Finance,2020-02-01,102.18
 Banking & Finance,2020-03-01,101.9
 Banking & Finance,2020-04-01,67.11
@@ -490,7 +490,7 @@ Banking & Finance,2026-07-01,105.4
 Banking & Finance,2026-08-01,102.81
 Banking & Finance,2026-09-01,104.91
 Banking & Finance,2026-10-01,106.88
-Banking & Finance,2026-11-01,109.32
+Banking & Finance,2026-11-01,108.61
 Childcare,2020-02-01,99.08
 Childcare,2020-03-01,90.11
 Childcare,2020-04-01,43.87
@@ -572,14 +572,14 @@ Childcare,2026-07-01,90.12
 Childcare,2026-08-01,87.86
 Childcare,2026-09-01,85.63
 Childcare,2026-10-01,84.8
-Childcare,2026-11-01,85.37
+Childcare,2026-11-01,87.5
 Civil Engineering,2020-02-01,99.94
 Civil Engineering,2020-03-01,96.71
 Civil Engineering,2020-04-01,73.55
-Civil Engineering,2020-05-01,67.29
-Civil Engineering,2020-06-01,68.57
-Civil Engineering,2020-07-01,74.31
-Civil Engineering,2020-08-01,73.44
+Civil Engineering,2020-05-01,67.3
+Civil Engineering,2020-06-01,68.58
+Civil Engineering,2020-07-01,74.32
+Civil Engineering,2020-08-01,73.45
 Civil Engineering,2020-09-01,70.8
 Civil Engineering,2020-10-01,69.58
 Civil Engineering,2020-11-01,73.64
@@ -654,7 +654,7 @@ Civil Engineering,2026-07-01,144.63
 Civil Engineering,2026-08-01,146.79
 Civil Engineering,2026-09-01,156.8
 Civil Engineering,2026-10-01,162.09
-Civil Engineering,2026-11-01,161.47
+Civil Engineering,2026-11-01,161.79
 Cleaning & Sanitation,2020-02-01,99.06
 Cleaning & Sanitation,2020-03-01,91.01
 Cleaning & Sanitation,2020-04-01,59.23
@@ -736,7 +736,7 @@ Cleaning & Sanitation,2026-07-01,98.0
 Cleaning & Sanitation,2026-08-01,100.04
 Cleaning & Sanitation,2026-09-01,101.18
 Cleaning & Sanitation,2026-10-01,101.77
-Cleaning & Sanitation,2026-11-01,102.71
+Cleaning & Sanitation,2026-11-01,104.28
 Community & Social Service,2020-02-01,100.25
 Community & Social Service,2020-03-01,96.27
 Community & Social Service,2020-04-01,72.91
@@ -818,7 +818,7 @@ Community & Social Service,2026-07-01,103.13
 Community & Social Service,2026-08-01,104.62
 Community & Social Service,2026-09-01,104.71
 Community & Social Service,2026-10-01,105.42
-Community & Social Service,2026-11-01,106.02
+Community & Social Service,2026-11-01,106.87
 Construction,2020-02-01,98.93
 Construction,2020-03-01,94.63
 Construction,2020-04-01,64.89
@@ -830,9 +830,9 @@ Construction,2020-09-01,108.78
 Construction,2020-10-01,113.4
 Construction,2020-11-01,114.37
 Construction,2020-12-01,112.78
-Construction,2021-01-01,116.88
+Construction,2021-01-01,116.87
 Construction,2021-02-01,125.55
-Construction,2021-03-01,141.37
+Construction,2021-03-01,141.36
 Construction,2021-04-01,164.99
 Construction,2021-05-01,171.7
 Construction,2021-06-01,170.58
@@ -867,7 +867,7 @@ Construction,2023-10-01,156.71
 Construction,2023-11-01,148.79
 Construction,2023-12-01,144.11
 Construction,2024-01-01,141.42
-Construction,2024-02-01,140.51
+Construction,2024-02-01,140.5
 Construction,2024-03-01,140.33
 Construction,2024-04-01,137.85
 Construction,2024-05-01,132.5
@@ -900,7 +900,7 @@ Construction,2026-07-01,119.38
 Construction,2026-08-01,121.89
 Construction,2026-09-01,125.83
 Construction,2026-10-01,129.06
-Construction,2026-11-01,129.14
+Construction,2026-11-01,130.28
 Customer Service,2020-02-01,99.52
 Customer Service,2020-03-01,92.46
 Customer Service,2020-04-01,63.52
@@ -930,7 +930,7 @@ Customer Service,2022-03-01,139.98
 Customer Service,2022-04-01,138.39
 Customer Service,2022-05-01,136.44
 Customer Service,2022-06-01,134.42
-Customer Service,2022-07-01,130.13
+Customer Service,2022-07-01,130.12
 Customer Service,2022-08-01,127.96
 Customer Service,2022-09-01,127.24
 Customer Service,2022-10-01,127.19
@@ -982,7 +982,7 @@ Customer Service,2026-07-01,88.3
 Customer Service,2026-08-01,87.75
 Customer Service,2026-09-01,87.85
 Customer Service,2026-10-01,86.97
-Customer Service,2026-11-01,87.24
+Customer Service,2026-11-01,88.23
 Data & Analytics,2020-02-01,99.83
 Data & Analytics,2020-03-01,96.43
 Data & Analytics,2020-04-01,69.62
@@ -1064,7 +1064,7 @@ Data & Analytics,2026-07-01,62.05
 Data & Analytics,2026-08-01,60.35
 Data & Analytics,2026-09-01,61.58
 Data & Analytics,2026-10-01,63.11
-Data & Analytics,2026-11-01,62.18
+Data & Analytics,2026-11-01,61.97
 Dental,2020-02-01,100.05
 Dental,2020-03-01,90.01
 Dental,2020-04-01,42.59
@@ -1146,7 +1146,7 @@ Dental,2026-07-01,114.67
 Dental,2026-08-01,118.63
 Dental,2026-09-01,117.91
 Dental,2026-10-01,117.77
-Dental,2026-11-01,118.95
+Dental,2026-11-01,120.83
 Driving,2020-02-01,99.1
 Driving,2020-03-01,93.05
 Driving,2020-04-01,76.34
@@ -1228,7 +1228,7 @@ Driving,2026-07-01,84.6
 Driving,2026-08-01,83.01
 Driving,2026-09-01,81.29
 Driving,2026-10-01,82.69
-Driving,2026-11-01,84.51
+Driving,2026-11-01,85.12
 Education & Instruction,2020-02-01,100.37
 Education & Instruction,2020-03-01,95.84
 Education & Instruction,2020-04-01,72.13
@@ -1260,7 +1260,7 @@ Education & Instruction,2022-05-01,158.1
 Education & Instruction,2022-06-01,160.23
 Education & Instruction,2022-07-01,163.3
 Education & Instruction,2022-08-01,164.03
-Education & Instruction,2022-09-01,161.99
+Education & Instruction,2022-09-01,161.98
 Education & Instruction,2022-10-01,163.63
 Education & Instruction,2022-11-01,163.53
 Education & Instruction,2022-12-01,161.25
@@ -1310,7 +1310,7 @@ Education & Instruction,2026-07-01,114.13
 Education & Instruction,2026-08-01,109.07
 Education & Instruction,2026-09-01,107.26
 Education & Instruction,2026-10-01,107.58
-Education & Instruction,2026-11-01,107.34
+Education & Instruction,2026-11-01,108.0
 Electrical Engineering,2020-02-01,99.83
 Electrical Engineering,2020-03-01,95.58
 Electrical Engineering,2020-04-01,73.89
@@ -1368,10 +1368,10 @@ Electrical Engineering,2024-07-01,127.38
 Electrical Engineering,2024-08-01,126.19
 Electrical Engineering,2024-09-01,125.94
 Electrical Engineering,2024-10-01,122.53
-Electrical Engineering,2024-11-01,119.01
+Electrical Engineering,2024-11-01,119.0
 Electrical Engineering,2024-12-01,119.36
-Electrical Engineering,2025-01-01,118.97
-Electrical Engineering,2025-02-01,119.34
+Electrical Engineering,2025-01-01,118.96
+Electrical Engineering,2025-02-01,119.33
 Electrical Engineering,2025-03-01,118.86
 Electrical Engineering,2025-04-01,117.57
 Electrical Engineering,2025-05-01,115.81
@@ -1392,7 +1392,7 @@ Electrical Engineering,2026-07-01,137.86
 Electrical Engineering,2026-08-01,139.83
 Electrical Engineering,2026-09-01,146.54
 Electrical Engineering,2026-10-01,153.02
-Electrical Engineering,2026-11-01,155.91
+Electrical Engineering,2026-11-01,157.08
 Food Preparation & Service,2020-02-01,98.95
 Food Preparation & Service,2020-03-01,88.56
 Food Preparation & Service,2020-04-01,55.68
@@ -1474,7 +1474,7 @@ Food Preparation & Service,2026-07-01,93.34
 Food Preparation & Service,2026-08-01,94.03
 Food Preparation & Service,2026-09-01,94.7
 Food Preparation & Service,2026-10-01,95.71
-Food Preparation & Service,2026-11-01,96.43
+Food Preparation & Service,2026-11-01,97.14
 Hospitality & Tourism,2020-02-01,99.57
 Hospitality & Tourism,2020-03-01,82.12
 Hospitality & Tourism,2020-04-01,36.24
@@ -1556,7 +1556,7 @@ Hospitality & Tourism,2026-07-01,84.8
 Hospitality & Tourism,2026-08-01,85.61
 Hospitality & Tourism,2026-09-01,86.75
 Hospitality & Tourism,2026-10-01,84.27
-Hospitality & Tourism,2026-11-01,84.81
+Hospitality & Tourism,2026-11-01,85.02
 Human Resources,2020-02-01,100.05
 Human Resources,2020-03-01,93.67
 Human Resources,2020-04-01,56.5
@@ -1638,7 +1638,7 @@ Human Resources,2026-07-01,94.23
 Human Resources,2026-08-01,94.28
 Human Resources,2026-09-01,96.01
 Human Resources,2026-10-01,98.65
-Human Resources,2026-11-01,98.85
+Human Resources,2026-11-01,99.69
 "IT Infrastructure, Operations & Support",2020-02-01,99.04
 "IT Infrastructure, Operations & Support",2020-03-01,94.97
 "IT Infrastructure, Operations & Support",2020-04-01,73.15
@@ -1666,18 +1666,18 @@ Human Resources,2026-11-01,98.85
 "IT Infrastructure, Operations & Support",2022-02-01,155.02
 "IT Infrastructure, Operations & Support",2022-03-01,156.57
 "IT Infrastructure, Operations & Support",2022-04-01,157.45
-"IT Infrastructure, Operations & Support",2022-05-01,158.07
-"IT Infrastructure, Operations & Support",2022-06-01,158.03
+"IT Infrastructure, Operations & Support",2022-05-01,158.06
+"IT Infrastructure, Operations & Support",2022-06-01,158.02
 "IT Infrastructure, Operations & Support",2022-07-01,153.73
 "IT Infrastructure, Operations & Support",2022-08-01,148.24
 "IT Infrastructure, Operations & Support",2022-09-01,143.12
 "IT Infrastructure, Operations & Support",2022-10-01,137.64
 "IT Infrastructure, Operations & Support",2022-11-01,133.05
-"IT Infrastructure, Operations & Support",2022-12-01,128.22
+"IT Infrastructure, Operations & Support",2022-12-01,128.21
 "IT Infrastructure, Operations & Support",2023-01-01,122.21
 "IT Infrastructure, Operations & Support",2023-02-01,115.1
 "IT Infrastructure, Operations & Support",2023-03-01,111.74
-"IT Infrastructure, Operations & Support",2023-04-01,110.78
+"IT Infrastructure, Operations & Support",2023-04-01,110.77
 "IT Infrastructure, Operations & Support",2023-05-01,106.74
 "IT Infrastructure, Operations & Support",2023-06-01,100.09
 "IT Infrastructure, Operations & Support",2023-07-01,96.31
@@ -1720,7 +1720,7 @@ Human Resources,2026-11-01,98.85
 "IT Infrastructure, Operations & Support",2026-08-01,70.78
 "IT Infrastructure, Operations & Support",2026-09-01,69.68
 "IT Infrastructure, Operations & Support",2026-10-01,69.36
-"IT Infrastructure, Operations & Support",2026-11-01,69.1
+"IT Infrastructure, Operations & Support",2026-11-01,69.63
 IT Systems & Solutions,2020-02-01,98.73
 IT Systems & Solutions,2020-03-01,95.11
 IT Systems & Solutions,2020-04-01,70.15
@@ -1801,8 +1801,8 @@ IT Systems & Solutions,2026-06-01,69.55
 IT Systems & Solutions,2026-07-01,71.98
 IT Systems & Solutions,2026-08-01,72.67
 IT Systems & Solutions,2026-09-01,75.28
-IT Systems & Solutions,2026-10-01,77.18
-IT Systems & Solutions,2026-11-01,77.27
+IT Systems & Solutions,2026-10-01,77.17
+IT Systems & Solutions,2026-11-01,77.48
 Industrial Engineering,2020-02-01,100.13
 Industrial Engineering,2020-03-01,97.18
 Industrial Engineering,2020-04-01,77.08
@@ -1823,11 +1823,11 @@ Industrial Engineering,2021-06-01,129.57
 Industrial Engineering,2021-07-01,136.13
 Industrial Engineering,2021-08-01,142.07
 Industrial Engineering,2021-09-01,149.93
-Industrial Engineering,2021-10-01,158.06
-Industrial Engineering,2021-11-01,167.65
+Industrial Engineering,2021-10-01,158.05
+Industrial Engineering,2021-11-01,167.64
 Industrial Engineering,2021-12-01,175.84
-Industrial Engineering,2022-01-01,176.17
-Industrial Engineering,2022-02-01,185.71
+Industrial Engineering,2022-01-01,176.16
+Industrial Engineering,2022-02-01,185.7
 Industrial Engineering,2022-03-01,190.23
 Industrial Engineering,2022-04-01,190.23
 Industrial Engineering,2022-05-01,193.6
@@ -1836,7 +1836,7 @@ Industrial Engineering,2022-07-01,186.76
 Industrial Engineering,2022-08-01,180.61
 Industrial Engineering,2022-09-01,178.6
 Industrial Engineering,2022-10-01,171.08
-Industrial Engineering,2022-11-01,164.22
+Industrial Engineering,2022-11-01,164.21
 Industrial Engineering,2022-12-01,157.32
 Industrial Engineering,2023-01-01,151.28
 Industrial Engineering,2023-02-01,144.99
@@ -1862,18 +1862,18 @@ Industrial Engineering,2024-09-01,94.97
 Industrial Engineering,2024-10-01,91.2
 Industrial Engineering,2024-11-01,90.52
 Industrial Engineering,2024-12-01,89.67
-Industrial Engineering,2025-01-01,90.24
+Industrial Engineering,2025-01-01,90.23
 Industrial Engineering,2025-02-01,89.6
 Industrial Engineering,2025-03-01,88.16
 Industrial Engineering,2025-04-01,88.65
 Industrial Engineering,2025-05-01,85.95
 Industrial Engineering,2025-06-01,89.33
-Industrial Engineering,2025-07-01,90.89
+Industrial Engineering,2025-07-01,90.88
 Industrial Engineering,2025-08-01,91.4
 Industrial Engineering,2025-09-01,90.36
 Industrial Engineering,2025-10-01,89.59
 Industrial Engineering,2025-11-01,89.18
-Industrial Engineering,2025-12-01,91.34
+Industrial Engineering,2025-12-01,91.33
 Industrial Engineering,2026-01-01,92.42
 Industrial Engineering,2026-02-01,95.97
 Industrial Engineering,2026-03-01,98.86
@@ -1883,8 +1883,8 @@ Industrial Engineering,2026-06-01,105.44
 Industrial Engineering,2026-07-01,112.28
 Industrial Engineering,2026-08-01,114.23
 Industrial Engineering,2026-09-01,119.92
-Industrial Engineering,2026-10-01,123.5
-Industrial Engineering,2026-11-01,125.58
+Industrial Engineering,2026-10-01,123.49
+Industrial Engineering,2026-11-01,126.41
 Installation & Maintenance,2020-02-01,99.13
 Installation & Maintenance,2020-03-01,91.34
 Installation & Maintenance,2020-04-01,63.41
@@ -1913,7 +1913,7 @@ Installation & Maintenance,2022-02-01,153.91
 Installation & Maintenance,2022-03-01,155.37
 Installation & Maintenance,2022-04-01,156.18
 Installation & Maintenance,2022-05-01,155.54
-Installation & Maintenance,2022-06-01,154.78
+Installation & Maintenance,2022-06-01,154.77
 Installation & Maintenance,2022-07-01,154.11
 Installation & Maintenance,2022-08-01,153.98
 Installation & Maintenance,2022-09-01,154.16
@@ -1935,7 +1935,7 @@ Installation & Maintenance,2023-12-01,134.32
 Installation & Maintenance,2024-01-01,131.04
 Installation & Maintenance,2024-02-01,129.61
 Installation & Maintenance,2024-03-01,129.24
-Installation & Maintenance,2024-04-01,128.04
+Installation & Maintenance,2024-04-01,128.05
 Installation & Maintenance,2024-05-01,125.67
 Installation & Maintenance,2024-06-01,124.63
 Installation & Maintenance,2024-07-01,124.03
@@ -1951,22 +1951,22 @@ Installation & Maintenance,2025-04-01,116.63
 Installation & Maintenance,2025-05-01,115.69
 Installation & Maintenance,2025-06-01,115.82
 Installation & Maintenance,2025-07-01,115.93
-Installation & Maintenance,2025-08-01,115.72
+Installation & Maintenance,2025-08-01,115.71
 Installation & Maintenance,2025-09-01,113.49
-Installation & Maintenance,2025-10-01,113.15
+Installation & Maintenance,2025-10-01,113.14
 Installation & Maintenance,2025-11-01,114.22
 Installation & Maintenance,2025-12-01,117.0
 Installation & Maintenance,2026-01-01,118.27
 Installation & Maintenance,2026-02-01,118.54
 Installation & Maintenance,2026-03-01,116.77
-Installation & Maintenance,2026-04-01,114.63
+Installation & Maintenance,2026-04-01,114.62
 Installation & Maintenance,2026-05-01,113.22
 Installation & Maintenance,2026-06-01,111.83
 Installation & Maintenance,2026-07-01,112.8
 Installation & Maintenance,2026-08-01,112.77
 Installation & Maintenance,2026-09-01,114.86
 Installation & Maintenance,2026-10-01,117.32
-Installation & Maintenance,2026-11-01,118.06
+Installation & Maintenance,2026-11-01,119.32
 Insurance,2020-02-01,101.47
 Insurance,2020-03-01,99.08
 Insurance,2020-04-01,71.16
@@ -2048,7 +2048,7 @@ Insurance,2026-07-01,127.53
 Insurance,2026-08-01,124.68
 Insurance,2026-09-01,125.8
 Insurance,2026-10-01,126.18
-Insurance,2026-11-01,124.74
+Insurance,2026-11-01,125.28
 Legal,2020-02-01,99.54
 Legal,2020-03-01,93.47
 Legal,2020-04-01,60.71
@@ -2104,8 +2104,8 @@ Legal,2024-05-01,128.66
 Legal,2024-06-01,128.7
 Legal,2024-07-01,130.39
 Legal,2024-08-01,130.68
-Legal,2024-09-01,127.52
-Legal,2024-10-01,126.96
+Legal,2024-09-01,127.51
+Legal,2024-10-01,126.95
 Legal,2024-11-01,127.39
 Legal,2024-12-01,129.86
 Legal,2025-01-01,130.91
@@ -2130,7 +2130,7 @@ Legal,2026-07-01,117.89
 Legal,2026-08-01,119.59
 Legal,2026-09-01,121.42
 Legal,2026-10-01,123.68
-Legal,2026-11-01,124.72
+Legal,2026-11-01,125.43
 Loading & Stocking,2020-02-01,99.46
 Loading & Stocking,2020-03-01,93.17
 Loading & Stocking,2020-04-01,64.25
@@ -2205,14 +2205,14 @@ Loading & Stocking,2025-12-01,101.6
 Loading & Stocking,2026-01-01,102.03
 Loading & Stocking,2026-02-01,104.9
 Loading & Stocking,2026-03-01,105.87
-Loading & Stocking,2026-04-01,106.93
-Loading & Stocking,2026-05-01,106.92
+Loading & Stocking,2026-04-01,106.92
+Loading & Stocking,2026-05-01,106.91
 Loading & Stocking,2026-06-01,106.19
 Loading & Stocking,2026-07-01,109.24
 Loading & Stocking,2026-08-01,108.16
 Loading & Stocking,2026-09-01,108.05
 Loading & Stocking,2026-10-01,108.62
-Loading & Stocking,2026-11-01,107.45
+Loading & Stocking,2026-11-01,108.11
 Logistic Support,2020-02-01,97.62
 Logistic Support,2020-03-01,89.45
 Logistic Support,2020-04-01,56.52
@@ -2228,7 +2228,7 @@ Logistic Support,2021-01-01,93.97
 Logistic Support,2021-02-01,102.34
 Logistic Support,2021-03-01,113.1
 Logistic Support,2021-04-01,128.47
-Logistic Support,2021-05-01,141.1
+Logistic Support,2021-05-01,141.09
 Logistic Support,2021-06-01,151.43
 Logistic Support,2021-07-01,158.71
 Logistic Support,2021-08-01,165.01
@@ -2240,21 +2240,21 @@ Logistic Support,2022-01-01,199.01
 Logistic Support,2022-02-01,213.06
 Logistic Support,2022-03-01,217.16
 Logistic Support,2022-04-01,209.55
-Logistic Support,2022-05-01,204.65
-Logistic Support,2022-06-01,189.48
-Logistic Support,2022-07-01,182.5
+Logistic Support,2022-05-01,204.64
+Logistic Support,2022-06-01,189.47
+Logistic Support,2022-07-01,182.49
 Logistic Support,2022-08-01,176.79
 Logistic Support,2022-09-01,178.84
 Logistic Support,2022-10-01,169.97
 Logistic Support,2022-11-01,163.79
 Logistic Support,2022-12-01,157.04
 Logistic Support,2023-01-01,154.56
-Logistic Support,2023-02-01,149.69
+Logistic Support,2023-02-01,149.68
 Logistic Support,2023-03-01,145.73
 Logistic Support,2023-04-01,140.0
 Logistic Support,2023-05-01,135.15
 Logistic Support,2023-06-01,130.15
-Logistic Support,2023-07-01,130.2
+Logistic Support,2023-07-01,130.19
 Logistic Support,2023-08-01,131.89
 Logistic Support,2023-09-01,130.98
 Logistic Support,2023-10-01,136.59
@@ -2271,10 +2271,10 @@ Logistic Support,2024-08-01,118.65
 Logistic Support,2024-09-01,119.63
 Logistic Support,2024-10-01,110.57
 Logistic Support,2024-11-01,110.05
-Logistic Support,2024-12-01,114.02
+Logistic Support,2024-12-01,114.01
 Logistic Support,2025-01-01,117.81
-Logistic Support,2025-02-01,114.18
-Logistic Support,2025-03-01,108.71
+Logistic Support,2025-02-01,114.17
+Logistic Support,2025-03-01,108.7
 Logistic Support,2025-04-01,103.32
 Logistic Support,2025-05-01,104.04
 Logistic Support,2025-06-01,107.3
@@ -2294,7 +2294,7 @@ Logistic Support,2026-07-01,110.66
 Logistic Support,2026-08-01,115.29
 Logistic Support,2026-09-01,120.54
 Logistic Support,2026-10-01,119.3
-Logistic Support,2026-11-01,122.05
+Logistic Support,2026-11-01,122.28
 Management,2020-02-01,99.28
 Management,2020-03-01,93.04
 Management,2020-04-01,71.83
@@ -2374,9 +2374,9 @@ Management,2026-05-01,100.81
 Management,2026-06-01,98.88
 Management,2026-07-01,100.02
 Management,2026-08-01,101.27
-Management,2026-09-01,102.78
+Management,2026-09-01,102.77
 Management,2026-10-01,104.41
-Management,2026-11-01,105.21
+Management,2026-11-01,105.55
 Marketing,2020-02-01,100.61
 Marketing,2020-03-01,93.7
 Marketing,2020-04-01,53.29
@@ -2393,7 +2393,7 @@ Marketing,2021-02-01,97.31
 Marketing,2021-03-01,107.4
 Marketing,2021-04-01,119.58
 Marketing,2021-05-01,130.7
-Marketing,2021-06-01,139.04
+Marketing,2021-06-01,139.03
 Marketing,2021-07-01,145.0
 Marketing,2021-08-01,150.1
 Marketing,2021-09-01,157.23
@@ -2458,22 +2458,22 @@ Marketing,2026-07-01,74.72
 Marketing,2026-08-01,76.47
 Marketing,2026-09-01,76.25
 Marketing,2026-10-01,76.08
-Marketing,2026-11-01,77.66
+Marketing,2026-11-01,78.14
 Mechanical Engineering,2020-02-01,100.72
 Mechanical Engineering,2020-03-01,95.1
 Mechanical Engineering,2020-04-01,73.11
 Mechanical Engineering,2020-05-01,65.69
-Mechanical Engineering,2020-06-01,67.11
-Mechanical Engineering,2020-07-01,71.61
-Mechanical Engineering,2020-08-01,72.21
+Mechanical Engineering,2020-06-01,67.1
+Mechanical Engineering,2020-07-01,71.6
+Mechanical Engineering,2020-08-01,72.2
 Mechanical Engineering,2020-09-01,72.85
 Mechanical Engineering,2020-10-01,73.38
 Mechanical Engineering,2020-11-01,79.42
 Mechanical Engineering,2020-12-01,85.04
 Mechanical Engineering,2021-01-01,90.24
-Mechanical Engineering,2021-02-01,96.28
-Mechanical Engineering,2021-03-01,103.8
-Mechanical Engineering,2021-04-01,111.68
+Mechanical Engineering,2021-02-01,96.27
+Mechanical Engineering,2021-03-01,103.79
+Mechanical Engineering,2021-04-01,111.67
 Mechanical Engineering,2021-05-01,118.5
 Mechanical Engineering,2021-06-01,124.98
 Mechanical Engineering,2021-07-01,132.22
@@ -2485,22 +2485,22 @@ Mechanical Engineering,2021-12-01,161.5
 Mechanical Engineering,2022-01-01,163.31
 Mechanical Engineering,2022-02-01,169.48
 Mechanical Engineering,2022-03-01,176.89
-Mechanical Engineering,2022-04-01,181.82
+Mechanical Engineering,2022-04-01,181.81
 Mechanical Engineering,2022-05-01,187.33
 Mechanical Engineering,2022-06-01,187.99
 Mechanical Engineering,2022-07-01,187.34
 Mechanical Engineering,2022-08-01,181.17
 Mechanical Engineering,2022-09-01,177.88
-Mechanical Engineering,2022-10-01,180.18
-Mechanical Engineering,2022-11-01,179.15
-Mechanical Engineering,2022-12-01,172.89
+Mechanical Engineering,2022-10-01,180.17
+Mechanical Engineering,2022-11-01,179.14
+Mechanical Engineering,2022-12-01,172.88
 Mechanical Engineering,2023-01-01,166.14
-Mechanical Engineering,2023-02-01,161.34
+Mechanical Engineering,2023-02-01,161.33
 Mechanical Engineering,2023-03-01,158.9
 Mechanical Engineering,2023-04-01,158.84
-Mechanical Engineering,2023-05-01,156.34
-Mechanical Engineering,2023-06-01,153.34
-Mechanical Engineering,2023-07-01,151.25
+Mechanical Engineering,2023-05-01,156.33
+Mechanical Engineering,2023-06-01,153.32
+Mechanical Engineering,2023-07-01,151.24
 Mechanical Engineering,2023-08-01,153.54
 Mechanical Engineering,2023-09-01,152.52
 Mechanical Engineering,2023-10-01,150.57
@@ -2538,9 +2538,9 @@ Mechanical Engineering,2026-05-01,144.2
 Mechanical Engineering,2026-06-01,145.51
 Mechanical Engineering,2026-07-01,151.11
 Mechanical Engineering,2026-08-01,155.08
-Mechanical Engineering,2026-09-01,163.03
-Mechanical Engineering,2026-10-01,169.59
-Mechanical Engineering,2026-11-01,171.58
+Mechanical Engineering,2026-09-01,163.02
+Mechanical Engineering,2026-10-01,169.58
+Mechanical Engineering,2026-11-01,172.51
 Media & Communications,2020-02-01,101.08
 Media & Communications,2020-03-01,94.47
 Media & Communications,2020-04-01,58.86
@@ -2622,7 +2622,7 @@ Media & Communications,2026-07-01,66.0
 Media & Communications,2026-08-01,71.26
 Media & Communications,2026-09-01,70.14
 Media & Communications,2026-10-01,68.29
-Media & Communications,2026-11-01,67.08
+Media & Communications,2026-11-01,66.63
 Medical Information,2020-02-01,101.23
 Medical Information,2020-03-01,98.69
 Medical Information,2020-04-01,61.33
@@ -2704,7 +2704,7 @@ Medical Information,2026-07-01,89.24
 Medical Information,2026-08-01,86.9
 Medical Information,2026-09-01,87.85
 Medical Information,2026-10-01,88.54
-Medical Information,2026-11-01,89.1
+Medical Information,2026-11-01,89.61
 Medical Technician,2020-02-01,100.31
 Medical Technician,2020-03-01,97.92
 Medical Technician,2020-04-01,70.2
@@ -2786,7 +2786,7 @@ Medical Technician,2026-07-01,119.02
 Medical Technician,2026-08-01,119.73
 Medical Technician,2026-09-01,121.44
 Medical Technician,2026-10-01,124.3
-Medical Technician,2026-11-01,125.2
+Medical Technician,2026-11-01,125.81
 Nursing,2020-02-01,99.78
 Nursing,2020-03-01,98.72
 Nursing,2020-04-01,83.26
@@ -2868,7 +2868,7 @@ Nursing,2026-07-01,102.52
 Nursing,2026-08-01,104.18
 Nursing,2026-09-01,107.77
 Nursing,2026-10-01,111.2
-Nursing,2026-11-01,111.05
+Nursing,2026-11-01,111.39
 Personal Care & Home Health,2020-02-01,102.07
 Personal Care & Home Health,2020-03-01,101.03
 Personal Care & Home Health,2020-04-01,88.21
@@ -2950,7 +2950,7 @@ Personal Care & Home Health,2026-07-01,144.36
 Personal Care & Home Health,2026-08-01,149.91
 Personal Care & Home Health,2026-09-01,155.53
 Personal Care & Home Health,2026-10-01,153.67
-Personal Care & Home Health,2026-11-01,162.22
+Personal Care & Home Health,2026-11-01,164.8
 Pharmacy,2020-02-01,99.6
 Pharmacy,2020-03-01,101.48
 Pharmacy,2020-04-01,91.99
@@ -3032,7 +3032,7 @@ Pharmacy,2026-07-01,137.4
 Pharmacy,2026-08-01,130.71
 Pharmacy,2026-09-01,126.62
 Pharmacy,2026-10-01,125.06
-Pharmacy,2026-11-01,123.54
+Pharmacy,2026-11-01,124.31
 Physicians & Surgeons,2020-02-01,100.27
 Physicians & Surgeons,2020-03-01,101.84
 Physicians & Surgeons,2020-04-01,86.94
@@ -3114,23 +3114,23 @@ Physicians & Surgeons,2026-07-01,181.58
 Physicians & Surgeons,2026-08-01,183.12
 Physicians & Surgeons,2026-09-01,193.28
 Physicians & Surgeons,2026-10-01,198.63
-Physicians & Surgeons,2026-11-01,196.22
+Physicians & Surgeons,2026-11-01,196.8
 Production & Manufacturing,2020-02-01,100.15
 Production & Manufacturing,2020-03-01,95.75
-Production & Manufacturing,2020-04-01,70.04
+Production & Manufacturing,2020-04-01,70.05
 Production & Manufacturing,2020-05-01,66.45
 Production & Manufacturing,2020-06-01,73.52
 Production & Manufacturing,2020-07-01,82.91
 Production & Manufacturing,2020-08-01,91.4
-Production & Manufacturing,2020-09-01,98.83
+Production & Manufacturing,2020-09-01,98.82
 Production & Manufacturing,2020-10-01,106.0
-Production & Manufacturing,2020-11-01,114.33
+Production & Manufacturing,2020-11-01,114.32
 Production & Manufacturing,2020-12-01,116.77
 Production & Manufacturing,2021-01-01,122.17
 Production & Manufacturing,2021-02-01,133.65
 Production & Manufacturing,2021-03-01,143.89
 Production & Manufacturing,2021-04-01,160.22
-Production & Manufacturing,2021-05-01,172.11
+Production & Manufacturing,2021-05-01,172.1
 Production & Manufacturing,2021-06-01,176.02
 Production & Manufacturing,2021-07-01,179.23
 Production & Manufacturing,2021-08-01,176.92
@@ -3141,62 +3141,62 @@ Production & Manufacturing,2021-12-01,194.43
 Production & Manufacturing,2022-01-01,192.34
 Production & Manufacturing,2022-02-01,200.33
 Production & Manufacturing,2022-03-01,201.64
-Production & Manufacturing,2022-04-01,196.47
+Production & Manufacturing,2022-04-01,196.46
 Production & Manufacturing,2022-05-01,196.68
 Production & Manufacturing,2022-06-01,192.9
 Production & Manufacturing,2022-07-01,188.16
-Production & Manufacturing,2022-08-01,186.4
+Production & Manufacturing,2022-08-01,186.39
 Production & Manufacturing,2022-09-01,185.33
 Production & Manufacturing,2022-10-01,183.37
 Production & Manufacturing,2022-11-01,181.21
-Production & Manufacturing,2022-12-01,175.3
-Production & Manufacturing,2023-01-01,169.79
+Production & Manufacturing,2022-12-01,175.29
+Production & Manufacturing,2023-01-01,169.78
 Production & Manufacturing,2023-02-01,163.87
-Production & Manufacturing,2023-03-01,161.99
-Production & Manufacturing,2023-04-01,160.67
-Production & Manufacturing,2023-05-01,158.79
-Production & Manufacturing,2023-06-01,154.81
+Production & Manufacturing,2023-03-01,162.0
+Production & Manufacturing,2023-04-01,160.68
+Production & Manufacturing,2023-05-01,158.8
+Production & Manufacturing,2023-06-01,154.82
 Production & Manufacturing,2023-07-01,152.89
-Production & Manufacturing,2023-08-01,150.13
-Production & Manufacturing,2023-09-01,147.24
-Production & Manufacturing,2023-10-01,144.52
+Production & Manufacturing,2023-08-01,150.14
+Production & Manufacturing,2023-09-01,147.25
+Production & Manufacturing,2023-10-01,144.53
 Production & Manufacturing,2023-11-01,140.96
 Production & Manufacturing,2023-12-01,136.62
 Production & Manufacturing,2024-01-01,134.18
-Production & Manufacturing,2024-02-01,132.3
+Production & Manufacturing,2024-02-01,132.31
 Production & Manufacturing,2024-03-01,131.75
 Production & Manufacturing,2024-04-01,128.9
-Production & Manufacturing,2024-05-01,125.48
+Production & Manufacturing,2024-05-01,125.49
 Production & Manufacturing,2024-06-01,121.85
-Production & Manufacturing,2024-07-01,118.47
+Production & Manufacturing,2024-07-01,118.48
 Production & Manufacturing,2024-08-01,116.29
 Production & Manufacturing,2024-09-01,114.89
 Production & Manufacturing,2024-10-01,110.98
 Production & Manufacturing,2024-11-01,110.9
 Production & Manufacturing,2024-12-01,111.76
 Production & Manufacturing,2025-01-01,112.56
-Production & Manufacturing,2025-02-01,112.12
+Production & Manufacturing,2025-02-01,112.11
 Production & Manufacturing,2025-03-01,110.08
 Production & Manufacturing,2025-04-01,109.76
 Production & Manufacturing,2025-05-01,108.99
 Production & Manufacturing,2025-06-01,110.03
-Production & Manufacturing,2025-07-01,110.7
-Production & Manufacturing,2025-08-01,111.48
+Production & Manufacturing,2025-07-01,110.69
+Production & Manufacturing,2025-08-01,111.47
 Production & Manufacturing,2025-09-01,110.95
-Production & Manufacturing,2025-10-01,110.2
-Production & Manufacturing,2025-11-01,111.36
-Production & Manufacturing,2025-12-01,113.51
-Production & Manufacturing,2026-01-01,114.96
+Production & Manufacturing,2025-10-01,110.19
+Production & Manufacturing,2025-11-01,111.35
+Production & Manufacturing,2025-12-01,113.5
+Production & Manufacturing,2026-01-01,114.95
 Production & Manufacturing,2026-02-01,117.79
 Production & Manufacturing,2026-03-01,116.47
 Production & Manufacturing,2026-04-01,113.93
-Production & Manufacturing,2026-05-01,115.21
+Production & Manufacturing,2026-05-01,115.22
 Production & Manufacturing,2026-06-01,114.31
 Production & Manufacturing,2026-07-01,117.62
 Production & Manufacturing,2026-08-01,120.79
-Production & Manufacturing,2026-09-01,123.26
+Production & Manufacturing,2026-09-01,123.25
 Production & Manufacturing,2026-10-01,124.8
-Production & Manufacturing,2026-11-01,127.18
+Production & Manufacturing,2026-11-01,128.88
 Project Management,2020-02-01,100.03
 Project Management,2020-03-01,97.47
 Project Management,2020-04-01,71.36
@@ -3204,8 +3204,8 @@ Project Management,2020-05-01,61.27
 Project Management,2020-06-01,61.57
 Project Management,2020-07-01,64.96
 Project Management,2020-08-01,66.7
-Project Management,2020-09-01,69.13
-Project Management,2020-10-01,72.0
+Project Management,2020-09-01,69.12
+Project Management,2020-10-01,71.99
 Project Management,2020-11-01,76.32
 Project Management,2020-12-01,81.39
 Project Management,2021-01-01,85.85
@@ -3219,7 +3219,7 @@ Project Management,2021-08-01,140.4
 Project Management,2021-09-01,149.1
 Project Management,2021-10-01,155.81
 Project Management,2021-11-01,164.3
-Project Management,2021-12-01,173.33
+Project Management,2021-12-01,173.32
 Project Management,2022-01-01,172.93
 Project Management,2022-02-01,181.06
 Project Management,2022-03-01,186.12
@@ -3228,7 +3228,7 @@ Project Management,2022-05-01,188.21
 Project Management,2022-06-01,183.2
 Project Management,2022-07-01,178.79
 Project Management,2022-08-01,171.93
-Project Management,2022-09-01,166.21
+Project Management,2022-09-01,166.2
 Project Management,2022-10-01,162.51
 Project Management,2022-11-01,158.01
 Project Management,2022-12-01,152.28
@@ -3254,11 +3254,11 @@ Project Management,2024-07-01,113.9
 Project Management,2024-08-01,112.91
 Project Management,2024-09-01,111.88
 Project Management,2024-10-01,110.6
-Project Management,2024-11-01,110.43
+Project Management,2024-11-01,110.42
 Project Management,2024-12-01,109.97
 Project Management,2025-01-01,109.45
 Project Management,2025-02-01,107.18
-Project Management,2025-03-01,104.35
+Project Management,2025-03-01,104.34
 Project Management,2025-04-01,102.94
 Project Management,2025-05-01,99.32
 Project Management,2025-06-01,99.51
@@ -3278,7 +3278,7 @@ Project Management,2026-07-01,110.68
 Project Management,2026-08-01,112.57
 Project Management,2026-09-01,116.79
 Project Management,2026-10-01,117.66
-Project Management,2026-11-01,118.36
+Project Management,2026-11-01,118.74
 Retail,2020-02-01,98.45
 Retail,2020-03-01,94.21
 Retail,2020-04-01,71.37
@@ -3360,7 +3360,7 @@ Retail,2026-07-01,89.13
 Retail,2026-08-01,86.55
 Retail,2026-09-01,88.68
 Retail,2026-10-01,89.78
-Retail,2026-11-01,89.41
+Retail,2026-11-01,89.77
 Sales,2020-02-01,99.28
 Sales,2020-03-01,94.53
 Sales,2020-04-01,60.56
@@ -3442,7 +3442,7 @@ Sales,2026-07-01,90.82
 Sales,2026-08-01,89.83
 Sales,2026-09-01,92.52
 Sales,2026-10-01,92.04
-Sales,2026-11-01,92.98
+Sales,2026-11-01,94.09
 Scientific Research & Development,2020-02-01,100.21
 Scientific Research & Development,2020-03-01,99.51
 Scientific Research & Development,2020-04-01,75.93
@@ -3524,7 +3524,7 @@ Scientific Research & Development,2026-07-01,78.36
 Scientific Research & Development,2026-08-01,79.06
 Scientific Research & Development,2026-09-01,81.96
 Scientific Research & Development,2026-10-01,83.79
-Scientific Research & Development,2026-11-01,84.42
+Scientific Research & Development,2026-11-01,84.81
 Security & Public Safety,2020-02-01,100.17
 Security & Public Safety,2020-03-01,95.18
 Security & Public Safety,2020-04-01,76.61
@@ -3551,10 +3551,10 @@ Security & Public Safety,2021-12-01,164.88
 Security & Public Safety,2022-01-01,169.58
 Security & Public Safety,2022-02-01,166.86
 Security & Public Safety,2022-03-01,167.53
-Security & Public Safety,2022-04-01,172.75
+Security & Public Safety,2022-04-01,172.74
 Security & Public Safety,2022-05-01,175.08
 Security & Public Safety,2022-06-01,170.32
-Security & Public Safety,2022-07-01,163.66
+Security & Public Safety,2022-07-01,163.65
 Security & Public Safety,2022-08-01,161.44
 Security & Public Safety,2022-09-01,157.35
 Security & Public Safety,2022-10-01,157.34
@@ -3580,8 +3580,8 @@ Security & Public Safety,2024-05-01,127.77
 Security & Public Safety,2024-06-01,124.57
 Security & Public Safety,2024-07-01,124.98
 Security & Public Safety,2024-08-01,124.81
-Security & Public Safety,2024-09-01,126.36
-Security & Public Safety,2024-10-01,121.63
+Security & Public Safety,2024-09-01,126.35
+Security & Public Safety,2024-10-01,121.62
 Security & Public Safety,2024-11-01,123.04
 Security & Public Safety,2024-12-01,123.91
 Security & Public Safety,2025-01-01,119.22
@@ -3606,7 +3606,7 @@ Security & Public Safety,2026-07-01,113.01
 Security & Public Safety,2026-08-01,115.3
 Security & Public Safety,2026-09-01,116.75
 Security & Public Safety,2026-10-01,118.02
-Security & Public Safety,2026-11-01,117.66
+Security & Public Safety,2026-11-01,118.86
 Social Science,2020-02-01,99.58
 Social Science,2020-03-01,95.42
 Social Science,2020-04-01,72.5
@@ -3688,7 +3688,7 @@ Social Science,2026-07-01,124.01
 Social Science,2026-08-01,123.13
 Social Science,2026-09-01,126.16
 Social Science,2026-10-01,123.31
-Social Science,2026-11-01,120.93
+Social Science,2026-11-01,121.99
 Software Development,2020-02-01,99.65
 Software Development,2020-03-01,98.22
 Software Development,2020-04-01,77.42
@@ -3723,7 +3723,7 @@ Software Development,2022-08-01,187.35
 Software Development,2022-09-01,173.92
 Software Development,2022-10-01,160.7
 Software Development,2022-11-01,147.07
-Software Development,2022-12-01,135.26
+Software Development,2022-12-01,135.25
 Software Development,2023-01-01,126.3
 Software Development,2023-02-01,114.14
 Software Development,2023-03-01,102.53
@@ -3770,7 +3770,7 @@ Software Development,2026-07-01,75.0
 Software Development,2026-08-01,74.37
 Software Development,2026-09-01,77.1
 Software Development,2026-10-01,79.45
-Software Development,2026-11-01,81.56
+Software Development,2026-11-01,81.62
 Therapy,2020-02-01,98.69
 Therapy,2020-03-01,89.81
 Therapy,2020-04-01,59.17
@@ -3852,4 +3852,4 @@ Therapy,2026-07-01,170.29
 Therapy,2026-08-01,175.58
 Therapy,2026-09-01,182.93
 Therapy,2026-10-01,189.36
-Therapy,2026-11-01,192.84
+Therapy,2026-11-01,194.17

@@ -80,7 +80,7 @@ metro,month,postings_index
 "Bakersfield, CA",2026-08-01,95.04
 "Bakersfield, CA",2026-09-01,96.51
 "Bakersfield, CA",2026-10-01,95.46
-"Bakersfield, CA",2026-11-01,93.77
+"Bakersfield, CA",2026-11-01,95.16
 "Chico, CA",2020-02-01,100.68
 "Chico, CA",2020-03-01,97.79
 "Chico, CA",2020-04-01,70.7
@@ -162,7 +162,7 @@ metro,month,postings_index
 "Chico, CA",2026-08-01,83.56
 "Chico, CA",2026-09-01,86.34
 "Chico, CA",2026-10-01,78.62
-"Chico, CA",2026-11-01,70.81
+"Chico, CA",2026-11-01,70.38
 "El Centro, CA",2020-02-01,99.41
 "El Centro, CA",2020-03-01,94.29
 "El Centro, CA",2020-04-01,78.62
@@ -244,7 +244,7 @@ metro,month,postings_index
 "El Centro, CA",2026-08-01,97.93
 "El Centro, CA",2026-09-01,100.67
 "El Centro, CA",2026-10-01,98.4
-"El Centro, CA",2026-11-01,96.89
+"El Centro, CA",2026-11-01,97.22
 "Eureka-Arcata, CA",2020-02-01,103.92
 "Eureka-Arcata, CA",2020-03-01,86.03
 "Eureka-Arcata, CA",2020-04-01,63.14
@@ -326,7 +326,7 @@ metro,month,postings_index
 "Eureka-Arcata, CA",2026-08-01,82.67
 "Eureka-Arcata, CA",2026-09-01,85.7
 "Eureka-Arcata, CA",2026-10-01,84.01
-"Eureka-Arcata, CA",2026-11-01,83.86
+"Eureka-Arcata, CA",2026-11-01,84.3
 "Fresno, CA",2020-02-01,98.61
 "Fresno, CA",2020-03-01,95.97
 "Fresno, CA",2020-04-01,75.4
@@ -408,7 +408,7 @@ metro,month,postings_index
 "Fresno, CA",2026-08-01,101.71
 "Fresno, CA",2026-09-01,102.23
 "Fresno, CA",2026-10-01,99.66
-"Fresno, CA",2026-11-01,99.56
+"Fresno, CA",2026-11-01,99.67
 "Hanford-Corcoran, CA",2020-02-01,106.57
 "Hanford-Corcoran, CA",2020-03-01,107.7
 "Hanford-Corcoran, CA",2020-04-01,83.41
@@ -490,7 +490,7 @@ metro,month,postings_index
 "Hanford-Corcoran, CA",2026-08-01,107.59
 "Hanford-Corcoran, CA",2026-09-01,101.86
 "Hanford-Corcoran, CA",2026-10-01,105.03
-"Hanford-Corcoran, CA",2026-11-01,103.9
+"Hanford-Corcoran, CA",2026-11-01,104.16
 "Los Angeles-Long Beach-Anaheim, CA",2020-02-01,99.8
 "Los Angeles-Long Beach-Anaheim, CA",2020-03-01,93.04
 "Los Angeles-Long Beach-Anaheim, CA",2020-04-01,63.13
@@ -500,7 +500,7 @@ metro,month,postings_index
 "Los Angeles-Long Beach-Anaheim, CA",2020-08-01,72.52
 "Los Angeles-Long Beach-Anaheim, CA",2020-09-01,76.43
 "Los Angeles-Long Beach-Anaheim, CA",2020-10-01,82.49
-"Los Angeles-Long Beach-Anaheim, CA",2020-11-01,85.02
+"Los Angeles-Long Beach-Anaheim, CA",2020-11-01,85.01
 "Los Angeles-Long Beach-Anaheim, CA",2020-12-01,86.0
 "Los Angeles-Long Beach-Anaheim, CA",2021-01-01,89.08
 "Los Angeles-Long Beach-Anaheim, CA",2021-02-01,94.24
@@ -515,7 +515,7 @@ metro,month,postings_index
 "Los Angeles-Long Beach-Anaheim, CA",2021-11-01,150.58
 "Los Angeles-Long Beach-Anaheim, CA",2021-12-01,152.93
 "Los Angeles-Long Beach-Anaheim, CA",2022-01-01,149.8
-"Los Angeles-Long Beach-Anaheim, CA",2022-02-01,150.67
+"Los Angeles-Long Beach-Anaheim, CA",2022-02-01,150.68
 "Los Angeles-Long Beach-Anaheim, CA",2022-03-01,152.03
 "Los Angeles-Long Beach-Anaheim, CA",2022-04-01,151.4
 "Los Angeles-Long Beach-Anaheim, CA",2022-05-01,153.96
@@ -529,18 +529,18 @@ metro,month,postings_index
 "Los Angeles-Long Beach-Anaheim, CA",2023-01-01,128.29
 "Los Angeles-Long Beach-Anaheim, CA",2023-02-01,123.77
 "Los Angeles-Long Beach-Anaheim, CA",2023-03-01,120.18
-"Los Angeles-Long Beach-Anaheim, CA",2023-04-01,119.0
+"Los Angeles-Long Beach-Anaheim, CA",2023-04-01,119.01
 "Los Angeles-Long Beach-Anaheim, CA",2023-05-01,117.58
 "Los Angeles-Long Beach-Anaheim, CA",2023-06-01,113.96
 "Los Angeles-Long Beach-Anaheim, CA",2023-07-01,111.92
-"Los Angeles-Long Beach-Anaheim, CA",2023-08-01,111.11
+"Los Angeles-Long Beach-Anaheim, CA",2023-08-01,111.12
 "Los Angeles-Long Beach-Anaheim, CA",2023-09-01,109.6
 "Los Angeles-Long Beach-Anaheim, CA",2023-10-01,108.76
 "Los Angeles-Long Beach-Anaheim, CA",2023-11-01,106.58
 "Los Angeles-Long Beach-Anaheim, CA",2023-12-01,103.98
 "Los Angeles-Long Beach-Anaheim, CA",2024-01-01,101.54
 "Los Angeles-Long Beach-Anaheim, CA",2024-02-01,100.89
-"Los Angeles-Long Beach-Anaheim, CA",2024-03-01,100.2
+"Los Angeles-Long Beach-Anaheim, CA",2024-03-01,100.21
 "Los Angeles-Long Beach-Anaheim, CA",2024-04-01,99.36
 "Los Angeles-Long Beach-Anaheim, CA",2024-05-01,96.89
 "Los Angeles-Long Beach-Anaheim, CA",2024-06-01,96.31
@@ -572,7 +572,7 @@ metro,month,postings_index
 "Los Angeles-Long Beach-Anaheim, CA",2026-08-01,82.49
 "Los Angeles-Long Beach-Anaheim, CA",2026-09-01,83.88
 "Los Angeles-Long Beach-Anaheim, CA",2026-10-01,85.19
-"Los Angeles-Long Beach-Anaheim, CA",2026-11-01,86.02
+"Los Angeles-Long Beach-Anaheim, CA",2026-11-01,86.63
 "Madera, CA",2020-02-01,104.28
 "Madera, CA",2020-03-01,102.91
 "Madera, CA",2020-04-01,85.31
@@ -654,7 +654,7 @@ metro,month,postings_index
 "Madera, CA",2026-08-01,112.48
 "Madera, CA",2026-09-01,105.67
 "Madera, CA",2026-10-01,104.45
-"Madera, CA",2026-11-01,107.71
+"Madera, CA",2026-11-01,107.66
 "Merced, CA",2020-02-01,106.94
 "Merced, CA",2020-03-01,106.06
 "Merced, CA",2020-04-01,80.09
@@ -736,7 +736,7 @@ metro,month,postings_index
 "Merced, CA",2026-08-01,114.11
 "Merced, CA",2026-09-01,109.08
 "Merced, CA",2026-10-01,107.42
-"Merced, CA",2026-11-01,107.4
+"Merced, CA",2026-11-01,108.14
 "Modesto, CA",2020-02-01,100.2
 "Modesto, CA",2020-03-01,96.01
 "Modesto, CA",2020-04-01,72.39
@@ -818,7 +818,7 @@ metro,month,postings_index
 "Modesto, CA",2026-08-01,94.44
 "Modesto, CA",2026-09-01,97.11
 "Modesto, CA",2026-10-01,97.5
-"Modesto, CA",2026-11-01,95.46
+"Modesto, CA",2026-11-01,96.44
 "Napa, CA",2020-02-01,100.59
 "Napa, CA",2020-03-01,84.84
 "Napa, CA",2020-04-01,48.36
@@ -900,7 +900,7 @@ metro,month,postings_index
 "Napa, CA",2026-08-01,86.03
 "Napa, CA",2026-09-01,85.71
 "Napa, CA",2026-10-01,83.03
-"Napa, CA",2026-11-01,87.85
+"Napa, CA",2026-11-01,88.66
 "Oxnard-Thousand Oaks-Ventura, CA",2020-02-01,100.32
 "Oxnard-Thousand Oaks-Ventura, CA",2020-03-01,95.25
 "Oxnard-Thousand Oaks-Ventura, CA",2020-04-01,67.14
@@ -982,7 +982,7 @@ metro,month,postings_index
 "Oxnard-Thousand Oaks-Ventura, CA",2026-08-01,79.75
 "Oxnard-Thousand Oaks-Ventura, CA",2026-09-01,81.53
 "Oxnard-Thousand Oaks-Ventura, CA",2026-10-01,83.09
-"Oxnard-Thousand Oaks-Ventura, CA",2026-11-01,84.03
+"Oxnard-Thousand Oaks-Ventura, CA",2026-11-01,84.62
 "Redding, CA",2020-02-01,98.04
 "Redding, CA",2020-03-01,94.53
 "Redding, CA",2020-04-01,72.81
@@ -1064,7 +1064,7 @@ metro,month,postings_index
 "Redding, CA",2026-08-01,107.99
 "Redding, CA",2026-09-01,109.68
 "Redding, CA",2026-10-01,107.61
-"Redding, CA",2026-11-01,107.9
+"Redding, CA",2026-11-01,108.09
 "Riverside-San Bernardino-Ontario, CA",2020-02-01,101.22
 "Riverside-San Bernardino-Ontario, CA",2020-03-01,97.1
 "Riverside-San Bernardino-Ontario, CA",2020-04-01,67.54
@@ -1146,7 +1146,7 @@ metro,month,postings_index
 "Riverside-San Bernardino-Ontario, CA",2026-08-01,101.01
 "Riverside-San Bernardino-Ontario, CA",2026-09-01,102.53
 "Riverside-San Bernardino-Ontario, CA",2026-10-01,102.12
-"Riverside-San Bernardino-Ontario, CA",2026-11-01,101.72
+"Riverside-San Bernardino-Ontario, CA",2026-11-01,102.47
 "Sacramento-Roseville-Folsom, CA",2020-02-01,100.4
 "Sacramento-Roseville-Folsom, CA",2020-03-01,96.33
 "Sacramento-Roseville-Folsom, CA",2020-04-01,69.19
@@ -1228,7 +1228,7 @@ metro,month,postings_index
 "Sacramento-Roseville-Folsom, CA",2026-08-01,97.91
 "Sacramento-Roseville-Folsom, CA",2026-09-01,98.28
 "Sacramento-Roseville-Folsom, CA",2026-10-01,98.86
-"Sacramento-Roseville-Folsom, CA",2026-11-01,98.76
+"Sacramento-Roseville-Folsom, CA",2026-11-01,98.98
 "Salinas, CA",2020-02-01,101.64
 "Salinas, CA",2020-03-01,97.36
 "Salinas, CA",2020-04-01,70.49
@@ -1310,7 +1310,7 @@ metro,month,postings_index
 "Salinas, CA",2026-08-01,94.93
 "Salinas, CA",2026-09-01,93.24
 "Salinas, CA",2026-10-01,90.9
-"Salinas, CA",2026-11-01,94.42
+"Salinas, CA",2026-11-01,94.6
 "San Diego-Chula Vista-Carlsbad, CA",2020-02-01,100.94
 "San Diego-Chula Vista-Carlsbad, CA",2020-03-01,95.68
 "San Diego-Chula Vista-Carlsbad, CA",2020-04-01,64.4
@@ -1392,7 +1392,7 @@ metro,month,postings_index
 "San Diego-Chula Vista-Carlsbad, CA",2026-08-01,90.81
 "San Diego-Chula Vista-Carlsbad, CA",2026-09-01,92.54
 "San Diego-Chula Vista-Carlsbad, CA",2026-10-01,92.14
-"San Diego-Chula Vista-Carlsbad, CA",2026-11-01,92.8
+"San Diego-Chula Vista-Carlsbad, CA",2026-11-01,93.58
 "San Francisco-Oakland-Berkeley, CA",2020-02-01,99.48
 "San Francisco-Oakland-Berkeley, CA",2020-03-01,94.06
 "San Francisco-Oakland-Berkeley, CA",2020-04-01,66.15
@@ -1474,7 +1474,7 @@ metro,month,postings_index
 "San Francisco-Oakland-Berkeley, CA",2026-08-01,69.73
 "San Francisco-Oakland-Berkeley, CA",2026-09-01,71.26
 "San Francisco-Oakland-Berkeley, CA",2026-10-01,72.05
-"San Francisco-Oakland-Berkeley, CA",2026-11-01,72.23
+"San Francisco-Oakland-Berkeley, CA",2026-11-01,72.72
 "San Jose-Sunnyvale-Santa Clara, CA",2020-02-01,100.36
 "San Jose-Sunnyvale-Santa Clara, CA",2020-03-01,96.48
 "San Jose-Sunnyvale-Santa Clara, CA",2020-04-01,70.64
@@ -1556,7 +1556,7 @@ metro,month,postings_index
 "San Jose-Sunnyvale-Santa Clara, CA",2026-08-01,79.8
 "San Jose-Sunnyvale-Santa Clara, CA",2026-09-01,81.21
 "San Jose-Sunnyvale-Santa Clara, CA",2026-10-01,81.29
-"San Jose-Sunnyvale-Santa Clara, CA",2026-11-01,81.94
+"San Jose-Sunnyvale-Santa Clara, CA",2026-11-01,83.16
 "San Luis Obispo-Paso Robles, CA",2020-02-01,99.71
 "San Luis Obispo-Paso Robles, CA",2020-03-01,94.1
 "San Luis Obispo-Paso Robles, CA",2020-04-01,58.62
@@ -1638,7 +1638,7 @@ metro,month,postings_index
 "San Luis Obispo-Paso Robles, CA",2026-08-01,115.92
 "San Luis Obispo-Paso Robles, CA",2026-09-01,112.66
 "San Luis Obispo-Paso Robles, CA",2026-10-01,109.09
-"San Luis Obispo-Paso Robles, CA",2026-11-01,109.71
+"San Luis Obispo-Paso Robles, CA",2026-11-01,109.98
 "Santa Cruz-Watsonville, CA",2020-02-01,98.76
 "Santa Cruz-Watsonville, CA",2020-03-01,92.53
 "Santa Cruz-Watsonville, CA",2020-04-01,69.58
@@ -1720,7 +1720,7 @@ metro,month,postings_index
 "Santa Cruz-Watsonville, CA",2026-08-01,84.06
 "Santa Cruz-Watsonville, CA",2026-09-01,82.43
 "Santa Cruz-Watsonville, CA",2026-10-01,81.62
-"Santa Cruz-Watsonville, CA",2026-11-01,83.35
+"Santa Cruz-Watsonville, CA",2026-11-01,83.06
 "Santa Maria-Santa Barbara, CA",2020-02-01,99.79
 "Santa Maria-Santa Barbara, CA",2020-03-01,94.03
 "Santa Maria-Santa Barbara, CA",2020-04-01,65.73
@@ -1802,7 +1802,7 @@ metro,month,postings_index
 "Santa Maria-Santa Barbara, CA",2026-08-01,83.65
 "Santa Maria-Santa Barbara, CA",2026-09-01,81.86
 "Santa Maria-Santa Barbara, CA",2026-10-01,80.17
-"Santa Maria-Santa Barbara, CA",2026-11-01,80.36
+"Santa Maria-Santa Barbara, CA",2026-11-01,80.65
 "Santa Rosa-Petaluma, CA",2020-02-01,100.17
 "Santa Rosa-Petaluma, CA",2020-03-01,88.8
 "Santa Rosa-Petaluma, CA",2020-04-01,62.32
@@ -1884,7 +1884,7 @@ metro,month,postings_index
 "Santa Rosa-Petaluma, CA",2026-08-01,73.16
 "Santa Rosa-Petaluma, CA",2026-09-01,74.56
 "Santa Rosa-Petaluma, CA",2026-10-01,73.21
-"Santa Rosa-Petaluma, CA",2026-11-01,72.93
+"Santa Rosa-Petaluma, CA",2026-11-01,73.68
 "Sonora, CA",2020-02-01,102.07
 "Sonora, CA",2020-03-01,102.79
 "Sonora, CA",2020-04-01,74.8
@@ -1966,7 +1966,7 @@ metro,month,postings_index
 "Sonora, CA",2026-08-01,105.7
 "Sonora, CA",2026-09-01,107.4
 "Sonora, CA",2026-10-01,109.46
-"Sonora, CA",2026-11-01,111.86
+"Sonora, CA",2026-11-01,111.13
 "Stockton, CA",2020-02-01,101.39
 "Stockton, CA",2020-03-01,96.94
 "Stockton, CA",2020-04-01,75.09
@@ -2048,7 +2048,7 @@ metro,month,postings_index
 "Stockton, CA",2026-08-01,99.85
 "Stockton, CA",2026-09-01,100.08
 "Stockton, CA",2026-10-01,99.95
-"Stockton, CA",2026-11-01,99.7
+"Stockton, CA",2026-11-01,100.72
 "Truckee-Grass Valley, CA",2020-02-01,98.65
 "Truckee-Grass Valley, CA",2020-03-01,87.44
 "Truckee-Grass Valley, CA",2020-04-01,55.37
@@ -2130,7 +2130,7 @@ metro,month,postings_index
 "Truckee-Grass Valley, CA",2026-08-01,77.34
 "Truckee-Grass Valley, CA",2026-09-01,78.08
 "Truckee-Grass Valley, CA",2026-10-01,75.31
-"Truckee-Grass Valley, CA",2026-11-01,77.14
+"Truckee-Grass Valley, CA",2026-11-01,77.62
 "Ukiah, CA",2020-02-01,94.36
 "Ukiah, CA",2020-03-01,91.28
 "Ukiah, CA",2020-04-01,65.04
@@ -2212,7 +2212,7 @@ metro,month,postings_index
 "Ukiah, CA",2026-08-01,105.36
 "Ukiah, CA",2026-09-01,111.41
 "Ukiah, CA",2026-10-01,114.22
-"Ukiah, CA",2026-11-01,115.04
+"Ukiah, CA",2026-11-01,114.77
 "Vallejo, CA",2020-02-01,100.74
 "Vallejo, CA",2020-03-01,94.59
 "Vallejo, CA",2020-04-01,66.92
@@ -2294,7 +2294,7 @@ metro,month,postings_index
 "Vallejo, CA",2026-08-01,86.2
 "Vallejo, CA",2026-09-01,84.65
 "Vallejo, CA",2026-10-01,83.94
-"Vallejo, CA",2026-11-01,83.33
+"Vallejo, CA",2026-11-01,83.39
 "Visalia, CA",2020-02-01,99.32
 "Visalia, CA",2020-03-01,95.52
 "Visalia, CA",2020-04-01,72.51
@@ -2376,7 +2376,7 @@ metro,month,postings_index
 "Visalia, CA",2026-08-01,114.56
 "Visalia, CA",2026-09-01,112.27
 "Visalia, CA",2026-10-01,113.69
-"Visalia, CA",2026-11-01,114.05
+"Visalia, CA",2026-11-01,113.95
 "Yuba City, CA",2020-02-01,100.36
 "Yuba City, CA",2020-03-01,95.29
 "Yuba City, CA",2020-04-01,72.76
@@ -2458,4 +2458,4 @@ metro,month,postings_index
 "Yuba City, CA",2026-08-01,121.31
 "Yuba City, CA",2026-09-01,119.86
 "Yuba City, CA",2026-10-01,120.81
-"Yuba City, CA",2026-11-01,121.24
+"Yuba City, CA",2026-11-01,121.72

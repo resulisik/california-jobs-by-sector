@@ -12,6 +12,8 @@ DOCS = ROOT / "docs"
 RAW_STOCKS = ROOT / "data" / "raw" / "stocks"
 RESEARCH = ROOT / "data" / "research"
 RAW_POSTINGS = ROOT / "data" / "raw" / "postings"
+RAW_JOLTS = ROOT / "data" / "raw" / "jolts"
+RAW_TRACKERS = ROOT / "data" / "raw" / "trackers"
 POSTINGS_SNAPSHOT = "2026-11-17"
 
 # Analysis window: 5 years ending in the latest month BLS has published.
@@ -128,3 +130,40 @@ MAJOR_GROUPS = {
         "MISCELLANEOUS BIOLOGICAL SCIENCE", "MISCELLANEOUS PHYSICAL SCIENCES", "ANIMAL AND PLANT SCIENCES", "AGRICULTURE"],
 }
 OTHER_MAJOR_GROUP = "Social sciences & humanities"
+
+
+# Year-by-year view (Part 7). FRED series, monthly from 2020:
+# (series_id, measure, industry, jobs_sector, seasonally_adjusted)
+# FRED carries JOLTS industry detail only without seasonal adjustment, so industry openings are
+# compared as annual averages (or the same months of two years), where seasonality cancels out.
+FRED_YEARLY = [
+    ("JTSJOL", "openings", "Total nonfarm", "Total nonfarm", 1),
+    ("JTSHIL", "hires", "Total nonfarm", "Total nonfarm", 1),
+    ("JTSQUL", "quits", "Total nonfarm", "Total nonfarm", 1),
+    ("JTSLDL", "layoffs", "Total nonfarm", "Total nonfarm", 1),
+    ("JTUJOL", "openings", "Total nonfarm", "Total nonfarm", 0),
+    ("JTUHIL", "hires", "Total nonfarm", "Total nonfarm", 0),
+    ("JTUQUL", "quits", "Total nonfarm", "Total nonfarm", 0),
+    ("JTULDL", "layoffs", "Total nonfarm", "Total nonfarm", 0),
+    ("JTU1000JOL", "openings", "Total private", "Total private", 0),
+    ("JTU110099JOL", "openings", "Mining and logging", "Mining & logging", 0),
+    ("JTU2300JOL", "openings", "Construction", "Construction", 0),
+    ("JTU3000JOL", "openings", "Manufacturing", "Manufacturing", 0),
+    ("JTU4000JOL", "openings", "Trade, transportation, and utilities", "Trade, transportation & utilities", 0),
+    ("JTU5100JOL", "openings", "Information", "Information", 0),
+    ("JTU510099JOL", "openings", "Financial activities", "Financial activities", 0),
+    ("JTU540099JOL", "openings", "Professional and business services", "Professional & business services", 0),
+    ("JTU6000JOL", "openings", "Private education and health services", "Private education & health services", 0),
+    ("JTU6200JOL", "openings", "Health care and social assistance", "Private education & health services", 0),
+    ("JTU7000JOL", "openings", "Leisure and hospitality", "Leisure & hospitality", 0),
+    ("JTU8100JOL", "openings", "Other services", "Other services", 0),
+    ("JTU9000JOL", "openings", "Government", "Government", 0),
+    ("UNEMPLOY", "unemployed", "Unemployed persons (CPS)", "Total nonfarm", 1),
+    ("FEDFUNDS", "fed_funds_rate", "Effective federal funds rate (%)", "", 0),
+]
+# Other Indeed Hiring Lab repositories (CC BY 4.0); only U.S. rows are kept.
+INDEED_TRACKERS = {
+    "ai_postings_share_US.csv": "https://raw.githubusercontent.com/hiring-lab/ai-tracker/main/AI_posting.csv",
+    "remote_postings_share_US.csv": "https://raw.githubusercontent.com/hiring-lab/remote-tracker/main/remote_postings.csv",
+    "posted_wage_growth_US.csv": "https://raw.githubusercontent.com/hiring-lab/indeed-wage-tracker/main/posted-wage-growth-by-country.csv",
+}

@@ -14,7 +14,8 @@ import sys
 import pandas as pd
 import requests
 
-from config import FRED_CSV, INDEED_FILES, INDEED_RAW, RAW_BLS, RAW_INDEED, RAW_STOCKS, SERIES, STOCKS, YAHOO_CHART
+from config import (FRED_CSV, FRED_YEARLY, INDEED_FILES, INDEED_RAW, INDEED_TRACKERS, RAW_BLS, RAW_INDEED, RAW_JOLTS,
+                    RAW_STOCKS, RAW_TRACKERS, SERIES, STOCKS, YAHOO_CHART)
 
 
 def fetch(url: str) -> bytes:
@@ -72,6 +73,36 @@ def download_stocks(force: bool) -> None:
     print(f"saved {out.name}: {len(merged)} rows")
 
 
+def download_jolts(force: bool) -> None:
+    """JOLTS openings, hires, quits and layoffs, unemployed persons and the fed funds rate, from FRED."""
+    RAW_JOLTS.mkdir(parents=True, exist_ok=True)
+    out = RAW_JOLTS / "fred_jolts_2020_2026.csv"
+    if out.exists() and not force:
+        print(f"skip  {out.name} (exists)")
+        return
+    frames = []
+    for sid, *_ in FRED_YEARLY:
+        df = pd.read_csv(io.BytesIO(fetch(FRED_CSV.format(series=sid))))
+        df.columns = ["date", "value"]
+        df["series_id"] = sid
+        frames.append(df[pd.to_numeric(df["value"], errors="coerce").notna()])
+    pd.concat(frames)[["series_id", "date", "value"]].to_csv(out, index=False)
+    print(f"saved {out.name}: {len(FRED_YEARLY)} series")
+
+
+def download_trackers(force: bool) -> None:
+    """Indeed Hiring Lab AI, remote-work and posted-wage trackers, U.S. rows only."""
+    RAW_TRACKERS.mkdir(parents=True, exist_ok=True)
+    for fname, url in INDEED_TRACKERS.items():
+        out = RAW_TRACKERS / fname
+        if out.exists() and not force:
+            print(f"skip  {out.name} (exists)")
+            continue
+        df = pd.read_csv(io.BytesIO(fetch(url)))
+        df[df["jobcountry"] == "US"].to_csv(out, index=False)
+        print(f"saved {out.name}")
+
+
 def download_indeed(force: bool) -> None:
     RAW_INDEED.mkdir(parents=True, exist_ok=True)
     for fname, path in INDEED_FILES.items():
@@ -86,7 +117,7 @@ def download_indeed(force: bool) -> None:
 if __name__ == "__main__":
     force = "--force" in sys.argv
     failed = False
-    for step in (download_bls, download_stocks, download_indeed):
+    for step in (download_bls, download_stocks, download_indeed, download_jolts, download_trackers):
         try:
             step(force)
         except requests.RequestException as exc:

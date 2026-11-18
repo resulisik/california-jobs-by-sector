@@ -8,6 +8,7 @@
    numbers (Challenger job cuts, JOLTS job openings).
 4. Every series must have one value per month with no gaps.
 5. Job postings: unique ids, platform totals add up, every posting classified, rule tests pass.
+6. Year by year: FRED JOLTS matches the BLS table; Challenger annual figures match the industry table; no gaps.
 Run after build_database.py; exits with code 1 on any mismatch.
 """
 import sqlite3
@@ -91,6 +92,20 @@ def main() -> int:
         errors += check(ov == (4.2, 39.4), f"NY Fed majors: overall unemployment {ov[0]}%, underemployment {ov[1]}%")
         n = conn.execute("SELECT COUNT(*), COUNT(DISTINCT major) FROM majors").fetchone()
         errors += check(n == (74, 74), f"NY Fed majors: {n[0]} rows, no duplicates")
+
+        # Year by year (Part 7): FRED's JOLTS total must equal the hand-collected BLS release table.
+        fred_sep, table_sep = conn.execute("""SELECT (SELECT value FROM fred_monthly WHERE series_id = 'JTSJOL' AND month = '2026-09-01'),
+                                                     (SELECT openings_k FROM jolts WHERE industry = 'Total' AND month = '2026-09-01')""").fetchone()
+        errors += check(fred_sep == table_sep, f"JOLTS Sep 2026 openings: FRED {fred_sep:,.0f} = BLS table {table_sep:,.0f} (thousands)")
+        ann, ytd26, prior, ytd25 = conn.execute("""SELECT a.job_cuts, y.ytd_2026, a.prior_year_same_months, y.ytd_2025
+                                                    FROM layoffs_annual a, layoffs_ytd y WHERE a.year = 2026 AND y.industry = 'TOTAL'""").fetchone()
+        errors += check(ann == ytd26 and prior == ytd25, f"Challenger 2026 Jan-Oct: {ann:,} cuts against {int(prior):,} a year earlier, matches the industry table")
+        short = conn.execute("""SELECT series_id, COUNT(*) FROM fred_monthly GROUP BY series_id HAVING COUNT(*) < 80""").fetchall()
+        errors += check(not short, "FRED: every series has at least 80 months since Jan 2020" + (f" (short: {short})" if short else ""))
+        occ_years = conn.execute("""SELECT COUNT(DISTINCT occupation) FROM postings_occ GROUP BY substr(date, 1, 4)""").fetchall()
+        errors += check({n for (n,) in occ_years} == {47}, "Indeed: all 47 occupational categories in every year")
+        trk = conn.execute("SELECT metric, MAX(date) FROM indeed_trackers GROUP BY metric").fetchall()
+        errors += check(all(d >= "2026-09-01" for _, d in trk), "Indeed trackers (AI, remote, wages) reach autumn 2026: " + ", ".join(f"{m} {d}" for m, d in trk))
 
         n_post, n_ids = conn.execute("SELECT COUNT(*), COUNT(DISTINCT posting_id) FROM postings").fetchone()
         errors += check(n_post == n_ids and n_post > 30000, f"postings: {n_post:,} rows, ids unique")

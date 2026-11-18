@@ -132,7 +132,8 @@ def chart_postings(conn):
     ax.set_title("California job postings are still below 2020; the U.S. is back above", pad=26)
     subtitle(ax, "Indeed job postings, monthly average, indexed to Feb 1, 2020 = 100")
     ax.set_ylabel("Index (Feb 2020 = 100)")
-    finish(fig, "03_postings_ca_vs_us.png", "Indeed Hiring Lab, seasonally adjusted (data through Nov 6, 2026)")
+    through = pd.Timestamp(q(conn, "SELECT MAX(date) AS d FROM postings_state")["d"][0])
+    finish(fig, "03_postings_ca_vs_us.png", f"Indeed Hiring Lab, seasonally adjusted (data through {through:%b} {through.day}, {through.year})")
 
 
 def window_change(conn, table, key, where=""):
@@ -159,7 +160,8 @@ def chart_metros(conn):
     ax.set_title("Bay Area postings bounced back; Los Angeles is flat", pad=26)
     subtitle(ax, "Change in Indeed job postings, last 28 days vs the same 28 days a year earlier")
     ax.set_xlabel("Percent change")
-    finish(fig, "04_metro_postings.png", "Indeed Hiring Lab metro postings (data through Nov 6, 2026)")
+    through = pd.Timestamp(q(conn, "SELECT MAX(date) AS d FROM postings_metro")["d"][0])
+    finish(fig, "04_metro_postings.png", f"Indeed Hiring Lab metro postings (data through {through:%b} {through.day}, {through.year})")
 
 
 def chart_occupations(conn):
@@ -175,7 +177,8 @@ def chart_occupations(conn):
     ax.set_title("Engineering and software postings rose most; Data & Analytics up modestly", pad=26)
     subtitle(ax, "U.S. Indeed postings by occupation, last 28 days vs a year earlier (top 6, bottom 5, and roles to watch)")
     ax.set_xlabel("Percent change")
-    finish(fig, "05_occupation_postings.png", "Indeed Hiring Lab occupational categories, U.S. (data through Nov 6, 2026)")
+    through = pd.Timestamp(q(conn, "SELECT MAX(date) AS d FROM postings_occ")["d"][0])
+    finish(fig, "05_occupation_postings.png", f"Indeed Hiring Lab occupational categories, U.S. (data through {through:%b} {through.day}, {through.year})")
 
 
 def chart_ca_vs_us(conn):
@@ -357,6 +360,77 @@ def chart_posting_skills(conn):
     finish(fig, "13_data_posting_skills.png", POSTINGS_SOURCE)
 
 
+FIELDS = ["Physicians & Surgeons", "Therapy", "Civil Engineering", "Mechanical Engineering", "Electrical Engineering", "Insurance",
+          "Industrial Engineering", "Nursing", "Banking & Finance", "Accounting", "Arts & Entertainment", "Marketing",
+          "Software Development", "IT Systems & Solutions", "Media & Communications", "Data & Analytics"]
+
+
+def chart_occupations_by_year(conn):
+    from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
+    df = q(conn, "SELECT occupation, substr(date, 1, 4) AS year, AVG(postings_index) AS idx FROM postings_occ GROUP BY 1, 2")
+    wide = df[df["occupation"].isin(FIELDS)].pivot(index="occupation", columns="year", values="idx")
+    wide = wide.sort_values("2026", ascending=False)
+    cmap = LinearSegmentedColormap.from_list("div", [NEG, SURFACE, BLUE])
+    fig, ax = plt.subplots(figsize=(9, 6.8))
+    fig.subplots_adjust(top=0.84, bottom=0.04)
+    ax.imshow(wide.values, cmap=cmap, norm=TwoSlopeNorm(vmin=40, vcenter=100, vmax=200), aspect="auto", alpha=0.85)
+    ax.set_xticks(range(len(wide.columns)), [c if c != "2026" else "2026*" for c in wide.columns])
+    ax.set_yticks(range(len(wide.index)), wide.index)
+    ax.tick_params(length=0)
+    ax.xaxis.tick_top()
+    ax.grid(False)
+    for s in ax.spines.values():
+        s.set_visible(False)
+    for i in range(wide.shape[0]):
+        for j in range(wide.shape[1]):
+            ax.text(j, i, f"{wide.values[i, j]:.0f}", ha="center", va="center", fontsize=9, color=TEXT)
+    fig.text(0.01, 0.955, "Data and software postings fell the furthest after the 2022 peak", fontsize=13, fontweight="semibold", color=TEXT)
+    fig.text(0.01, 0.92, "Indeed job postings by occupation, yearly average, Feb 1 2020 = 100 (blue: more postings than then, red: fewer)",
+             color=TEXT2, fontsize=9.5)
+    finish(fig, "14_occupations_by_year.png", "Indeed Hiring Lab, U.S., seasonally adjusted. *2026 to mid-November.", y=0.0)
+
+
+def chart_year_by_year(conn):
+    s = q(conn, """SELECT substr(date, 1, 4) AS year,
+                          AVG(CASE WHEN state = 'US' THEN postings_index END) AS us,
+                          AVG(CASE WHEN state = 'CA' THEN postings_index END) AS ca
+                   FROM postings_state GROUP BY 1""")
+    vu = q(conn, """SELECT substr(o.month, 1, 4) AS year, AVG(o.value / u.value) AS vu
+                    FROM fred_monthly o JOIN fred_monthly u ON u.month = o.month AND u.series_id = 'UNEMPLOY'
+                    WHERE o.series_id = 'JTSJOL' GROUP BY 1""")
+    la = q(conn, "SELECT CAST(year AS TEXT) AS year, job_cuts, months_covered FROM layoffs_annual")
+    years = list(s["year"])
+    x = range(len(years))
+    labels = ["\u2019" + y[2:] + ("*" if y == "2026" else "") for y in years]
+    fig, axes = plt.subplots(1, 3, figsize=(11, 4.2))
+    a = axes[0]
+    a.bar([i - 0.2 for i in x], s["us"], width=0.38, color=ORANGE, label="United States")
+    a.bar([i + 0.2 for i in x], s["ca"], width=0.38, color=BLUE, label="California")
+    a.axhline(100, color=TEXT2, linewidth=0.8)
+    a.set_title("Job postings index", fontsize=11)
+    a.legend(frameon=False, fontsize=8.5, loc="upper right")
+    a = axes[1]
+    a.bar(x, vu["vu"], width=0.6, color=BLUE)
+    a.axhline(1, color=TEXT2, linewidth=0.8)
+    for i, v in enumerate(vu["vu"]):
+        a.text(i, v + 0.03, f"{v:.2f}", ha="center", fontsize=8.5, color=TEXT)
+    a.set_title("Job openings per unemployed person", fontsize=11)
+    a = axes[2]
+    a.bar(x, la["job_cuts"] / 1e6, width=0.6, color=[BLUE if m == 12 else GREY for m in la["months_covered"]])
+    for i, v in enumerate(la["job_cuts"] / 1e6):
+        a.text(i, v + 0.03, f"{v:.2f}", ha="center", fontsize=8.5, color=TEXT)
+    a.set_title("Announced job cuts (millions)", fontsize=11)
+    for a in axes:
+        a.set_xticks(list(x), labels, fontsize=8.5)
+        a.grid(axis="x", visible=False)
+        a.set_axisbelow(True)
+    fig.suptitle("Year by year: the 2022 peak, then three years of cooling", x=0.01, ha="left", fontsize=13, fontweight="semibold", y=1.08)
+    fig.text(0.01, 0.985, "Each panel has its own scale. *2026 is partial: postings to mid-November, JOLTS to September, job cuts to October (grey).",
+             color=TEXT2, fontsize=9.5)
+    fig.subplots_adjust(wspace=0.25)
+    finish(fig, "15_year_by_year.png", "Indeed Hiring Lab; BLS JOLTS and CPS via FRED; Challenger, Gray & Christmas", y=-0.05)
+
+
 def main() -> None:
     CHARTS.mkdir(exist_ok=True)
     with sqlite3.connect(DB_PATH) as conn:
@@ -373,6 +447,8 @@ def main() -> None:
         chart_majors(conn)
         chart_posting_families(conn)
         chart_posting_skills(conn)
+        chart_occupations_by_year(conn)
+        chart_year_by_year(conn)
 
 
 if __name__ == "__main__":

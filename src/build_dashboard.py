@@ -171,6 +171,34 @@ def extra(conn) -> dict:
         "post_la": records(conn, Q["Q41"]),
         "post_sectors": records(conn, Q["Q37"]),
         "post_jobs": records(conn, Q["Q43"]),
+        "post_skills_pay": records(conn, Q["Q52"]),
+        "yr_score": records(conn, Q["Q44"]),
+        "yr_movers": records(conn, Q["Q45"]),
+        "yr_regions": records(conn, Q["Q47"]),
+        "yr_jolts": records(conn, Q["Q48"]),
+        "yr_peaks": records(conn, Q["Q49"]),
+        "yr_layoffs": records(conn, Q["Q50"]),
+        "yr_breadth": records(conn, Q["Q51"]),
+        "yr_occ": records(conn, """SELECT occupation, substr(date, 1, 4) AS year, ROUND(AVG(postings_index), 1) AS idx
+                                   FROM postings_occ GROUP BY 1, 2 ORDER BY 1, 2"""),
+        "yr_monthly": records(conn, """WITH s AS (SELECT substr(date, 1, 7) || '-01' AS month,
+                                              AVG(CASE WHEN state = 'US' THEN postings_index END) AS us,
+                                              AVG(CASE WHEN state = 'CA' THEN postings_index END) AS ca
+                                       FROM postings_state GROUP BY 1),
+                                    l AS (SELECT substr(date, 1, 7) || '-01' AS month, AVG(postings_index) AS la
+                                          FROM postings_metro WHERE metro LIKE 'Los Angeles%' GROUP BY 1)
+                                    SELECT month, ROUND(us, 1) AS us, ROUND(ca, 1) AS ca, ROUND(l.la, 1) AS la
+                                    FROM s JOIN l USING (month) ORDER BY month"""),
+        "yr_marks": records(conn, """SELECT
+            (SELECT month FROM fred_monthly WHERE series_id = 'JTSJOL' ORDER BY value DESC LIMIT 1) AS openings_peak_month,
+            (SELECT MAX(value) FROM fred_monthly WHERE series_id = 'JTSJOL') AS openings_peak_k,
+            (SELECT o.month FROM fred_monthly o JOIN fred_monthly u ON u.month = o.month AND u.series_id = 'UNEMPLOY'
+              WHERE o.series_id = 'JTSJOL' ORDER BY o.value / u.value DESC LIMIT 1) AS vu_peak_month,
+            (SELECT ROUND(MAX(o.value / u.value), 2) FROM fred_monthly o JOIN fred_monthly u ON u.month = o.month AND u.series_id = 'UNEMPLOY'
+              WHERE o.series_id = 'JTSJOL') AS vu_peak,
+            (SELECT MAX(month) FROM fred_monthly WHERE series_id = 'JTSJOL') AS jolts_through,
+            (SELECT value FROM indeed_trackers WHERE metric = 'ai_share_pct' ORDER BY date DESC LIMIT 1) AS ai_latest,
+            (SELECT MAX(date) FROM indeed_trackers WHERE metric = 'ai_share_pct') AS ai_through""")[0],
         "sources": records(conn, "SELECT report, url FROM research_sources"),
         "short": SHORT,
     }

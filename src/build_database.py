@@ -16,6 +16,10 @@ Tables
   postings_state  Indeed job postings index for California and the U.S. (daily)
   postings_metro  Indeed index for California metro areas (daily)
   postings_occ    Indeed index by occupational category, U.S. (daily)
+  fred_series / fred_monthly  JOLTS openings, hires, quits, layoffs (total and by industry), unemployed
+                  persons and the fed funds rate, monthly from 2020 (Part 7, year by year)
+  indeed_trackers share of U.S. postings that mention AI or offer remote work (daily), posted wage growth (monthly)
+  layoffs_annual  announced job cuts per year, 2020-2026 (hand-collected from Challenger reports)
 
 The Indeed index is 100 on Feb 1, 2020: 110 means 10% more postings than then.
 Small California-only extracts are also written to data/processed/ so the
@@ -25,8 +29,8 @@ import sqlite3
 
 import pandas as pd
 
-from config import (DB_PATH, MAJOR_GROUPS, OCCUPATION_FIELDS, OTHER_MAJOR_GROUP, POSTINGS_SNAPSHOT, PROCESSED, RAW_BLS,
-                    RAW_INDEED, RAW_POSTINGS, RAW_STOCKS, RESEARCH, SERIES, STOCKS)
+from config import (DB_PATH, FRED_YEARLY, MAJOR_GROUPS, OCCUPATION_FIELDS, OTHER_MAJOR_GROUP, POSTINGS_SNAPSHOT, PROCESSED, RAW_BLS,
+                    RAW_INDEED, RAW_JOLTS, RAW_POSTINGS, RAW_STOCKS, RAW_TRACKERS, RESEARCH, SERIES, STOCKS)
 from postings import BOARD_SOURCES, clean as clean_postings, skills_long
 
 
@@ -79,6 +83,34 @@ def build_postings_occ() -> pd.DataFrame:
     return s.rename(
         columns={"display_name": "occupation", "indeed_job_postings_index": "postings_index"}
     )[["date", "occupation", "postings_index"]].reset_index(drop=True)
+
+
+def build_fred() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """JOLTS and related FRED series, monthly. Returns (fred_series, fred_monthly)."""
+    meta = pd.DataFrame(FRED_YEARLY, columns=["series_id", "measure", "industry", "jobs_sector", "seasonally_adjusted"])
+    raw = pd.read_csv(RAW_JOLTS / "fred_jolts_2020_2026.csv")
+    raw = raw[raw["series_id"].isin(meta["series_id"])].rename(columns={"date": "month"})
+    raw["value"] = raw["value"].astype(float)
+    assert not raw.duplicated(["series_id", "month"]).any(), "duplicate FRED rows"
+    missing = set(meta["series_id"]) - set(raw["series_id"])
+    assert not missing, f"FRED series missing: {missing}"
+    return meta, raw.sort_values(["series_id", "month"]).reset_index(drop=True)
+
+
+def build_trackers() -> pd.DataFrame:
+    """Indeed AI and remote-work shares (daily, %) and posted wage growth (monthly, % year over year)."""
+    ai = pd.read_csv(RAW_TRACKERS / "ai_postings_share_US.csv")
+    remote = pd.read_csv(RAW_TRACKERS / "remote_postings_share_US.csv")
+    wage = pd.read_csv(RAW_TRACKERS / "posted_wage_growth_US.csv")
+    wage["date"] = pd.to_datetime(wage["month"], format="%b-%y").dt.strftime("%Y-%m-01")
+    frames = [
+        ai.assign(metric="ai_share_pct", value=ai["AI_share_postings"])[["date", "metric", "value"]],
+        remote.assign(metric="remote_share_pct", value=remote["remote_share_postings"])[["date", "metric", "value"]],
+        wage.assign(metric="posted_wage_growth_pct", value=wage["posted_wage_growth_yoy"] * 100)[["date", "metric", "value"]],
+    ]
+    out = pd.concat(frames).dropna()
+    out["value"] = out["value"].round(3)
+    return out.sort_values(["metric", "date"]).reset_index(drop=True)
 
 
 def build_stock_prices() -> pd.DataFrame:
@@ -170,6 +202,7 @@ def build_postings():
 def main() -> None:
     layoffs_monthly, layoffs_ytd = build_layoffs()
     postings, posting_skills, posting_companies, posting_platforms = build_postings()
+    fred_series, fred_monthly = build_fred()
     tables = {
         "series": build_series(),
         "employment": build_employment(),
@@ -190,6 +223,10 @@ def main() -> None:
         "posting_companies": posting_companies,
         "posting_platforms": posting_platforms,
         "research_sources": pd.read_csv(RESEARCH / "sources.csv"),
+        "fred_series": fred_series,
+        "fred_monthly": fred_monthly,
+        "indeed_trackers": build_trackers(),
+        "layoffs_annual": pd.read_csv(RESEARCH / "challenger_annual.csv"),
     }
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     PROCESSED.mkdir(parents=True, exist_ok=True)
@@ -206,6 +243,8 @@ def main() -> None:
             CREATE INDEX IF NOT EXISTS idx_sp ON stock_prices(ticker, month);
             CREATE INDEX IF NOT EXISTS idx_post_family ON postings(family, sector);
             CREATE INDEX IF NOT EXISTS idx_post_skill ON posting_skills(posting_id);
+            CREATE INDEX IF NOT EXISTS idx_fred ON fred_monthly(series_id, month);
+            CREATE INDEX IF NOT EXISTS idx_trk ON indeed_trackers(metric, date);
             """
         )
     tables["employment"].to_csv(PROCESSED / "employment.csv", index=False)
@@ -214,6 +253,7 @@ def main() -> None:
     tables["stock_sectors"].to_csv(PROCESSED / "stock_sectors.csv", index=False)
     tables["postings"].to_csv(PROCESSED / "postings.csv.gz", index=False)
     tables["posting_skills"].to_csv(PROCESSED / "posting_skills.csv", index=False)
+    tables["fred_monthly"].to_csv(PROCESSED / "fred_monthly.csv", index=False)
     # Postings are daily; the processed copies are monthly averages to stay small.
     for name, key in (("postings_state", "state"), ("postings_metro", "metro"), ("postings_occ", "occupation")):
         df = tables[name].copy()

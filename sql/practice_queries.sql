@@ -19,6 +19,9 @@
 --                                                                    one row per open job, snapshot of 17 Nov 2026
 --   posting_skills(posting_id, skill)                                skills named in data-related descriptions
 --   posting_companies(platform, slug, company, sector, postings)     the employers in the snapshot
+--   fred_monthly(series_id, month, value), fred_series(series_id, measure, industry, ...)  JOLTS and FRED, monthly
+--   indeed_trackers(date, metric, value)                             AI and remote shares of postings, posted wage growth
+--   layoffs_annual(year, job_cuts, tech_cuts, top_industry, ...)     announced job cuts per year
 
 -- ---------- Level 1: SELECT, WHERE, ORDER BY ----------
 
@@ -160,6 +163,29 @@ JOIN posting_skills s2 ON s2.posting_id = p.posting_id AND s2.skill = 'tableau'
 WHERE p.family = 'Data & analytics' AND p.is_us = 1
 ORDER BY p.posted_date DESC;
 
+-- ---------- Level 7: year by year ----------
+
+-- 7.1 Average job openings per month in each year (millions), from the JOLTS total
+SELECT substr(month, 1, 4)              AS year,
+       ROUND(AVG(value) / 1000.0, 2)    AS openings_m,
+       COUNT(*)                         AS months
+FROM fred_monthly
+WHERE series_id = 'JTSJOL'
+GROUP BY substr(month, 1, 4)
+ORDER BY year;
+
+-- 7.2 Data & Analytics postings each year and the change on the year before (LAG)
+WITH y AS (
+    SELECT substr(date, 1, 4) AS year, AVG(postings_index) AS idx
+    FROM postings_occ
+    WHERE occupation = 'Data & Analytics'
+    GROUP BY substr(date, 1, 4)
+)
+SELECT year, ROUND(idx, 1) AS postings_index,
+       ROUND(100.0 * (idx / LAG(idx) OVER (ORDER BY year) - 1), 1) AS change_pct
+FROM y
+ORDER BY year;
+
 -- ---------- Your turn (answers are in sql/analysis_queries.sql) ----------
 -- A. Which California sector lost the most jobs between Sep 2021 and Sep 2026?            (see Q1)
 -- B. In which sectors is California ahead of the U.S. over five years?                    (see Q13)
@@ -168,3 +194,4 @@ ORDER BY p.posted_date DESC;
 -- E. Build one table with jobs, openings, layoffs and stock returns per sector.           (see Q24)
 -- F. Which five job titles are most common in each sector's postings?                     (see Q34)
 -- G. Which skills appear most often in data & analytics postings?                         (see Q39)
+-- H. Which occupations rose and fell most each year?                                      (see Q45)

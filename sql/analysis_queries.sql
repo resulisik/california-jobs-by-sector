@@ -3,7 +3,8 @@
 -- jobs_k = thousands of jobs. postings_index = Indeed postings, Feb 1 2020 = 100.
 -- adj_close = month-end price with dividends reinvested. Months are stored as YYYY-MM-01.
 -- Q1-Q12 California, Q13-Q15 California vs U.S., Q16-Q20 stock sectors, Q21-Q24 last three months,
--- Q25-Q30 occupations and college majors, Q31-Q43 live job postings (snapshot of 17 Nov 2026).
+-- Q25-Q30 occupations and college majors, Q31-Q43 live job postings (snapshot of 17 Nov 2026),
+-- Q44-Q52 year by year, 2020-2026 (Indeed postings, JOLTS, Challenger).
 -- Each query starts with a "-- Qn: title" line so src/run_queries.py can split the file.
 
 -- Q1: Five-year job change by sector (Sep 2021 -> Sep 2026)
@@ -721,9 +722,9 @@ WITH p AS (
 )
 SELECT seniority,
        MAX(n)                                                     AS postings_with_pay,
-       ROUND(MIN(mid), -3)                                        AS lowest_midpoint,
-       ROUND(AVG(CASE WHEN rn IN ((n + 1) / 2, (n + 2) / 2) THEN mid END), -3) AS median_midpoint,
-       ROUND(MAX(mid), -3)                                        AS highest_midpoint
+       CAST(ROUND(MIN(mid) / 1000.0) * 1000 AS INTEGER)                                        AS lowest_midpoint,
+       CAST(ROUND(AVG(CASE WHEN rn IN ((n + 1) / 2, (n + 2) / 2) THEN mid END) / 1000.0) * 1000 AS INTEGER) AS median_midpoint,
+       CAST(ROUND(MAX(mid) / 1000.0) * 1000 AS INTEGER)                                        AS highest_midpoint
 FROM ranked
 GROUP BY seniority
 ORDER BY median_midpoint;
@@ -758,3 +759,228 @@ WHERE (is_data_analyst = 1 OR (family = 'Data & analytics' AND title LIKE '%anal
   AND seniority IN ('Entry level', 'Mid or not stated', 'Internship')
   AND loc_bucket IN ('Los Angeles area', 'Other California', 'Remote (U.S.)')
 ORDER BY CASE loc_bucket WHEN 'Los Angeles area' THEN 1 WHEN 'Remote (U.S.)' THEN 2 ELSE 3 END, posted_date DESC;
+
+-- Q44: Year by year in one table - postings, openings, quits, layoffs, interest rates, AI and remote postings
+-- 2026 is partial: Indeed to mid-November, JOLTS to September, Challenger to October.
+WITH ind AS (
+    SELECT substr(date, 1, 4) AS year,
+           AVG(CASE WHEN state = 'US' THEN postings_index END) AS us_postings,
+           AVG(CASE WHEN state = 'CA' THEN postings_index END) AS ca_postings,
+           MAX(date) AS indeed_through
+    FROM postings_state GROUP BY 1
+), jolts AS (
+    SELECT substr(month, 1, 4) AS year,
+           AVG(CASE WHEN series_id = 'JTSJOL'   THEN value END) AS openings_k,
+           AVG(CASE WHEN series_id = 'JTSHIL'   THEN value END) AS hires_k,
+           AVG(CASE WHEN series_id = 'JTSQUL'   THEN value END) AS quits_k,
+           AVG(CASE WHEN series_id = 'JTSLDL'   THEN value END) AS layoffs_k,
+           AVG(CASE WHEN series_id = 'FEDFUNDS' THEN value END) AS fed_funds_pct
+    FROM fred_monthly GROUP BY 1
+), vu AS (
+    SELECT substr(o.month, 1, 4) AS year, AVG(o.value / u.value) AS openings_per_unemployed
+    FROM fred_monthly o
+    JOIN fred_monthly u ON u.month = o.month AND u.series_id = 'UNEMPLOY'
+    WHERE o.series_id = 'JTSJOL'
+    GROUP BY 1
+), trk AS (
+    SELECT substr(date, 1, 4) AS year,
+           AVG(CASE WHEN metric = 'ai_share_pct'           THEN value END) AS ai_share_pct,
+           AVG(CASE WHEN metric = 'remote_share_pct'       THEN value END) AS remote_share_pct,
+           AVG(CASE WHEN metric = 'posted_wage_growth_pct' THEN value END) AS posted_wage_growth_pct
+    FROM indeed_trackers GROUP BY 1
+)
+SELECT ind.year,
+       ROUND(us_postings, 1)                                                          AS us_postings_index,
+       ROUND(100.0 * (us_postings / LAG(us_postings) OVER (ORDER BY ind.year) - 1), 1) AS us_postings_change_pct,
+       ROUND(ca_postings, 1)                                                          AS ca_postings_index,
+       ROUND(openings_k / 1000.0, 2)                                                  AS job_openings_m,
+       ROUND(hires_k / 1000.0, 2)                                                     AS hires_m,
+       ROUND(quits_k / 1000.0, 2)                                                     AS quits_m,
+       ROUND(layoffs_k / 1000.0, 2)                                                   AS layoffs_m,
+       ROUND(openings_per_unemployed, 2)                                              AS openings_per_unemployed,
+       ROUND(fed_funds_pct, 2)                                                        AS fed_funds_pct,
+       la.job_cuts                                                                    AS announced_job_cuts,
+       la.tech_cuts                                                                   AS announced_tech_cuts,
+       ROUND(ai_share_pct, 1)                                                         AS ai_postings_pct,
+       ROUND(remote_share_pct, 1)                                                     AS remote_postings_pct,
+       ROUND(posted_wage_growth_pct, 1)                                               AS posted_wage_growth_pct,
+       indeed_through
+FROM ind
+LEFT JOIN jolts USING (year)
+LEFT JOIN vu USING (year)
+LEFT JOIN trk USING (year)
+LEFT JOIN layoffs_annual la ON la.year = CAST(ind.year AS INTEGER)
+ORDER BY ind.year;
+
+-- Q45: Which occupations rose and fell the most each year? (Indeed, U.S.)
+-- Full years are compared with the year before; 2026 (to mid-November) with the same days of 2025.
+WITH cut AS (
+    SELECT MAX(substr(date, 6, 5)) AS mmdd FROM postings_occ WHERE date LIKE '2026%'
+), y AS (
+    SELECT occupation, CAST(substr(date, 1, 4) AS INTEGER) AS year,
+           AVG(postings_index) AS full_avg,
+           AVG(CASE WHEN substr(date, 6, 5) <= (SELECT mmdd FROM cut) THEN postings_index END) AS ytd_avg
+    FROM postings_occ
+    GROUP BY 1, 2
+), chg AS (
+    SELECT a.occupation, a.year,
+           CASE WHEN a.year = 2026 THEN a.ytd_avg / b.ytd_avg ELSE a.full_avg / b.full_avg END AS ratio
+    FROM y a
+    JOIN y b ON b.occupation = a.occupation AND b.year = a.year - 1
+), ranked AS (
+    SELECT occupation, year, ratio,
+           RANK() OVER (PARTITION BY year ORDER BY ratio DESC) AS up_rank,
+           RANK() OVER (PARTITION BY year ORDER BY ratio ASC)  AS down_rank
+    FROM chg
+)
+SELECT year,
+       CASE WHEN up_rank <= 3 THEN 'Rose most' ELSE 'Fell most' END AS direction,
+       CASE WHEN up_rank <= 3 THEN up_rank ELSE down_rank END        AS rank,
+       occupation,
+       ROUND(100.0 * (ratio - 1), 1)                                  AS change_pct
+FROM ranked
+WHERE up_rank <= 3 OR down_rank <= 3
+ORDER BY year, direction DESC, rank;
+
+-- Q46: Postings by year for the fields in this project (Indeed index, Feb 1 2020 = 100)
+SELECT occupation,
+       ROUND(AVG(CASE WHEN date LIKE '2020%' THEN postings_index END), 1) AS y2020,
+       ROUND(AVG(CASE WHEN date LIKE '2021%' THEN postings_index END), 1) AS y2021,
+       ROUND(AVG(CASE WHEN date LIKE '2022%' THEN postings_index END), 1) AS y2022,
+       ROUND(AVG(CASE WHEN date LIKE '2023%' THEN postings_index END), 1) AS y2023,
+       ROUND(AVG(CASE WHEN date LIKE '2024%' THEN postings_index END), 1) AS y2024,
+       ROUND(AVG(CASE WHEN date LIKE '2025%' THEN postings_index END), 1) AS y2025,
+       ROUND(AVG(CASE WHEN date LIKE '2026%' THEN postings_index END), 1) AS y2026,
+       ROUND(100.0 * (AVG(CASE WHEN date LIKE '2026%' THEN postings_index END)
+                    / AVG(CASE WHEN date LIKE '2022%' THEN postings_index END) - 1), 1) AS change_since_2022_pct
+FROM postings_occ
+WHERE occupation IN ('Data & Analytics', 'Software Development', 'IT Systems & Solutions', 'Mechanical Engineering',
+                     'Electrical Engineering', 'Civil Engineering', 'Industrial Engineering', 'Nursing',
+                     'Physicians & Surgeons', 'Therapy', 'Banking & Finance', 'Accounting', 'Insurance',
+                     'Media & Communications', 'Arts & Entertainment', 'Marketing')
+GROUP BY occupation
+ORDER BY y2026 DESC;
+
+-- Q47: California and Los Angeles against the U.S. each year (Indeed index, Feb 1 2020 = 100)
+WITH s AS (
+    SELECT substr(date, 1, 4) AS year,
+           AVG(CASE WHEN state = 'US' THEN postings_index END) AS us,
+           AVG(CASE WHEN state = 'CA' THEN postings_index END) AS ca
+    FROM postings_state GROUP BY 1
+), la AS (
+    SELECT substr(date, 1, 4) AS year, AVG(postings_index) AS la
+    FROM postings_metro WHERE metro LIKE 'Los Angeles%' GROUP BY 1
+)
+SELECT year,
+       ROUND(us, 1)      AS united_states,
+       ROUND(ca, 1)      AS california,
+       ROUND(la.la, 1)   AS los_angeles,
+       ROUND(ca - us, 1) AS california_gap_points,
+       CASE WHEN ca >= 100 THEN 'above' ELSE 'below' END AS california_vs_feb_2020
+FROM s JOIN la USING (year)
+ORDER BY year;
+
+-- Q48: Job openings by industry each year (BLS JOLTS, thousands, average month)
+-- 2026 covers January-September and is compared with January-September 2025.
+WITH o AS (
+    SELECT s.industry, CAST(substr(m.month, 1, 4) AS INTEGER) AS year, CAST(substr(m.month, 6, 2) AS INTEGER) AS mon, m.value
+    FROM fred_monthly m JOIN fred_series s USING (series_id)
+    WHERE s.measure = 'openings' AND s.seasonally_adjusted = 0 AND s.industry <> 'Total private'
+), last_month AS (
+    SELECT MAX(mon) AS m FROM o WHERE year = 2026
+)
+SELECT industry,
+       ROUND(AVG(CASE WHEN year = 2020 THEN value END)) AS y2020,
+       ROUND(AVG(CASE WHEN year = 2021 THEN value END)) AS y2021,
+       ROUND(AVG(CASE WHEN year = 2022 THEN value END)) AS y2022,
+       ROUND(AVG(CASE WHEN year = 2023 THEN value END)) AS y2023,
+       ROUND(AVG(CASE WHEN year = 2024 THEN value END)) AS y2024,
+       ROUND(AVG(CASE WHEN year = 2025 THEN value END)) AS y2025,
+       ROUND(AVG(CASE WHEN year = 2026 THEN value END)) AS y2026_jan_sep,
+       ROUND(100.0 * (AVG(CASE WHEN year = 2026 THEN value END)
+                    / AVG(CASE WHEN year = 2025 AND mon <= (SELECT m FROM last_month) THEN value END) - 1), 1) AS vs_same_months_2025_pct,
+       ROUND(100.0 * (AVG(CASE WHEN year = 2025 THEN value END)
+                    / AVG(CASE WHEN year = 2022 THEN value END) - 1), 1) AS change_2022_to_2025_pct
+FROM o
+GROUP BY industry
+ORDER BY y2025 DESC;
+
+-- Q49: The high and low point of each year for U.S. job postings (Indeed)
+WITH d AS (
+    SELECT substr(date, 1, 4) AS year, date, postings_index,
+           ROW_NUMBER() OVER (PARTITION BY substr(date, 1, 4) ORDER BY postings_index DESC, date) AS hi,
+           ROW_NUMBER() OVER (PARTITION BY substr(date, 1, 4) ORDER BY postings_index ASC, date)  AS lo
+    FROM postings_state WHERE state = 'US'
+)
+SELECT year,
+       MAX(CASE WHEN hi = 1 THEN date END)           AS high_date,
+       MAX(CASE WHEN hi = 1 THEN postings_index END) AS high_index,
+       MAX(CASE WHEN lo = 1 THEN date END)           AS low_date,
+       MAX(CASE WHEN lo = 1 THEN postings_index END) AS low_index
+FROM d
+GROUP BY year
+ORDER BY year;
+
+-- Q50: Layoffs each year - announced plans (Challenger) against layoffs measured by BLS (JOLTS)
+WITH measured AS (
+    SELECT CAST(substr(month, 1, 4) AS INTEGER) AS year, SUM(value) AS jolts_layoffs_k, COUNT(*) AS months
+    FROM fred_monthly WHERE series_id = 'JTULDL'
+    GROUP BY 1
+)
+SELECT la.year,
+       la.months_covered,
+       la.job_cuts                                                       AS announced_cuts,
+       ROUND(100.0 * (1.0 * la.job_cuts / COALESCE(la.prior_year_same_months, LAG(la.job_cuts) OVER (ORDER BY la.year)) - 1), 1)
+                                                                         AS change_vs_prior_year_pct,
+       la.tech_cuts                                                      AS announced_tech_cuts,
+       ROUND(100.0 * la.tech_cuts / la.job_cuts, 1)                      AS tech_share_pct,
+       la.top_industry,
+       SUM(la.job_cuts) OVER (ORDER BY la.year)                          AS running_total_since_2020,
+       ROUND(m.jolts_layoffs_k / 1000.0, 1)                              AS jolts_layoffs_m,
+       m.months                                                          AS jolts_months
+FROM layoffs_annual la
+LEFT JOIN measured m ON m.year = la.year
+ORDER BY la.year;
+
+-- Q51: How many of Indeed's 47 occupational categories were above their February 2020 level each year?
+WITH y AS (
+    SELECT substr(date, 1, 4) AS year, occupation, AVG(postings_index) AS idx
+    FROM postings_occ GROUP BY 1, 2
+)
+SELECT year,
+       COUNT(*)                                     AS occupations,
+       SUM(idx >= 100)                              AS above_feb_2020,
+       ROUND(100.0 * SUM(idx >= 100) / COUNT(*), 1) AS above_pct,
+       ROUND(MIN(idx), 1)                           AS lowest_index,
+       ROUND(MAX(idx), 1)                           AS highest_index
+FROM y
+GROUP BY year
+ORDER BY year;
+
+-- Q52: Demand against pay for skills in data & analytics postings (live snapshot, U.S., yearly pay)
+-- In the style of the popular "optimal skills" question: how often a skill is asked for, and what those postings pay.
+WITH d AS (
+    SELECT posting_id, CASE WHEN pay_period = 'year' THEN (pay_min + pay_max) / 2.0 END AS mid
+    FROM postings
+    WHERE family = 'Data & analytics' AND is_us = 1 AND desc_fetched = 1
+), s AS (
+    SELECT ps.skill, d.mid FROM posting_skills ps JOIN d USING (posting_id)
+), paid AS (
+    SELECT skill, mid,
+           ROW_NUMBER() OVER (PARTITION BY skill ORDER BY mid) AS rn,
+           COUNT(*)     OVER (PARTITION BY skill)              AS n
+    FROM s WHERE mid IS NOT NULL
+), med AS (
+    SELECT skill, MAX(n) AS postings_with_pay,
+           AVG(CASE WHEN rn IN ((n + 1) / 2, (n + 2) / 2) THEN mid END) AS median_mid
+    FROM paid GROUP BY skill
+)
+SELECT s.skill,
+       COUNT(*)                                              AS postings,
+       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM d), 1) AS share_pct,
+       med.postings_with_pay,
+       CAST(ROUND(med.median_mid / 1000.0) * 1000 AS INTEGER) AS median_pay_midpoint
+FROM s JOIN med USING (skill)
+GROUP BY s.skill, med.postings_with_pay, med.median_mid
+HAVING med.postings_with_pay >= 10
+ORDER BY postings DESC;
